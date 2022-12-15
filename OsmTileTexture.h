@@ -34,13 +34,7 @@ public:
 private:
   GLuint _id{};
   int _width{256}, _height{256};
-
   std::vector<std::byte> _blob;
-
-  struct StbDeleter final {
-    void operator()(stbi_uc *p) const noexcept { stbi_image_free(p); }
-  };
-  std::unique_ptr<stbi_uc, StbDeleter> _stbBlob;
 
   void initTexture();
 };

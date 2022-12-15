@@ -28,7 +28,10 @@ OsmTileTexture::OsmTileTexture(int size, const std::vector<std::byte> &blob) {
   const auto ptr = stbi_load_from_memory(
       reinterpret_cast<stbi_uc const *>(blob.data()),
       static_cast<int>(blob.size()), &_width, &_height, &tmp, STBI_rgb_alpha);
-  _stbBlob.reset(ptr);
+  const auto byteptr = reinterpret_cast<std::byte *>(ptr);
+  _blob.insert(_blob.begin(), byteptr,
+               byteptr + _width * _height * TextureColor::RGBA_SZ);
+  stbi_image_free(ptr);
 
   initTexture();
 }
@@ -36,14 +39,11 @@ OsmTileTexture::OsmTileTexture(int size, const std::vector<std::byte> &blob) {
 OsmTileTexture::~OsmTileTexture() { glDeleteTextures(1, &_id); }
 
 void OsmTileTexture::initTexture() {
-  const auto ptr =
-      _blob.size() > 0 ? (uint8_t *)_blob.data() : (uint8_t *)_stbBlob.get();
-
   glGenTextures(1, &_id);
   glBindTexture(GL_TEXTURE_2D, _id);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
   glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, GL_RGBA,
-               GL_UNSIGNED_BYTE, ptr);
+               GL_UNSIGNED_BYTE, reinterpret_cast<uint8_t *>(_blob.data()));
 }
