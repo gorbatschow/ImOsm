@@ -8,8 +8,6 @@ ImOsmWidget::ImOsmWidget() {}
 void ImOsmWidget::paint() {
   ImGui::Begin("OsmPlotWidget");
 
-  ImGui::Text("TILE PX: %.2f", _plotTileSizePx);
-
   if (ImPlot::BeginPlot("##OsmPlot", {-1, -1},
                         ImPlotFlags_Equal | ImPlotFlags_NoLegend)) {
     ImPlot::SetupAxis(ImAxis_Y1, NULL, ImPlotAxisFlags_Invert);
