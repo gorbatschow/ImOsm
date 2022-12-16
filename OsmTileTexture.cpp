@@ -20,8 +20,6 @@ OsmTileTexture::OsmTileTexture(int size, TextureColor color)
 OsmTileTexture::OsmTileTexture(int size, const std::vector<std::byte> &blob) {
   _width = size;
   _height = size;
-  _blob.resize(0);
-  _blob.shrink_to_fit();
 
   stbi_set_flip_vertically_on_load(false);
   const auto ptr =
