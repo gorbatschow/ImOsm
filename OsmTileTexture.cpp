@@ -23,11 +23,11 @@ OsmTileTexture::OsmTileTexture(int size, const std::vector<std::byte> &blob) {
   _blob.resize(0);
   _blob.shrink_to_fit();
 
-  int tmp;
   stbi_set_flip_vertically_on_load(false);
-  const auto ptr = stbi_load_from_memory(
-      reinterpret_cast<stbi_uc const *>(blob.data()),
-      static_cast<int>(blob.size()), &_width, &_height, &tmp, STBI_rgb_alpha);
+  const auto ptr =
+      stbi_load_from_memory(reinterpret_cast<stbi_uc const *>(blob.data()),
+                            static_cast<int>(blob.size()), &_width, &_height,
+                            &_channels, STBI_rgb_alpha);
   const auto byteptr = reinterpret_cast<std::byte *>(ptr);
   _blob.insert(_blob.begin(), byteptr,
                byteptr + _width * _height * TextureColor::RGBA_SZ);

@@ -33,7 +33,7 @@ public:
 
 private:
   GLuint _id{};
-  int _width{256}, _height{256};
+  int _width{256}, _height{256}, _channels{};
   std::vector<std::byte> _blob;
 
   void initTexture();
