@@ -12,6 +12,16 @@ void ImOsmWidget::paint() {
     ImPlot::SetupAxis(ImAxis_X1, NULL, ImPlotAxisFlags_NoInitialFit);
     ImPlot::SetupAxis(ImAxis_Y1, NULL,
                       ImPlotAxisFlags_Invert | ImPlotAxisFlags_NoInitialFit);
+    if (_setBounds) {
+      _minX = lon2x(_minLon, 0);
+      _maxX = lon2x(_maxLon, 0);
+      _minY = lat2y(_minLat, 0);
+      _maxY = lat2y(_maxLat, 0);
+      ImPlot::SetupAxisLimits(ImAxis_X1, _minX, _maxX, ImPlotCond_Always);
+      ImPlot::SetupAxisLimits(ImAxis_Y1, _minY, _maxY, ImPlotCond_Always);
+      _setBounds = false;
+    }
+
     ImPlot::SetupFinish();
 
     const auto plotLims = ImPlot::GetPlotLimits(ImAxis_X1, ImAxis_Y1);
@@ -29,7 +39,7 @@ void ImOsmWidget::paint() {
 
     _resX = _pixelsX / _rangeX;
     _resY = _pixelsY / _rangeY;
-    _zoom = std::clamp(int(floor(log2(_resX / _tilePixels))), 0, 18);
+    _zoom = std::clamp(int(floor(log2(_resX / _tilePixels))), 0, LimZoom);
     _tilesNum = (1 << _zoom);
     _tileSize = 1.0 / float(_tilesNum);
 

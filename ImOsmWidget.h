@@ -8,6 +8,9 @@ public:
 
   void paint();
 
+  inline void setBounds();
+  inline void setBounds(double minLon, double maxLon, double minLat,
+                        double maxLat);
   inline void getBounds(double &minLon, double &maxLon, double &minLat,
                         double &maxLat) const;
   inline void getBounds(int &minTX, int &maxTX, int &minTY, int &maxTY) const;
@@ -39,6 +42,23 @@ private:
 
   OsmTileLoader _loader;
 };
+
+inline void ImOsmWidget::setBounds() {
+  _minLon = -LimLon;
+  _maxLon = LimLon;
+  _minLat = -LimLat;
+  _maxLat = LimLat;
+  _setBounds = true;
+}
+
+inline void ImOsmWidget::setBounds(double minLon, double maxLon, double minLat,
+                                   double maxLat) {
+  _minLon = minLon;
+  _maxLon = maxLon;
+  _minLat = minLat;
+  _maxLat = maxLat;
+  _setBounds = true;
+}
 
 inline void ImOsmWidget::getBounds(double &minLon, double &maxLon,
                                    double &minLat, double &maxLat) const {
