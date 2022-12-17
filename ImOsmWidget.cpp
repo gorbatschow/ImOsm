@@ -16,6 +16,7 @@ void ImOsmWidget::paint() {
                        ImPlotAxisFlags_NoMenus | ImPlotAxisFlags_NoHighlight;
     ImPlot::SetupAxis(ImAxis_X1, NULL, flags);
     ImPlot::SetupAxis(ImAxis_Y1, NULL, flags | ImPlotAxisFlags_Invert);
+    ImPlot::SetupAxisLimitsConstraints(ImAxis_Y1, 0.0, 1.0);
 
     if (_setBounds) {
       _minX = lon2x(_minLon, 0);
@@ -52,15 +53,15 @@ void ImOsmWidget::paint() {
     _tilesNum = (1 << _zoom);
     _tileSize = 1.0 / float(_tilesNum);
 
-    _minLon = std::clamp(x2lon(_minX * _tilesNum, _zoom), -LimLon, LimLon);
-    _maxLon = std::clamp(x2lon(_maxX * _tilesNum, _zoom), -LimLon, LimLon);
-    _minLat = std::clamp(y2lat(_minY * _tilesNum, _zoom), -LimLat, LimLat);
-    _maxLat = std::clamp(y2lat(_maxY * _tilesNum, _zoom), -LimLat, LimLat);
+    _minLon = x2lon(_minX * _tilesNum, _zoom);
+    _maxLon = x2lon(_maxX * _tilesNum, _zoom);
+    _minLat = y2lat(_minY * _tilesNum, _zoom);
+    _maxLat = y2lat(_maxY * _tilesNum, _zoom);
 
-    _minTX = lon2tx(std::clamp(_minLon, -LimLon, LimLon), _zoom);
-    _maxTX = lon2tx(std::clamp(_maxLon, -LimLon, LimLon), _zoom);
-    _minTY = lat2ty(std::clamp(_minLat, -LimLat, LimLat), _zoom);
-    _maxTY = lat2ty(std::clamp(_maxLat, -LimLat, LimLat), _zoom);
+    _minTX = std::clamp(lon2tx(_minLon, _zoom), 0, _tilesNum - 1);
+    _maxTX = std::clamp(lon2tx(_maxLon, _zoom), 0, _tilesNum - 1);
+    _minTY = std::clamp(lat2ty(_minLat, _zoom), 0, _tilesNum - 1);
+    _maxTY = std::clamp(lat2ty(_maxLat, _zoom), 0, _tilesNum - 1);
 
     _loader.beginLoad(_zoom, _minTX, _maxTX, _minTY, _maxTY);
 

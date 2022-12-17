@@ -9,18 +9,17 @@ public:
   void paint();
 
   inline void setBounds();
-  inline void setBounds(double minLon, double maxLon, double minLat,
-                        double maxLat);
-  inline void getBounds(double &minLon, double &maxLon, double &minLat,
-                        double &maxLat) const;
+  inline void setBounds(float minLon, float maxLon, float minLat, float maxLat);
+  inline void getBounds(float &minLon, float &maxLon, float &minLat,
+                        float &maxLat) const;
   inline void getBounds(int &minTX, int &maxTX, int &minTY, int &maxTY) const;
-  inline double minLon() const { return _minLon; }
-  inline double maxLon() const { return _maxLon; }
-  inline double minLat() const { return _minLat; }
-  inline double maxLat() const { return _maxLat; }
+  inline float minLon() const { return _minLon; }
+  inline float maxLon() const { return _maxLon; }
+  inline float minLat() const { return _minLat; }
+  inline float maxLat() const { return _maxLat; }
   inline int zoom() const { return int(_zoom); }
-  inline double mouseLon() const { return _mouseLon; }
-  inline double mouseLat() const { return _mouseLat; }
+  inline float mouseLon() const { return _mouseLon; }
+  inline float mouseLat() const { return _mouseLat; }
 
 private:
   constexpr static const float LimLat{85.0};
@@ -54,8 +53,8 @@ inline void ImOsmWidget::setBounds() {
   _setBounds = true;
 }
 
-inline void ImOsmWidget::setBounds(double minLon, double maxLon, double minLat,
-                                   double maxLat) {
+inline void ImOsmWidget::setBounds(float minLon, float maxLon, float minLat,
+                                   float maxLat) {
   _minLon = minLon;
   _maxLon = maxLon;
   _minLat = minLat;
@@ -63,8 +62,8 @@ inline void ImOsmWidget::setBounds(double minLon, double maxLon, double minLat,
   _setBounds = true;
 }
 
-inline void ImOsmWidget::getBounds(double &minLon, double &maxLon,
-                                   double &minLat, double &maxLat) const {
+inline void ImOsmWidget::getBounds(float &minLon, float &maxLon, float &minLat,
+                                   float &maxLat) const {
   minLon = _minLon;
   maxLon = _maxLon;
   minLat = _minLat;
