@@ -19,6 +19,8 @@ public:
   inline double minLat() const { return _minLat; }
   inline double maxLat() const { return _maxLat; }
   inline int zoom() const { return int(_zoom); }
+  inline double mouseLon() const { return _mouseLon; }
+  inline double mouseLat() const { return _mouseLat; }
 
 private:
   constexpr static const float LimLat{85.0};
@@ -39,6 +41,7 @@ private:
   int _tilesNum{};
   int _zoom{0};
   bool _setBounds{true};
+  float _mouseLon{}, _mouseLat{};
 
   OsmTileLoader _loader;
 };

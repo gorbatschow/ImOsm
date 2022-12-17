@@ -22,10 +22,12 @@ void ImOsmWidget::paint() {
       _setBounds = false;
     }
 
-    ImPlot::SetupFinish();
-
+    const auto mousePos = ImPlot::GetPlotMousePos(ImAxis_X1, ImAxis_Y1);
     const auto plotLims = ImPlot::GetPlotLimits(ImAxis_X1, ImAxis_Y1);
     const auto plotSize = ImPlot::GetPlotSize();
+
+    _mouseLon = x2lon(mousePos.x, 0);
+    _mouseLat = y2lat(mousePos.y, 0);
 
     _pixelsX = plotSize.x;
     _pixelsY = plotSize.y;
