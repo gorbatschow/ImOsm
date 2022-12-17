@@ -9,9 +9,14 @@ void ImOsmWidget::paint() {
   if (ImPlot::BeginPlot("##OsmPlot", {-1, -1},
                         ImPlotFlags_Equal | ImPlotFlags_NoLegend)) {
 
-    ImPlot::SetupAxis(ImAxis_X1, NULL, ImPlotAxisFlags_NoInitialFit);
-    ImPlot::SetupAxis(ImAxis_Y1, NULL,
-                      ImPlotAxisFlags_Invert | ImPlotAxisFlags_NoInitialFit);
+    const auto flags = ImPlotAxisFlags_NoLabel | ImPlotAxisFlags_NoGridLines |
+                       ImPlotAxisFlags_NoTickMarks |
+                       ImPlotAxisFlags_NoTickLabels |
+                       ImPlotAxisFlags_NoInitialFit | ImPlotAxisFlags_NoMenus |
+                       ImPlotAxisFlags_NoMenus | ImPlotAxisFlags_NoHighlight;
+    ImPlot::SetupAxis(ImAxis_X1, NULL, flags);
+    ImPlot::SetupAxis(ImAxis_Y1, NULL, flags | ImPlotAxisFlags_Invert);
+
     if (_setBounds) {
       _minX = lon2x(_minLon, 0);
       _maxX = lon2x(_maxLon, 0);
@@ -21,6 +26,8 @@ void ImOsmWidget::paint() {
       ImPlot::SetupAxisLimits(ImAxis_Y1, _minY, _maxY, ImPlotCond_Always);
       _setBounds = false;
     }
+
+    ImPlot::SetupFinish();
 
     const auto mousePos = ImPlot::GetPlotMousePos(ImAxis_X1, ImAxis_Y1);
     const auto plotLims = ImPlot::GetPlotLimits(ImAxis_X1, ImAxis_Y1);
