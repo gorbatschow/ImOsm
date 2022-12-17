@@ -29,9 +29,9 @@ void ImOsmWidget::paint() {
 
     _resX = _pixelsX / _rangeX;
     _resY = _pixelsY / _rangeY;
-    _zoom = std::clamp(floor(log2(_resX / _tilePixels)), 0.0, 18.0);
+    _zoom = std::clamp(int(floor(log2(_resX / _tilePixels))), 0, 18);
     _tilesNum = (1 << _zoom);
-    _tileSize = 1.0 / _tilesNum;
+    _tileSize = 1.0 / float(_tilesNum);
 
     _minLon = std::clamp(x2lon(_minX * _tilesNum, _zoom), -LimLon, LimLon);
     _maxLon = std::clamp(x2lon(_maxX * _tilesNum, _zoom), -LimLon, LimLon);
