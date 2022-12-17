@@ -26,12 +26,13 @@ OsmTileTexture::OsmTileTexture(int size, const std::vector<std::byte> &blob) {
       stbi_load_from_memory(reinterpret_cast<stbi_uc const *>(blob.data()),
                             static_cast<int>(blob.size()), &_width, &_height,
                             &_channels, STBI_rgb_alpha);
-  const auto byteptr = reinterpret_cast<std::byte *>(ptr);
-  _blob.insert(_blob.begin(), byteptr,
-               byteptr + _width * _height * TextureColor::RGBA_SZ);
-  stbi_image_free(ptr);
-
-  initTexture();
+  if (ptr) {
+    const auto byteptr = reinterpret_cast<std::byte *>(ptr);
+    _blob.insert(_blob.begin(), byteptr,
+                 byteptr + _width * _height * TextureColor::RGBA_SZ);
+    stbi_image_free(ptr);
+    initTexture();
+  }
 }
 
 OsmTileTexture::~OsmTileTexture() { glDeleteTextures(1, &_id); }
