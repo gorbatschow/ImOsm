@@ -14,7 +14,7 @@ OsmTileTexture::OsmTileTexture(int size, TextureColor color)
     _blob[i + 3] = std::byte(color.rgba[3]);
   }
 
-  initTexture();
+  loadTexture();
 }
 
 OsmTileTexture::OsmTileTexture(int size, const std::vector<std::byte> &blob) {
@@ -31,13 +31,13 @@ OsmTileTexture::OsmTileTexture(int size, const std::vector<std::byte> &blob) {
     _blob.insert(_blob.begin(), byteptr,
                  byteptr + _width * _height * TextureColor::RGBA_SZ);
     stbi_image_free(ptr);
-    initTexture();
+    // loadTexture();
   }
 }
 
 OsmTileTexture::~OsmTileTexture() { glDeleteTextures(1, &_id); }
 
-void OsmTileTexture::initTexture() {
+void OsmTileTexture::loadTexture() {
   glGenTextures(1, &_id);
   glBindTexture(GL_TEXTURE_2D, _id);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);

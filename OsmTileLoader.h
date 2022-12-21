@@ -18,13 +18,14 @@ public:
 
   struct RemoteTile {
     std::vector<std::byte> blob;
+    std::shared_ptr<OsmTileTexture> texture;
     CURLcode code{CURLE_OK};
   };
 
   struct Tile {
     std::array<int, 3> zxy{0, 0, 0};
     std::shared_future<RemoteTile> future;
-    std::unique_ptr<OsmTileTexture> texture;
+    std::shared_ptr<OsmTileTexture> texture;
 
     bool operator==(const Tile &other) { return this->zxy == other.zxy; }
   };
@@ -33,8 +34,9 @@ private:
   const int _tileSizePx{256};
   OsmTileTexture _blankTile{_tileSizePx, TextureColor::Slate};
   std::list<Tile> _tiles;
-  const int _futureLimit{4}, _textureLimit{4};
-  int _futureCounter{}, _textureCounter{};
+  const int _futureLimit{4}, _textureLimit{1};
+  int _textureCounter{0};
+  int _futureCounter{0};
 
   RemoteTile onHandleRequest(const std::array<int, 3> &zxy);
 

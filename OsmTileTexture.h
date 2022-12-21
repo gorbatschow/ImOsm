@@ -28,6 +28,8 @@ public:
   OsmTileTexture(int size, const std::vector<std::byte> &blob);
   ~OsmTileTexture();
 
+  void loadTexture();
+
   inline GLuint glID() const { return _id; }
   inline ImTextureID imID() const { return (ImTextureID)(intptr_t)_id; }
 
@@ -35,6 +37,4 @@ private:
   GLuint _id{};
   int _width{256}, _height{256}, _channels{};
   std::vector<std::byte> _blob;
-
-  void initTexture();
 };

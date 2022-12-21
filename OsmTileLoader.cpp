@@ -4,6 +4,7 @@
 #include <curl/curl.h>
 #include <future>
 #include <iostream>
+#include <memory.h>
 #include <sstream>
 
 OsmTileLoader::OsmTileLoader() {}
@@ -20,7 +21,7 @@ void OsmTileLoader::beginLoad(int z, int xmin, int xmax, int ymin, int ymax) {
                _tiles.end());
 
   _futureCounter = 0;
-  _textureCounter = 0;
+  //_textureCounter = 0;
 }
 
 ImTextureID OsmTileLoader::tileAt(int z, int x, int y) {
@@ -48,9 +49,11 @@ ImTextureID OsmTileLoader::tileAt(int z, int x, int y) {
     }
 
     if (_textureCounter++ < _textureLimit) {
-      auto texture =
-          std::make_unique<OsmTileTexture>(_tileSizePx, it->future.get().blob);
-      it->texture.swap(texture);
+      auto ptr =
+          std::const_pointer_cast<OsmTileTexture>(it->future.get().texture);
+      it->texture.swap(ptr);
+      it->texture->loadTexture();
+      _textureCounter--;
       return it->texture.get()->imID();
     }
   }
@@ -78,6 +81,8 @@ OsmTileLoader::onHandleRequest(const std::array<int, 3> &zxy) {
   curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, onPullResponse);
   tile.code = curl_easy_perform(curl);
   curl_easy_cleanup(curl);
+
+  tile.texture = std::make_shared<OsmTileTexture>(_tileSizePx, tile.blob);
 
   return tile;
 }
