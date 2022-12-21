@@ -21,7 +21,6 @@ void OsmTileLoader::beginLoad(int z, int xmin, int xmax, int ymin, int ymax) {
                _tiles.end());
 
   _futureCounter = 0;
-  //_textureCounter = 0;
 }
 
 ImTextureID OsmTileLoader::tileAt(int z, int x, int y) {
@@ -49,11 +48,8 @@ ImTextureID OsmTileLoader::tileAt(int z, int x, int y) {
     }
 
     if (_textureCounter++ < _textureLimit) {
-      auto ptr =
-          std::const_pointer_cast<OsmTileTexture>(it->future.get().texture);
-      it->texture.swap(ptr);
-      it->texture->loadTexture();
       _textureCounter--;
+      it->texture = it->future.get().texture;
       return it->texture.get()->imID();
     }
   }

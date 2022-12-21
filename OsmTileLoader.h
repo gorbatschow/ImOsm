@@ -35,8 +35,7 @@ private:
   OsmTileTexture _blankTile{_tileSizePx, TextureColor::Slate};
   std::list<Tile> _tiles;
   const int _futureLimit{4}, _textureLimit{1};
-  int _textureCounter{0};
-  int _futureCounter{0};
+  int _textureCounter{0}, _futureCounter{0};
 
   RemoteTile onHandleRequest(const std::array<int, 3> &zxy);
 
