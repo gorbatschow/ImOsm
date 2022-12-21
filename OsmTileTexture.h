@@ -38,8 +38,8 @@ public:
 
 private:
   int _width{256}, _height{256}, _channels{};
+  std::vector<std::byte> _blob;
   mutable GLuint _id{0};
-  mutable std::vector<std::byte> _blob;
 
   void loadTexture() const;
 };
