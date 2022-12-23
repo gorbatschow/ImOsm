@@ -4,7 +4,7 @@
 #include <curl/curl.h>
 #include <future>
 #include <iostream>
-#include <memory.h>
+#include <memory>
 #include <sstream>
 
 OsmTileLoader::OsmTileLoader() {}
