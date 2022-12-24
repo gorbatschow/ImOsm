@@ -17,17 +17,8 @@ public:
   ImTextureID tileAt(int z, int x, int y);
   inline int tilesNum() const { return _tiles.size(); }
 
-  template <typename T> struct Countable {
-    Countable() { _alive++; }
-    Countable(const Countable &) { _alive++; }
-    static int alive() { return _alive; }
-
-  protected:
-    static int _alive;
-    virtual ~Countable() { --_alive; }
-  };
-
-  struct RemoteTile : Countable<RemoteTile> {
+private:
+  struct RemoteTile {
     std::vector<std::byte> blob;
     std::shared_ptr<OsmTileTexture> texture;
     CURLcode code{CURLE_OK};
@@ -40,7 +31,6 @@ public:
     bool operator==(const Tile &other) { return this->zxy == other.zxy; }
   };
 
-private:
   const int _tileSizePx{256};
   OsmTileTexture _blankTile{_tileSizePx, TextureColor::Slate};
   std::list<Tile> _tiles;
@@ -52,5 +42,3 @@ private:
   static size_t onPullResponse(void *data, size_t size, size_t nmemb,
                                void *userp);
 };
-
-template <typename T> int OsmTileLoader::Countable<T>::_alive(0);

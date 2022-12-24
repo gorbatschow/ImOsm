@@ -1,11 +1,14 @@
 #include "OsmTileLoader.h"
 #include <GL/gl.h>
 #include <algorithm>
+#include <chrono>
 #include <curl/curl.h>
 #include <future>
 #include <iostream>
 #include <memory>
 #include <sstream>
+#include <thread>
+using namespace std::chrono_literals;
 
 OsmTileLoader::OsmTileLoader() {}
 
@@ -13,10 +16,16 @@ OsmTileLoader::~OsmTileLoader() {}
 
 void OsmTileLoader::beginLoad(int z, int xmin, int xmax, int ymin, int ymax) {
   auto rm_cond = [z, xmin, xmax, ymin, ymax](const Tile &tile) {
-    return (tile.zxy.at(0) != z || tile.zxy.at(1) < xmin ||
-            tile.zxy.at(1) > xmax || tile.zxy.at(2) < ymin ||
-            tile.zxy.at(2) > ymax);
+    const bool c1{tile.zxy.at(0) != z};
+    const bool c2{tile.zxy.at(1) < xmin || tile.zxy.at(1) > xmax};
+    const bool c3{tile.zxy.at(2) < ymin || tile.zxy.at(2) > ymax};
+    const bool c4{tile.future.valid() &&
+                  tile.future.wait_for(0s) == std::future_status::ready};
+    const bool c5{tile.texture};
+
+    return (c1 || c2 || c3) && (c4 || c5);
   };
+
   _tiles.erase(std::remove_if(_tiles.begin(), _tiles.end(), rm_cond),
                _tiles.end());
 
@@ -29,10 +38,10 @@ ImTextureID OsmTileLoader::tileAt(int z, int x, int y) {
 
   if (it == _tiles.end()) {
     if (_futureCounter++ < _futureLimit) {
-      auto future =
-          std::async(std::launch::async, &OsmTileLoader::onHandleRequest, this,
-                     std::array<int, 3>({z, x, y}));
-      _tiles.insert(it, Tile{{z, x, y}, std::move(future)});
+      _tiles.insert(
+          it, {{z, x, y},
+               std::async(std::launch::async, &OsmTileLoader::onHandleRequest,
+                          this, std::array<int, 3>({z, x, y}))});
     }
     return _blankTile.imID();
   }
@@ -41,18 +50,25 @@ ImTextureID OsmTileLoader::tileAt(int z, int x, int y) {
     return it->texture.get()->imID();
   }
 
-  if (it->future.valid()) {
-    auto remote = it->future.get();
-    if (remote.code != CURLE_OK) {
-      it = _tiles.erase(it);
-      return _blankTile.imID();
-    }
+  if (!it->future.valid()) {
+    return _blankTile.imID();
+  }
 
-    if (_textureCounter++ < _textureLimit) {
-      _textureCounter--;
-      it->texture = remote.texture;
-      return it->texture.get()->imID();
-    }
+  if (it->future.wait_for(0s) != std::future_status::ready) {
+    return _blankTile.imID();
+  }
+
+  auto remote = it->future.get();
+
+  if (remote.code != CURLE_OK) {
+    it = _tiles.erase(it);
+    return _blankTile.imID();
+  }
+
+  if (_textureCounter++ < _textureLimit) {
+    _textureCounter--;
+    it->texture = remote.texture;
+    return it->texture.get()->imID();
   }
 
   return _blankTile.imID();
@@ -79,7 +95,12 @@ OsmTileLoader::onHandleRequest(const std::array<int, 3> &zxy) {
   tile.code = curl_easy_perform(curl);
   curl_easy_cleanup(curl);
 
-  tile.texture = std::make_shared<OsmTileTexture>(_tileSizePx, tile.blob);
+  if (tile.code == CURLE_OK) {
+    tile.texture = std::make_shared<OsmTileTexture>(_tileSizePx, tile.blob);
+  }
+
+  // test for async
+  // std::this_thread::sleep_for(1s);
 
   return tile;
 }
