@@ -78,8 +78,8 @@ OsmTileLoader::RemoteTile
 OsmTileLoader::onHandleRequest(const std::array<int, 3> &zxy) {
 
   std::ostringstream urlmaker;
-  urlmaker << "http://a.tile.openstreetmap.org/" << zxy[0] << "/" << zxy[1]
-           << "/" << zxy[2] << ".png";
+  urlmaker << _tileProvider << zxy[0] << '/' << zxy[1] << '/' << zxy[2]
+           << _tileExtension;
   const auto url{urlmaker.str()};
 
   RemoteTile tile;
@@ -87,7 +87,7 @@ OsmTileLoader::onHandleRequest(const std::array<int, 3> &zxy) {
   curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
   curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
   // curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
-  curl_easy_setopt(curl, CURLOPT_USERAGENT, "curl/7.84.0");
+  curl_easy_setopt(curl, CURLOPT_USERAGENT, _clientName.c_str());
   curl_easy_setopt(curl, CURLOPT_TIMEOUT, 1);
   curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 1);
   curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&tile);
