@@ -15,7 +15,7 @@ OsmTileLoader::OsmTileLoader() {}
 OsmTileLoader::~OsmTileLoader() {}
 
 void OsmTileLoader::beginLoad(int z, int xmin, int xmax, int ymin, int ymax) {
-  auto rm_cond = [z, xmin, xmax, ymin, ymax](const Tile &tile) {
+  auto rm_cond{[z, xmin, xmax, ymin, ymax](const Tile &tile) {
     const bool c1{tile.zxy.at(0) != z};
     const bool c2{tile.zxy.at(1) < xmin || tile.zxy.at(1) > xmax};
     const bool c3{tile.zxy.at(2) < ymin || tile.zxy.at(2) > ymax};
@@ -24,7 +24,7 @@ void OsmTileLoader::beginLoad(int z, int xmin, int xmax, int ymin, int ymax) {
     const bool c5{tile.texture};
 
     return (c1 || c2 || c3) && (c4 || c5);
-  };
+  }};
 
   _tiles.erase(std::remove_if(_tiles.begin(), _tiles.end(), rm_cond),
                _tiles.end());
@@ -33,8 +33,8 @@ void OsmTileLoader::beginLoad(int z, int xmin, int xmax, int ymin, int ymax) {
 }
 
 ImTextureID OsmTileLoader::tileAt(int z, int x, int y) {
-  auto it = std::find(_tiles.begin(), _tiles.end(),
-                      Tile{std::array<int, 3>{z, x, y}});
+  auto it{std::find(_tiles.begin(), _tiles.end(),
+                    Tile{std::array<int, 3>{z, x, y}})};
 
   if (it == _tiles.end()) {
     if (_futureCounter++ < _futureLimit) {
@@ -58,7 +58,7 @@ ImTextureID OsmTileLoader::tileAt(int z, int x, int y) {
     return _blankTile.imID();
   }
 
-  auto remote = it->future.get();
+  auto remote{it->future.get()};
 
   if (remote.code != CURLE_OK) {
     it = _tiles.erase(it);
@@ -80,10 +80,10 @@ OsmTileLoader::onHandleRequest(const std::array<int, 3> &zxy) {
   std::ostringstream urlmaker;
   urlmaker << "http://a.tile.openstreetmap.org/" << zxy[0] << "/" << zxy[1]
            << "/" << zxy[2] << ".png";
-  const auto url = urlmaker.str();
+  const auto url{urlmaker.str()};
 
   RemoteTile tile;
-  CURL *curl = curl_easy_init();
+  CURL *curl{curl_easy_init()};
   curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
   curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
   // curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
@@ -107,9 +107,9 @@ OsmTileLoader::onHandleRequest(const std::array<int, 3> &zxy) {
 
 size_t OsmTileLoader::onPullResponse(void *data, size_t size, size_t nmemb,
                                      void *userp) {
-  size_t realsize = size * nmemb;
-  auto &tile = *static_cast<RemoteTile *>(userp);
-  auto const *const dataptr = static_cast<std::byte *>(data);
+  size_t realsize{size * nmemb};
+  auto &tile{*static_cast<RemoteTile *>(userp)};
+  auto const *const dataptr{static_cast<std::byte *>(data)};
   tile.blob.insert(tile.blob.cend(), dataptr, dataptr + realsize);
 
   return realsize;

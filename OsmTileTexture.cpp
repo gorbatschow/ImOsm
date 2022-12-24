@@ -20,12 +20,12 @@ OsmTileTexture::OsmTileTexture(int size, const std::vector<std::byte> &blob) {
   _height = size;
 
   stbi_set_flip_vertically_on_load(false);
-  const auto ptr =
+  const auto ptr{
       stbi_load_from_memory(reinterpret_cast<stbi_uc const *>(blob.data()),
                             static_cast<int>(blob.size()), &_width, &_height,
-                            &_channels, STBI_rgb_alpha);
+                            &_channels, STBI_rgb_alpha)};
   if (ptr) {
-    const auto byteptr = reinterpret_cast<std::byte *>(ptr);
+    const auto byteptr{reinterpret_cast<std::byte *>(ptr)};
     _blob.insert(_blob.begin(), byteptr,
                  byteptr + _width * _height * TextureColor::RGBA_SZ);
     stbi_image_free(ptr);
