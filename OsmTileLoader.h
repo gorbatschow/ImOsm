@@ -35,7 +35,7 @@ public:
 
   struct Tile {
     std::array<int, 3> zxy{0, 0, 0};
-    std::shared_future<RemoteTile> future;
+    std::future<RemoteTile> future;
     std::shared_ptr<OsmTileTexture> texture;
     bool operator==(const Tile &other) { return this->zxy == other.zxy; }
   };

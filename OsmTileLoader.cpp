@@ -42,14 +42,15 @@ ImTextureID OsmTileLoader::tileAt(int z, int x, int y) {
   }
 
   if (it->future.valid()) {
-    if (it->future.get().code != CURLE_OK) {
+    auto remote = it->future.get();
+    if (remote.code != CURLE_OK) {
       it = _tiles.erase(it);
       return _blankTile.imID();
     }
 
     if (_textureCounter++ < _textureLimit) {
       _textureCounter--;
-      it->texture = it->future.get().texture;
+      it->texture = remote.texture;
       return it->texture.get()->imID();
     }
   }
