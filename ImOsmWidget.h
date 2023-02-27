@@ -5,14 +5,29 @@
 class ImOsmWidget {
 public:
   ImOsmWidget();
+  virtual ~ImOsmWidget() = default;
 
-  void paint();
+  virtual void paint();
+  virtual void paintBeforeMap() {}
+  virtual void paintOverMap(){};
 
   inline void setBounds();
-  inline void setBounds(float minLon, float maxLon, float minLat, float maxLat);
-  inline void getBounds(float &minLon, float &maxLon, float &minLat,
-                        float &maxLat) const;
-  inline void getBounds(int &minTX, int &maxTX, int &minTY, int &maxTY) const;
+
+  inline void setBoundsGeo(float minLon, float maxLon, float minLat,
+                           float maxLat);
+
+  inline void getBoundsGeo(float &minLon, float &maxLon, float &minLat,
+                           float &maxLat) const;
+
+  inline void getBoundsTile(int &minTX, int &maxTX, int &minTY,
+                            int &maxTY) const;
+
+  inline void setBoundsLocal(float &minX, float &maxX, float &minY,
+                             float &maxY) const;
+
+  inline void getBoundsLocal(float &minX, float &maxX, float &minY,
+                             float &maxY) const;
+
   inline float minLon() const { return _minLon; }
   inline float maxLon() const { return _maxLon; }
   inline float minLat() const { return _minLat; }
@@ -54,8 +69,8 @@ inline void ImOsmWidget::setBounds() {
   _setBounds = true;
 }
 
-inline void ImOsmWidget::setBounds(float minLon, float maxLon, float minLat,
-                                   float maxLat) {
+inline void ImOsmWidget::setBoundsGeo(float minLon, float maxLon, float minLat,
+                                      float maxLat) {
   _minLon = minLon;
   _maxLon = maxLon;
   _minLat = minLat;
@@ -63,18 +78,26 @@ inline void ImOsmWidget::setBounds(float minLon, float maxLon, float minLat,
   _setBounds = true;
 }
 
-inline void ImOsmWidget::getBounds(float &minLon, float &maxLon, float &minLat,
-                                   float &maxLat) const {
+inline void ImOsmWidget::getBoundsGeo(float &minLon, float &maxLon,
+                                      float &minLat, float &maxLat) const {
   minLon = _minLon;
   maxLon = _maxLon;
   minLat = _minLat;
   maxLat = _maxLat;
 }
 
-inline void ImOsmWidget::getBounds(int &minTX, int &maxTX, int &minTY,
-                                   int &maxTY) const {
+inline void ImOsmWidget::getBoundsTile(int &minTX, int &maxTX, int &minTY,
+                                       int &maxTY) const {
   minTX = _minTX;
   maxTX = _maxTX;
   minTY = _minTY;
   maxTY = _maxTY;
+}
+
+inline void ImOsmWidget::getBoundsLocal(float &minX, float &maxX, float &minY,
+                                        float &maxY) const {
+  minX = _minX;
+  maxX = _maxX;
+  minY = _minY;
+  maxY = _maxY;
 }

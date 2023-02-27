@@ -6,6 +6,8 @@
 ImOsmWidget::ImOsmWidget() {}
 
 void ImOsmWidget::paint() {
+  paintBeforeMap();
+
   if (ImPlot::BeginPlot("##OsmPlot", {-1, -1},
                         ImPlotFlags_Equal | ImPlotFlags_NoLegend)) {
 
@@ -80,6 +82,8 @@ void ImOsmWidget::paint() {
                           uv1, tint);
       }
     }
+
+    paintOverMap();
 
     ImPlot::EndPlot();
   }
