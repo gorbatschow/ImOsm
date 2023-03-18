@@ -4,25 +4,27 @@
 #include <implot.h>
 
 namespace ImOsm {
-MapPlot::MapPlot() {}
+MapPlot::MapPlot() { resetBounds(); }
 
 void MapPlot::paint() {
-  paintBeforeMap();
-
   if (ImPlot::BeginPlot("##ImOsmMapPlot", {-1, -1}, _plotFlags)) {
 
     ImPlot::SetupAxis(ImAxis_X1, nullptr, _xFlags);
     ImPlot::SetupAxis(ImAxis_Y1, nullptr, _yFlags);
     ImPlot::SetupAxisLimitsConstraints(ImAxis_Y1, 0.0, 1.0);
 
-    if (_setBounds) {
-      _minX = lon2x(_minLon, 0);
-      _maxX = lon2x(_maxLon, 0);
-      _minY = lat2y(_minLat, 0);
-      _maxY = lat2y(_maxLat, 0);
+    if (_setBounds != SetBounds::None) {
+      if (_setBounds == SetBounds::Geo) {
+        _minX = lon2x(_minLon, 0);
+        _maxX = lon2x(_maxLon, 0);
+        _minY = lat2y(_minLat, 0);
+        _maxY = lat2y(_maxLat, 0);
+      } else if (_setBounds == SetBounds::Local) {
+        // do nothing
+      }
       ImPlot::SetupAxisLimits(ImAxis_X1, _minX, _maxX, ImPlotCond_Always);
       ImPlot::SetupAxisLimits(ImAxis_Y1, _minY, _maxY, ImPlotCond_Always);
-      _setBounds = false;
+      _setBounds = SetBounds::None;
     }
 
     ImPlot::SetupFinish();

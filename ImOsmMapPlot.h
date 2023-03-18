@@ -9,33 +9,46 @@ public:
   virtual ~MapPlot() = default;
 
   virtual void paint();
-  virtual void paintBeforeMap() {}
   virtual void paintOverMap() {}
 
-  inline void setBounds();
+  inline void resetBounds();
 
+  // Geo CS routines
   inline void setBoundsGeo(float minLon, float maxLon, float minLat,
                            float maxLat);
 
   inline void getBoundsGeo(float &minLon, float &maxLon, float &minLat,
                            float &maxLat) const;
 
-  inline void getBoundsTile(int &minTX, int &maxTX, int &minTY,
-                            int &maxTY) const;
-
-  inline void setBoundsLocal(float &minX, float &maxX, float &minY,
-                             float &maxY) const;
-
-  inline void getBoundsLocal(float &minX, float &maxX, float &minY,
-                             float &maxY) const;
-
   inline float minLon() const { return _minLon; }
   inline float maxLon() const { return _maxLon; }
   inline float minLat() const { return _minLat; }
   inline float maxLat() const { return _maxLat; }
-  inline int zoom() const { return int(_zoom); }
+
   inline float mouseLon() const { return _mouseLon; }
   inline float mouseLat() const { return _mouseLat; }
+
+  // Tile CS routines
+  inline void getBoundsTile(int &minTX, int &maxTX, int &minTY,
+                            int &maxTY) const;
+
+  inline int minTileX() const { return _minTX; };
+  inline int maxTileX() const { return _maxTX; };
+  inline int minTileY() const { return _minTY; };
+  inline int maxTileY() const { return _maxTY; };
+
+  inline int zoom() const { return _zoom; }
+
+  // Local CS routines
+  inline void setBoundsLocal(float minX, float maxX, float minY, float maxY);
+
+  inline void getBoundsLocal(float &minX, float &maxX, float &minY,
+                             float &maxY) const;
+
+  inline int minLocalX() const { return _minX; };
+  inline int maxLocalX() const { return _maxX; };
+  inline int minLocalY() const { return _minY; };
+  inline int maxLocalY() const { return _maxY; };
 
   inline const TileLoader &loader() const { return _loader; };
 
@@ -71,22 +84,25 @@ private:
   float _minY{}, _maxY{};
   int _minTX{}, _maxTX{};
   int _minTY{}, _maxTY{};
+  int _zoom{};
   float _pixelsX{}, _pixelsY{};
   float _rangeX{}, _rangeY{};
   float _resX{}, _resY{};
   int _tilesNum{};
-  int _zoom{0};
-  bool _setBounds{true};
   float _mouseLon{}, _mouseLat{};
+
+  enum class SetBounds { None, Geo, Local };
+  SetBounds _setBounds{SetBounds::None};
+
   TileLoader _loader;
 };
 
-inline void MapPlot::setBounds() {
+inline void MapPlot::resetBounds() {
   _minLon = -LimLon;
   _maxLon = LimLon;
   _minLat = -LimLat;
   _maxLat = LimLat;
-  _setBounds = true;
+  _setBounds = SetBounds::Geo;
 }
 
 inline void MapPlot::setBoundsGeo(float minLon, float maxLon, float minLat,
@@ -95,7 +111,7 @@ inline void MapPlot::setBoundsGeo(float minLon, float maxLon, float minLat,
   _maxLon = maxLon;
   _minLat = minLat;
   _maxLat = maxLat;
-  _setBounds = true;
+  _setBounds = SetBounds::Geo;
 }
 
 inline void MapPlot::getBoundsGeo(float &minLon, float &maxLon, float &minLat,
@@ -112,6 +128,15 @@ inline void MapPlot::getBoundsTile(int &minTX, int &maxTX, int &minTY,
   maxTX = _maxTX;
   minTY = _minTY;
   maxTY = _maxTY;
+}
+
+inline void MapPlot::setBoundsLocal(float minX, float maxX, float minY,
+                                    float maxY) {
+  _minX = minX;
+  _maxX = maxX;
+  _minY = minY;
+  _maxY = maxY;
+  _setBounds = SetBounds::Local;
 }
 
 inline void MapPlot::getBoundsLocal(float &minX, float &maxX, float &minY,
