@@ -1,5 +1,5 @@
 #include "ImOsmWidget.h"
-#include "OsmCoords.h"
+#include "ImOsmCoords.h"
 #include <algorithm>
 #include <implot.h>
 

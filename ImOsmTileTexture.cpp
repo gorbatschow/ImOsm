@@ -1,4 +1,4 @@
-#include "OsmTileTexture.h"
+#include "ImOsmTileTexture.h"
 #include <cassert>
 #include <cmath>
 

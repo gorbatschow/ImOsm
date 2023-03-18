@@ -1,5 +1,5 @@
 #pragma once
-#include "OsmTileLoader.h"
+#include "ImOsmTileLoader.h"
 #include <implot.h>
 
 class ImOsmWidget {

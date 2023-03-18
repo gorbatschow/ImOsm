@@ -1,5 +1,5 @@
 #pragma once
-#include "OsmTileTexture.h"
+#include "ImOsmTileTexture.h"
 #include <array>
 #include <chrono>
 #include <curl/curl.h>

@@ -1,4 +1,4 @@
-#include "OsmTileLoader.h"
+#include "ImOsmTileLoader.h"
 #include <GL/gl.h>
 #include <algorithm>
 #include <chrono>
