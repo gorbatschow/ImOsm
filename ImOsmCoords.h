@@ -1,6 +1,7 @@
 #pragma once
 #include <cmath>
 
+namespace ImOsm {
 template <typename T> inline T lon2x(T lon, int z) {
   return ((lon + 180.0) / 360.0 * T(1 << z));
 }
@@ -26,3 +27,5 @@ template <typename T> inline int lon2tx(T lon, int z) {
 template <typename T> inline int lat2ty(T lat, int z) {
   return int(floor(lat2y(lat, z)));
 }
+
+} // namespace ImOsm

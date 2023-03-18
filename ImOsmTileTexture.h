@@ -7,6 +7,7 @@
 #include <stb_image.h>
 #include <vector>
 
+namespace ImOsm {
 struct TextureColor {
   static constexpr int RGBA_SZ{4};
   static constexpr std::array<uint8_t, RGBA_SZ> Snow{255, 250, 250, 255};
@@ -43,3 +44,4 @@ private:
 
   void loadTexture() const;
 };
+} // namespace ImOsm

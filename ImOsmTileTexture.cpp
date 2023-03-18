@@ -2,6 +2,7 @@
 #include <cassert>
 #include <cmath>
 
+namespace ImOsm {
 OsmTileTexture::OsmTileTexture(int size, TextureColor color)
     : _width(size), _height(size) {
 
@@ -44,3 +45,4 @@ void OsmTileTexture::loadTexture() const {
                GL_UNSIGNED_BYTE,
                reinterpret_cast<const uint8_t *>(_blob.data()));
 }
+} // namespace ImOsm

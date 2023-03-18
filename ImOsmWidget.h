@@ -2,6 +2,7 @@
 #include "ImOsmTileLoader.h"
 #include <implot.h>
 
+namespace ImOsm {
 class ImOsmWidget {
 public:
   ImOsmWidget();
@@ -101,3 +102,4 @@ inline void ImOsmWidget::getBoundsLocal(float &minX, float &maxX, float &minY,
   minY = _minY;
   maxY = _maxY;
 }
+} // namespace ImOsm

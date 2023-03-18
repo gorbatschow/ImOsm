@@ -10,6 +10,7 @@
 #include <thread>
 using namespace std::chrono_literals;
 
+namespace ImOsm {
 OsmTileLoader::OsmTileLoader() {}
 
 OsmTileLoader::~OsmTileLoader() {}
@@ -114,3 +115,4 @@ size_t OsmTileLoader::onPullResponse(void *data, size_t size, size_t nmemb,
 
   return realsize;
 }
+} // namespace ImOsm

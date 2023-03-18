@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <implot.h>
 
+namespace ImOsm {
 ImOsmWidget::ImOsmWidget() {}
 
 void ImOsmWidget::paint() {
@@ -88,3 +89,4 @@ void ImOsmWidget::paint() {
     ImPlot::EndPlot();
   }
 }
+} // namespace ImOsm

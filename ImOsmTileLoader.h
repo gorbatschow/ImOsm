@@ -8,6 +8,7 @@
 #include <map>
 #include <memory>
 
+namespace ImOsm {
 class OsmTileLoader {
 public:
   OsmTileLoader();
@@ -57,3 +58,4 @@ private:
   static size_t onPullResponse(void *data, size_t size, size_t nmemb,
                                void *userp);
 };
+} // namespace ImOsm
