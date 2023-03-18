@@ -12,14 +12,8 @@ void MapPlot::paint() {
   if (ImPlot::BeginPlot("##OsmPlot", {-1, -1},
                         ImPlotFlags_Equal | ImPlotFlags_NoLegend)) {
 
-    const auto flags = ImPlotAxisFlags_NoLabel | ImPlotAxisFlags_NoGridLines |
-                       ImPlotAxisFlags_NoTickMarks |
-                       ImPlotAxisFlags_NoTickLabels |
-                       ImPlotAxisFlags_NoInitialFit | ImPlotAxisFlags_NoMenus |
-                       ImPlotAxisFlags_NoMenus | ImPlotAxisFlags_NoHighlight;
-
-    ImPlot::SetupAxis(ImAxis_X1, NULL, flags);
-    ImPlot::SetupAxis(ImAxis_Y1, NULL, flags | ImPlotAxisFlags_Invert);
+    ImPlot::SetupAxis(ImAxis_X1, nullptr, _xFlags);
+    ImPlot::SetupAxis(ImAxis_Y1, nullptr, _yFlags);
     ImPlot::SetupAxisLimitsConstraints(ImAxis_Y1, 0.0, 1.0);
 
     if (_setBounds) {
@@ -34,20 +28,20 @@ void MapPlot::paint() {
 
     ImPlot::SetupFinish();
 
-    const auto mousePos = ImPlot::GetPlotMousePos(ImAxis_X1, ImAxis_Y1);
-    const auto plotLims = ImPlot::GetPlotLimits(ImAxis_X1, ImAxis_Y1);
-    const auto plotSize = ImPlot::GetPlotSize();
+    _mousePos = ImPlot::GetPlotMousePos(ImAxis_X1, ImAxis_Y1);
+    _plotLims = ImPlot::GetPlotLimits(ImAxis_X1, ImAxis_Y1);
+    _plotSize = ImPlot::GetPlotSize();
 
-    _mouseLon = x2lon(mousePos.x, 0);
-    _mouseLat = y2lat(mousePos.y, 0);
+    _mouseLon = x2lon(_mousePos.x, 0);
+    _mouseLat = y2lat(_mousePos.y, 0);
 
-    _pixelsX = plotSize.x;
-    _pixelsY = plotSize.y;
+    _pixelsX = _plotSize.x;
+    _pixelsY = _plotSize.y;
 
-    _minX = plotLims.X.Min;
-    _maxX = plotLims.X.Max;
-    _minY = plotLims.Y.Min;
-    _maxY = plotLims.Y.Max;
+    _minX = _plotLims.X.Min;
+    _maxX = _plotLims.X.Max;
+    _minY = _plotLims.Y.Min;
+    _maxY = _plotLims.Y.Max;
     _rangeX = abs(_maxX - _minX);
     _rangeY = abs(_maxY - _minY);
 
@@ -69,8 +63,6 @@ void MapPlot::paint() {
 
     _loader.beginLoad(_zoom, _minTX, _maxTX, _minTY, _maxTY);
 
-    const ImVec2 uv0(0, 1), uv1(1, 0);
-    const ImVec4 tint(1, 1, 1, 1);
     ImVec2 bmin{float(_minTX), float(_minTY)};
     ImVec2 bmax{float(_maxTX), float(_maxTY)};
 
@@ -80,8 +72,8 @@ void MapPlot::paint() {
       for (auto y = _minTY; y != _maxTY + 1; ++y) {
         bmin.y = float(y) * _tileSize;
         bmax.y = float(y + 1) * _tileSize;
-        ImPlot::PlotImage("##", _loader.tileAt(_zoom, x, y), bmin, bmax, uv0,
-                          uv1, tint);
+        ImPlot::PlotImage("##", _loader.tileAt(_zoom, x, y), bmin, bmax, _uv0,
+                          _uv1, _tint);
       }
     }
 

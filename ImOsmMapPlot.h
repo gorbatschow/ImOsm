@@ -44,6 +44,22 @@ private:
   constexpr static const float LimLon{179.9};
   constexpr static const int LimZoom{18};
 
+  constexpr static const ImPlotAxisFlags _xFlags{
+      ImPlotAxisFlags_NoLabel | ImPlotAxisFlags_NoGridLines |
+      ImPlotAxisFlags_NoTickMarks | ImPlotAxisFlags_NoTickLabels |
+      ImPlotAxisFlags_NoInitialFit | ImPlotAxisFlags_NoMenus |
+      ImPlotAxisFlags_NoMenus | ImPlotAxisFlags_NoHighlight};
+
+  constexpr static const ImPlotAxisFlags _yFlags{_xFlags |
+                                                 ImPlotAxisFlags_Invert};
+
+  constexpr static const ImVec2 _uv0{0, 1}, _uv1{1, 0};
+  constexpr static const ImVec4 _tint{1, 1, 1, 1};
+
+  ImPlotPoint _mousePos{};
+  ImPlotRect _plotLims{};
+  ImVec2 _plotSize{};
+
   float _tilePixels{256.0};
   float _tileSize{};
   float _minLon{-LimLon}, _maxLon{LimLon};
