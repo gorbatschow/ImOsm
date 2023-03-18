@@ -44,6 +44,9 @@ private:
   constexpr static const float LimLon{179.9};
   constexpr static const int LimZoom{18};
 
+  constexpr static const ImPlotFlags _plotFlags{ImPlotFlags_Equal |
+                                                ImPlotFlags_NoLegend};
+
   constexpr static const ImPlotAxisFlags _xFlags{
       ImPlotAxisFlags_NoLabel | ImPlotAxisFlags_NoGridLines |
       ImPlotAxisFlags_NoTickMarks | ImPlotAxisFlags_NoTickLabels |

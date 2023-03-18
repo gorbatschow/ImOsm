@@ -9,8 +9,7 @@ MapPlot::MapPlot() {}
 void MapPlot::paint() {
   paintBeforeMap();
 
-  if (ImPlot::BeginPlot("##OsmPlot", {-1, -1},
-                        ImPlotFlags_Equal | ImPlotFlags_NoLegend)) {
+  if (ImPlot::BeginPlot("##ImOsmMapPlot", {-1, -1}, _plotFlags)) {
 
     ImPlot::SetupAxis(ImAxis_X1, nullptr, _xFlags);
     ImPlot::SetupAxis(ImAxis_Y1, nullptr, _yFlags);
