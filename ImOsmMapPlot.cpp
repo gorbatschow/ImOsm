@@ -1,12 +1,12 @@
-#include "ImOsmWidget.h"
+#include "ImOsmMapPlot.h"
 #include "ImOsmCoords.h"
 #include <algorithm>
 #include <implot.h>
 
 namespace ImOsm {
-ImOsmWidget::ImOsmWidget() {}
+MapPlot::MapPlot() {}
 
-void ImOsmWidget::paint() {
+void MapPlot::paint() {
   paintBeforeMap();
 
   if (ImPlot::BeginPlot("##OsmPlot", {-1, -1},
@@ -17,6 +17,7 @@ void ImOsmWidget::paint() {
                        ImPlotAxisFlags_NoTickLabels |
                        ImPlotAxisFlags_NoInitialFit | ImPlotAxisFlags_NoMenus |
                        ImPlotAxisFlags_NoMenus | ImPlotAxisFlags_NoHighlight;
+
     ImPlot::SetupAxis(ImAxis_X1, NULL, flags);
     ImPlot::SetupAxis(ImAxis_Y1, NULL, flags | ImPlotAxisFlags_Invert);
     ImPlot::SetupAxisLimitsConstraints(ImAxis_Y1, 0.0, 1.0);

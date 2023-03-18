@@ -3,14 +3,14 @@
 #include <implot.h>
 
 namespace ImOsm {
-class ImOsmWidget {
+class MapPlot {
 public:
-  ImOsmWidget();
-  virtual ~ImOsmWidget() = default;
+  MapPlot();
+  virtual ~MapPlot() = default;
 
   virtual void paint();
   virtual void paintBeforeMap() {}
-  virtual void paintOverMap(){};
+  virtual void paintOverMap() {}
 
   inline void setBounds();
 
@@ -37,7 +37,7 @@ public:
   inline float mouseLon() const { return _mouseLon; }
   inline float mouseLat() const { return _mouseLat; }
 
-  inline const OsmTileLoader &loader() const { return _loader; };
+  inline const TileLoader &loader() const { return _loader; };
 
 private:
   constexpr static const float LimLat{85.0};
@@ -59,10 +59,10 @@ private:
   int _zoom{0};
   bool _setBounds{true};
   float _mouseLon{}, _mouseLat{};
-  OsmTileLoader _loader;
+  TileLoader _loader;
 };
 
-inline void ImOsmWidget::setBounds() {
+inline void MapPlot::setBounds() {
   _minLon = -LimLon;
   _maxLon = LimLon;
   _minLat = -LimLat;
@@ -70,8 +70,8 @@ inline void ImOsmWidget::setBounds() {
   _setBounds = true;
 }
 
-inline void ImOsmWidget::setBoundsGeo(float minLon, float maxLon, float minLat,
-                                      float maxLat) {
+inline void MapPlot::setBoundsGeo(float minLon, float maxLon, float minLat,
+                                  float maxLat) {
   _minLon = minLon;
   _maxLon = maxLon;
   _minLat = minLat;
@@ -79,24 +79,24 @@ inline void ImOsmWidget::setBoundsGeo(float minLon, float maxLon, float minLat,
   _setBounds = true;
 }
 
-inline void ImOsmWidget::getBoundsGeo(float &minLon, float &maxLon,
-                                      float &minLat, float &maxLat) const {
+inline void MapPlot::getBoundsGeo(float &minLon, float &maxLon, float &minLat,
+                                  float &maxLat) const {
   minLon = _minLon;
   maxLon = _maxLon;
   minLat = _minLat;
   maxLat = _maxLat;
 }
 
-inline void ImOsmWidget::getBoundsTile(int &minTX, int &maxTX, int &minTY,
-                                       int &maxTY) const {
+inline void MapPlot::getBoundsTile(int &minTX, int &maxTX, int &minTY,
+                                   int &maxTY) const {
   minTX = _minTX;
   maxTX = _maxTX;
   minTY = _minTY;
   maxTY = _maxTY;
 }
 
-inline void ImOsmWidget::getBoundsLocal(float &minX, float &maxX, float &minY,
-                                        float &maxY) const {
+inline void MapPlot::getBoundsLocal(float &minX, float &maxX, float &minY,
+                                    float &maxY) const {
   minX = _minX;
   maxX = _maxX;
   minY = _minY;

@@ -11,11 +11,11 @@
 using namespace std::chrono_literals;
 
 namespace ImOsm {
-OsmTileLoader::OsmTileLoader() {}
+TileLoader::TileLoader() {}
 
-OsmTileLoader::~OsmTileLoader() {}
+TileLoader::~TileLoader() {}
 
-void OsmTileLoader::beginLoad(int z, int xmin, int xmax, int ymin, int ymax) {
+void TileLoader::beginLoad(int z, int xmin, int xmax, int ymin, int ymax) {
   auto rm_cond{[z, xmin, xmax, ymin, ymax](const Tile &tile) {
     const bool c1{tile.zxy.at(0) != z};
     const bool c2{tile.zxy.at(1) < xmin || tile.zxy.at(1) > xmax};
@@ -33,7 +33,7 @@ void OsmTileLoader::beginLoad(int z, int xmin, int xmax, int ymin, int ymax) {
   _futureCounter = 0;
 }
 
-ImTextureID OsmTileLoader::tileAt(int z, int x, int y) {
+ImTextureID TileLoader::tileAt(int z, int x, int y) {
   auto it{std::find(_tiles.begin(), _tiles.end(),
                     Tile{std::array<int, 3>{z, x, y}})};
 
@@ -41,7 +41,7 @@ ImTextureID OsmTileLoader::tileAt(int z, int x, int y) {
     if (_futureCounter++ < _futureLimit) {
       _tiles.insert(
           it, {{z, x, y},
-               std::async(std::launch::async, &OsmTileLoader::onHandleRequest,
+               std::async(std::launch::async, &TileLoader::onHandleRequest,
                           this, std::array<int, 3>({z, x, y}))});
     }
     return _blankTile.imID();
@@ -75,8 +75,8 @@ ImTextureID OsmTileLoader::tileAt(int z, int x, int y) {
   return _blankTile.imID();
 }
 
-OsmTileLoader::RemoteTile
-OsmTileLoader::onHandleRequest(const std::array<int, 3> &zxy) {
+TileLoader::RemoteTile
+TileLoader::onHandleRequest(const std::array<int, 3> &zxy) {
 
   std::ostringstream urlmaker;
   urlmaker << _tileProvider << zxy[0] << '/' << zxy[1] << '/' << zxy[2]
@@ -97,7 +97,7 @@ OsmTileLoader::onHandleRequest(const std::array<int, 3> &zxy) {
   curl_easy_cleanup(curl);
 
   if (tile.code == CURLE_OK) {
-    tile.texture = std::make_shared<OsmTileTexture>(_tileSizePx, tile.blob);
+    tile.texture = std::make_shared<TileTexture>(_tileSizePx, tile.blob);
   }
 
   // test for async
@@ -106,8 +106,8 @@ OsmTileLoader::onHandleRequest(const std::array<int, 3> &zxy) {
   return tile;
 }
 
-size_t OsmTileLoader::onPullResponse(void *data, size_t size, size_t nmemb,
-                                     void *userp) {
+size_t TileLoader::onPullResponse(void *data, size_t size, size_t nmemb,
+                                  void *userp) {
   size_t realsize{size * nmemb};
   auto &tile{*static_cast<RemoteTile *>(userp)};
   auto const *const dataptr{static_cast<std::byte *>(data)};

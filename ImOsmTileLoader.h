@@ -9,10 +9,10 @@
 #include <memory>
 
 namespace ImOsm {
-class OsmTileLoader {
+class TileLoader {
 public:
-  OsmTileLoader();
-  ~OsmTileLoader();
+  TileLoader();
+  ~TileLoader();
 
   void beginLoad(int z, int xmin, int xmax, int ymin, int ymax);
   ImTextureID tileAt(int z, int x, int y);
@@ -30,14 +30,14 @@ public:
 private:
   struct RemoteTile {
     std::vector<std::byte> blob;
-    std::shared_ptr<OsmTileTexture> texture;
+    std::shared_ptr<TileTexture> texture;
     CURLcode code{CURLE_OK};
   };
 
   struct Tile {
     std::array<int, 3> zxy{0, 0, 0};
     std::future<RemoteTile> future;
-    std::shared_ptr<OsmTileTexture> texture;
+    std::shared_ptr<TileTexture> texture;
     bool operator==(const Tile &other) { return this->zxy == other.zxy; }
   };
 
@@ -47,7 +47,7 @@ private:
 
   const int _tileSizePx{256};
 
-  OsmTileTexture _blankTile{_tileSizePx, TextureColor::Slate};
+  TileTexture _blankTile{_tileSizePx, TextureColor::Slate};
   std::list<Tile> _tiles;
 
   const int _futureLimit{4}, _textureLimit{1};
