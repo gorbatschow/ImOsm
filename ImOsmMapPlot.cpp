@@ -1,10 +1,15 @@
 #include "ImOsmMapPlot.h"
 #include "ImOsmCoords.h"
+#include "ImOsmTileLoaderUrl.h"
 #include <algorithm>
 #include <implot.h>
 
 namespace ImOsm {
-MapPlot::MapPlot() { resetBounds(); }
+MapPlot::MapPlot() : _loader{new TileLoaderUrl()} {}
+
+MapPlot::MapPlot(std::shared_ptr<ITileLoader> &loader) : _loader{loader} {
+  resetBounds();
+}
 
 void MapPlot::paint() {
   if (ImPlot::BeginPlot("##ImOsmMapPlot", {-1, -1}, _plotFlags)) {
@@ -43,8 +48,8 @@ void MapPlot::paint() {
     _maxX = _plotLims.X.Max;
     _minY = _plotLims.Y.Min;
     _maxY = _plotLims.Y.Max;
-    _rangeX = abs(_maxX - _minX);
-    _rangeY = abs(_maxY - _minY);
+    _rangeX = fabs(_maxX - _minX);
+    _rangeY = fabs(_maxY - _minY);
 
     _resX = _pixelsX / _rangeX;
     _resY = _pixelsY / _rangeY;
@@ -62,7 +67,7 @@ void MapPlot::paint() {
     _minTY = std::clamp(lat2ty(_minLat, _zoom), 0, _tilesNum - 1);
     _maxTY = std::clamp(lat2ty(_maxLat, _zoom), 0, _tilesNum - 1);
 
-    _loader.beginLoad(_zoom, _minTX, _maxTX, _minTY, _maxTY);
+    _loader->beginLoad(_zoom, _minTX, _maxTX, _minTY, _maxTY);
 
     ImVec2 bmin{float(_minTX), float(_minTY)};
     ImVec2 bmax{float(_maxTX), float(_maxTY)};
@@ -73,10 +78,12 @@ void MapPlot::paint() {
       for (auto y = _minTY; y != _maxTY + 1; ++y) {
         bmin.y = float(y) * _tileSize;
         bmax.y = float(y + 1) * _tileSize;
-        ImPlot::PlotImage("##", _loader.tileAt(_zoom, x, y), bmin, bmax, _uv0,
+        ImPlot::PlotImage("##", _loader->tileAt(_zoom, x, y), bmin, bmax, _uv0,
                           _uv1, _tint);
       }
     }
+
+    _loader->endLoad();
 
     paintOverMap();
 

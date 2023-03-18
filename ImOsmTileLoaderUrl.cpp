@@ -1,4 +1,4 @@
-#include "ImOsmTileLoader.h"
+#include "ImOsmTileLoaderUrl.h"
 #include <GL/gl.h>
 #include <algorithm>
 #include <chrono>
@@ -11,11 +11,11 @@
 using namespace std::chrono_literals;
 
 namespace ImOsm {
-TileLoader::TileLoader() {}
+TileLoaderUrl::TileLoaderUrl() {}
 
-TileLoader::~TileLoader() {}
+TileLoaderUrl::~TileLoaderUrl() {}
 
-void TileLoader::beginLoad(int z, int xmin, int xmax, int ymin, int ymax) {
+void TileLoaderUrl::beginLoad(int z, int xmin, int xmax, int ymin, int ymax) {
   auto rm_cond{[z, xmin, xmax, ymin, ymax](const Tile &tile) {
     const bool c1{tile.zxy.at(0) != z};
     const bool c2{tile.zxy.at(1) < xmin || tile.zxy.at(1) > xmax};
@@ -33,7 +33,7 @@ void TileLoader::beginLoad(int z, int xmin, int xmax, int ymin, int ymax) {
   _futureCounter = 0;
 }
 
-ImTextureID TileLoader::tileAt(int z, int x, int y) {
+ImTextureID TileLoaderUrl::tileAt(int z, int x, int y) {
   auto it{std::find(_tiles.begin(), _tiles.end(),
                     Tile{std::array<int, 3>{z, x, y}})};
 
@@ -41,7 +41,7 @@ ImTextureID TileLoader::tileAt(int z, int x, int y) {
     if (_futureCounter++ < _futureLimit) {
       _tiles.insert(
           it, {{z, x, y},
-               std::async(std::launch::async, &TileLoader::onHandleRequest,
+               std::async(std::launch::async, &TileLoaderUrl::onHandleRequest,
                           this, std::array<int, 3>({z, x, y}))});
     }
     return _blankTile.imID();
@@ -75,8 +75,8 @@ ImTextureID TileLoader::tileAt(int z, int x, int y) {
   return _blankTile.imID();
 }
 
-TileLoader::RemoteTile
-TileLoader::onHandleRequest(const std::array<int, 3> &zxy) {
+TileLoaderUrl::RemoteTile
+TileLoaderUrl::onHandleRequest(const std::array<int, 3> &zxy) {
 
   std::ostringstream urlmaker;
   urlmaker << _tileProvider << zxy[0] << '/' << zxy[1] << '/' << zxy[2]
@@ -106,8 +106,8 @@ TileLoader::onHandleRequest(const std::array<int, 3> &zxy) {
   return tile;
 }
 
-size_t TileLoader::onPullResponse(void *data, size_t size, size_t nmemb,
-                                  void *userp) {
+size_t TileLoaderUrl::onPullResponse(void *data, size_t size, size_t nmemb,
+                                     void *userp) {
   size_t realsize{size * nmemb};
   auto &tile{*static_cast<RemoteTile *>(userp)};
   auto const *const dataptr{static_cast<std::byte *>(data)};

@@ -1,4 +1,5 @@
 #pragma once
+#include "ImOsmITileLoader.h"
 #include "ImOsmTileTexture.h"
 #include <array>
 #include <chrono>
@@ -9,14 +10,14 @@
 #include <memory>
 
 namespace ImOsm {
-class TileLoader {
+class TileLoaderUrl : public ITileLoader {
 public:
-  TileLoader();
-  ~TileLoader();
+  TileLoaderUrl();
+  ~TileLoaderUrl();
 
-  void beginLoad(int z, int xmin, int xmax, int ymin, int ymax);
-  ImTextureID tileAt(int z, int x, int y);
-  inline int tilesNum() const { return _tiles.size(); }
+  void beginLoad(int z, int xmin, int xmax, int ymin, int ymax) override;
+  ImTextureID tileAt(int z, int x, int y) override;
+  int tileCount() const override { return _tiles.size(); }
 
   inline void setTileProvider(const std::string &url) { _tileProvider = url; }
   inline const std::string &tileProvider() const { return _tileProvider; }
@@ -46,10 +47,8 @@ private:
   std::string _tileExtension{".png"};
 
   const int _tileSizePx{256};
-
   TileTexture _blankTile{_tileSizePx, TextureColor::Slate};
   std::list<Tile> _tiles;
-
   const int _futureLimit{4}, _textureLimit{1};
   int _textureCounter{0}, _futureCounter{0};
 

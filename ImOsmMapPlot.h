@@ -1,11 +1,13 @@
 #pragma once
-#include "ImOsmTileLoader.h"
+#include "ImOsmITileLoader.h"
 #include <implot.h>
+#include <memory>
 
 namespace ImOsm {
 class MapPlot {
 public:
   MapPlot();
+  MapPlot(std::shared_ptr<ITileLoader> &loader);
   virtual ~MapPlot() = default;
 
   virtual void paint();
@@ -50,8 +52,6 @@ public:
   inline int minLocalY() const { return _minY; };
   inline int maxLocalY() const { return _maxY; };
 
-  inline const TileLoader &loader() const { return _loader; };
-
 private:
   constexpr static const float LimLat{85.0};
   constexpr static const float LimLon{179.9};
@@ -94,7 +94,7 @@ private:
   enum class SetBounds { None, Geo, Local };
   SetBounds _setBounds{SetBounds::None};
 
-  TileLoader _loader;
+  std::shared_ptr<ITileLoader> _loader;
 };
 
 inline void MapPlot::resetBounds() {
