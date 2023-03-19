@@ -12,7 +12,8 @@ public:
   TileSourceAsync() = default;
   virtual ~TileSourceAsync() = default;
 
-  void setRequestLimit() {}
+  void setRequestLimit(int limit) { _requestLimit = limit; }
+  int requestLimit() const { return _requestLimit; }
 
   virtual bool hasRequest() override { return !_requests.empty(); }
 
