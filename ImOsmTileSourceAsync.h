@@ -1,5 +1,5 @@
 #pragma once
-#include "ImOsmTileSource.h"
+#include "ImOsmITileSource.h"
 #include <algorithm>
 #include <array>
 #include <cassert>

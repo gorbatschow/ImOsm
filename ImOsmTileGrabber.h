@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ImOsmTileSource.h"
+#include "ImOsmITileSource.h"
 #include <future>
 #include <memory>
 #include <thread>
