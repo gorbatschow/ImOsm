@@ -17,9 +17,9 @@ void TileGrabberUrl::grab(int minZ, int maxZ, float minLon, float maxLon,
                            this, minZ, maxZ, minLon, maxLon, minLat, maxLat);
 }
 
-TileGrabberUrl::GrabData TileGrabberUrl::onLaunchGrab(int minZ, int maxZ,
-                                                      int minLon, int maxLon,
-                                                      int minLat, int maxLat) {
+TileGrabberUrl::GrabData
+TileGrabberUrl::onLaunchGrab(int minZ, int maxZ, float minLon, float maxLon,
+                             float minLat, float maxLat) {
   auto rm_cond{[this](Tile &tile) {
     const bool ready{tile.future.wait_for(0s) == std::future_status::ready};
     if (ready) {
@@ -31,13 +31,16 @@ TileGrabberUrl::GrabData TileGrabberUrl::onLaunchGrab(int minZ, int maxZ,
   GrabData data;
   for (auto z{minZ}; z != maxZ + 1; ++z) {
     const auto tilesNum{(1 << z)};
-    const auto minTX{std::clamp(lon2tx(minLon, z), 0, tilesNum - 1)};
-    const auto maxTX{std::clamp(lon2tx(maxLon, z), 0, tilesNum - 1)};
-    const auto minTY{std::clamp(lat2ty(minLat, z), 0, tilesNum - 1)};
-    const auto maxTY{std::clamp(lat2ty(maxLat, z), 0, tilesNum - 1)};
+    const std::pair<int, int> tx{
+        std::minmax(std::clamp(lon2tx(minLon, z), 0, tilesNum - 1),
+                    std::clamp(lon2tx(maxLon, z), 0, tilesNum - 1))};
+    const std::pair<int, int> ty{
+        std::minmax(std::clamp(lat2ty(minLat, z), 0, tilesNum - 1),
+                    std::clamp(lat2ty(maxLat, z), 0, tilesNum - 1))};
+
     // const auto total{(maxTX - minTX + 1) * (maxTY - minTY + 1)};
-    for (auto x{minTX}; x != maxTX + 1; ++x) {
-      for (auto y{minTY}; y != maxTY + 1; ++y) {
+    for (auto x{tx.first}; x != tx.second + 1; ++x) {
+      for (auto y{ty.first}; y != ty.second + 1; ++y) {
         data.tiles.push_back(
             {{z, x, y},
              std::async(std::launch::async, &TileGrabberUrl::onHandleRequest,
