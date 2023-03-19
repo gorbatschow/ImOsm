@@ -1,4 +1,4 @@
-#include "OsmTileLoader.h"
+#include "ImOsmTileLoaderUrl.h"
 #include <GL/gl.h>
 #include <algorithm>
 #include <chrono>
@@ -10,11 +10,12 @@
 #include <thread>
 using namespace std::chrono_literals;
 
-OsmTileLoader::OsmTileLoader() {}
+namespace ImOsm {
+TileLoaderUrl::TileLoaderUrl() {}
 
-OsmTileLoader::~OsmTileLoader() {}
+TileLoaderUrl::~TileLoaderUrl() {}
 
-void OsmTileLoader::beginLoad(int z, int xmin, int xmax, int ymin, int ymax) {
+void TileLoaderUrl::beginLoad(int z, int xmin, int xmax, int ymin, int ymax) {
   auto rm_cond{[z, xmin, xmax, ymin, ymax](const Tile &tile) {
     const bool c1{tile.zxy.at(0) != z};
     const bool c2{tile.zxy.at(1) < xmin || tile.zxy.at(1) > xmax};
@@ -32,7 +33,7 @@ void OsmTileLoader::beginLoad(int z, int xmin, int xmax, int ymin, int ymax) {
   _futureCounter = 0;
 }
 
-ImTextureID OsmTileLoader::tileAt(int z, int x, int y) {
+ImTextureID TileLoaderUrl::tileAt(int z, int x, int y) {
   auto it{std::find(_tiles.begin(), _tiles.end(),
                     Tile{std::array<int, 3>{z, x, y}})};
 
@@ -40,7 +41,7 @@ ImTextureID OsmTileLoader::tileAt(int z, int x, int y) {
     if (_futureCounter++ < _futureLimit) {
       _tiles.insert(
           it, {{z, x, y},
-               std::async(std::launch::async, &OsmTileLoader::onHandleRequest,
+               std::async(std::launch::async, &TileLoaderUrl::onHandleRequest,
                           this, std::array<int, 3>({z, x, y}))});
     }
     return _blankTile.imID();
@@ -74,15 +75,15 @@ ImTextureID OsmTileLoader::tileAt(int z, int x, int y) {
   return _blankTile.imID();
 }
 
-OsmTileLoader::RemoteTile
-OsmTileLoader::onHandleRequest(const std::array<int, 3> &zxy) {
+TileLoaderUrl::Tile::Remote
+TileLoaderUrl::onHandleRequest(const std::array<int, 3> &zxy) {
 
   std::ostringstream urlmaker;
   urlmaker << _tileProvider << zxy[0] << '/' << zxy[1] << '/' << zxy[2]
            << _tileExtension;
   const auto url{urlmaker.str()};
 
-  RemoteTile tile;
+  Tile::Remote tile;
   CURL *curl{curl_easy_init()};
   curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
   curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
@@ -96,7 +97,7 @@ OsmTileLoader::onHandleRequest(const std::array<int, 3> &zxy) {
   curl_easy_cleanup(curl);
 
   if (tile.code == CURLE_OK) {
-    tile.texture = std::make_shared<OsmTileTexture>(_tileSizePx, tile.blob);
+    tile.texture = std::make_shared<TileTexture>(_tileSizePx, tile.blob);
   }
 
   // test for async
@@ -105,12 +106,13 @@ OsmTileLoader::onHandleRequest(const std::array<int, 3> &zxy) {
   return tile;
 }
 
-size_t OsmTileLoader::onPullResponse(void *data, size_t size, size_t nmemb,
+size_t TileLoaderUrl::onPullResponse(void *data, size_t size, size_t nmemb,
                                      void *userp) {
   size_t realsize{size * nmemb};
-  auto &tile{*static_cast<RemoteTile *>(userp)};
+  auto &tile{*static_cast<Tile::Remote *>(userp)};
   auto const *const dataptr{static_cast<std::byte *>(data)};
   tile.blob.insert(tile.blob.cend(), dataptr, dataptr + realsize);
 
   return realsize;
 }
+} // namespace ImOsm

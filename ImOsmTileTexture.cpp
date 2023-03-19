@@ -1,8 +1,9 @@
-#include "OsmTileTexture.h"
+#include "ImOsmTileTexture.h"
 #include <cassert>
 #include <cmath>
 
-OsmTileTexture::OsmTileTexture(int size, TextureColor color)
+namespace ImOsm {
+TileTexture::TileTexture(int size, TextureColor color)
     : _width(size), _height(size) {
 
   _blob.resize(_width * _height * TextureColor::RGBA_SZ);
@@ -15,7 +16,7 @@ OsmTileTexture::OsmTileTexture(int size, TextureColor color)
   }
 }
 
-OsmTileTexture::OsmTileTexture(int size, const std::vector<std::byte> &blob) {
+TileTexture::TileTexture(int size, const std::vector<std::byte> &blob) {
   _width = size;
   _height = size;
 
@@ -32,9 +33,9 @@ OsmTileTexture::OsmTileTexture(int size, const std::vector<std::byte> &blob) {
   }
 }
 
-OsmTileTexture::~OsmTileTexture() { glDeleteTextures(1, &_id); }
+TileTexture::~TileTexture() { glDeleteTextures(1, &_id); }
 
-void OsmTileTexture::loadTexture() const {
+void TileTexture::loadTexture() const {
   glGenTextures(1, &_id);
   glBindTexture(GL_TEXTURE_2D, _id);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -44,3 +45,4 @@ void OsmTileTexture::loadTexture() const {
                GL_UNSIGNED_BYTE,
                reinterpret_cast<const uint8_t *>(_blob.data()));
 }
+} // namespace ImOsm

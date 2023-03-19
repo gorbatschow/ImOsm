@@ -7,6 +7,7 @@
 #include <stb_image.h>
 #include <vector>
 
+namespace ImOsm {
 struct TextureColor {
   static constexpr int RGBA_SZ{4};
   static constexpr std::array<uint8_t, RGBA_SZ> Snow{255, 250, 250, 255};
@@ -22,11 +23,11 @@ struct TextureColor {
   const std::array<uint8_t, RGBA_SZ> rgba{Snow};
 };
 
-class OsmTileTexture {
+class TileTexture {
 public:
-  OsmTileTexture(int size = 256, TextureColor color = TextureColor::Snow);
-  OsmTileTexture(int size, const std::vector<std::byte> &blob);
-  ~OsmTileTexture();
+  TileTexture(int size = 256, TextureColor color = TextureColor::Snow);
+  TileTexture(int size, const std::vector<std::byte> &blob);
+  ~TileTexture();
 
   inline GLuint glID() const {
     if (_id == 0) {
@@ -43,3 +44,4 @@ private:
 
   void loadTexture() const;
 };
+} // namespace ImOsm
