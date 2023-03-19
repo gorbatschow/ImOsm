@@ -48,7 +48,7 @@ public:
 
   virtual bool hasRequest() = 0;
   virtual bool canRequest() = 0;
-  virtual void request(int z, int x, int y) = 0;
+  virtual bool request(int z, int x, int y) = 0;
   virtual bool canTakeAll() = 0;
   virtual bool takeAll(std::vector<std::shared_ptr<Tile>> &tiles) = 0;
 
@@ -75,14 +75,17 @@ public:
         });
   }
 
-  virtual void request(int z, int x, int y) override {
-    assert(canRequest());
-    if (_requests.size() < _requestLimit) {
-      _requests.push_back(
-          {z, x, y,
-           std::async(std::launch::async, &TileSourceAsync::onHandleRequest,
-                      this, z, x, y)});
+  virtual bool request(int z, int x, int y) override {
+    if (canRequest()) {
+      if (_requests.size() < _requestLimit) {
+        _requests.push_back(
+            {z, x, y,
+             std::async(std::launch::async, &TileSourceAsync::onHandleRequest,
+                        this, z, x, y)});
+      }
+      return true;
     }
+    return false;
   }
 
   virtual bool takeAll(std::vector<std::shared_ptr<Tile>> &tiles) override {
