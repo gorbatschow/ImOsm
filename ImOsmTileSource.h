@@ -20,7 +20,8 @@ public:
 
   void loadTexture() {}
 
-  void saveFile(const std::string &dirName, const std::string &ext = ".png") {
+  void saveFile(const std::string &dirName,
+                const std::string &ext = ".png") const {
     std::ostringstream pathmaker;
     pathmaker << dirName << '/' << _z << '/' << _x;
     if (!std::filesystem::exists(pathmaker.str())) {
@@ -49,7 +50,7 @@ public:
   virtual bool canRequest() = 0;
   virtual void request(int z, int x, int y) = 0;
   virtual bool canTakeAll() = 0;
-  virtual std::vector<std::shared_ptr<Tile>> takeAll() = 0;
+  virtual bool takeAll(std::vector<std::shared_ptr<Tile>> &tiles) = 0;
 
   virtual const std::string &tileExtension() const = 0;
 };
@@ -84,12 +85,15 @@ public:
     }
   }
 
-  virtual std::vector<std::shared_ptr<Tile>> takeAll() override {
-    std::vector<std::shared_ptr<Tile>> tiles;
-    for (auto &request : _requests) {
-      tiles.push_back(request.makeTile());
+  virtual bool takeAll(std::vector<std::shared_ptr<Tile>> &tiles) override {
+    if (canTakeAll()) {
+      for (auto &request : _requests) {
+        tiles.push_back(request.makeTile());
+      }
+      _requests.clear();
+      return true;
     }
-    return tiles;
+    return false;
   }
 
 protected:
@@ -111,12 +115,12 @@ protected:
 
     std::shared_ptr<Tile> makeTile() {
       assert(future.wait_for(0s) == std::future_status::ready);
-      return std::make_shared<Tile>(z, x, y, future.get().blob,
-                                    future.get().ok);
+      const auto data{future.get()};
+      return std::make_shared<Tile>(z, x, y, data.blob, data.ok);
     }
   };
   std::vector<AsyncTile> _requests;
-  int _requestLimit{1};
+  int _requestLimit{10};
 
   virtual AsyncTile::FutureData onHandleRequest(int z, int x, int y) = 0;
 };
