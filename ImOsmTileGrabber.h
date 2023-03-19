@@ -1,6 +1,7 @@
 #pragma once
 #include "ImOsmCoords.h"
 #include "ImOsmTileSource.h"
+#include "ImOsmTileSourceUrl.h"
 #include <memory>
 #include <thread>
 
