@@ -28,4 +28,11 @@ template <typename T> inline int lat2ty(T lat, int z) {
   return int(floor(lat2y(lat, z)));
 }
 
+constexpr static const float MinLat{-85.0f};
+constexpr static const float MaxLat{+85.0f};
+constexpr static const float MinLon{-179.9f};
+constexpr static const float MaxLon{+179.9f};
+constexpr static const int MinZoom{0};
+constexpr static const int MaxZoom{18};
+
 } // namespace ImOsm

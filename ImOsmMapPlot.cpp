@@ -53,7 +53,7 @@ void MapPlot::paint() {
 
     _resX = _pixelsX / _rangeX;
     _resY = _pixelsY / _rangeY;
-    _zoom = std::clamp(int(floor(log2(_resX / _tilePixels))), 0, LimZoom);
+    _zoom = std::clamp(int(floor(log2(_resX / _tilePixels))), MinZoom, MaxZoom);
     _tilesNum = (1 << _zoom);
     _tileSize = 1.0 / float(_tilesNum);
 
@@ -72,10 +72,10 @@ void MapPlot::paint() {
     ImVec2 bmin{float(_minTX), float(_minTY)};
     ImVec2 bmax{float(_maxTX), float(_maxTY)};
 
-    for (auto x = _minTX; x != _maxTX + 1; ++x) {
+    for (auto x{_minTX}; x != _maxTX + 1; ++x) {
       bmin.x = float(x) * _tileSize;
       bmax.x = float(x + 1) * _tileSize;
-      for (auto y = _minTY; y != _maxTY + 1; ++y) {
+      for (auto y{_minTY}; y != _maxTY + 1; ++y) {
         bmin.y = float(y) * _tileSize;
         bmax.y = float(y + 1) * _tileSize;
         ImPlot::PlotImage("##", _loader->tileAt(_zoom, x, y), bmin, bmax, _uv0,

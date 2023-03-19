@@ -1,4 +1,5 @@
 #pragma once
+#include "ImOsmCoords.h"
 #include "ImOsmITileLoader.h"
 #include <implot.h>
 #include <memory>
@@ -53,10 +54,6 @@ public:
   inline int maxLocalY() const { return _maxY; };
 
 private:
-  constexpr static const float LimLat{85.0};
-  constexpr static const float LimLon{179.9};
-  constexpr static const int LimZoom{18};
-
   constexpr static const ImPlotFlags _plotFlags{ImPlotFlags_Equal |
                                                 ImPlotFlags_NoLegend};
 
@@ -78,8 +75,8 @@ private:
 
   float _tilePixels{256.0};
   float _tileSize{};
-  float _minLon{-LimLon}, _maxLon{LimLon};
-  float _minLat{-LimLat}, _maxLat{LimLat};
+  float _minLon{MinLon}, _maxLon{MaxLon};
+  float _minLat{MinLat}, _maxLat{MaxLat};
   float _minX{}, _maxX{};
   float _minY{}, _maxY{};
   int _minTX{}, _maxTX{};
@@ -98,10 +95,10 @@ private:
 };
 
 inline void MapPlot::resetBounds() {
-  _minLon = -LimLon;
-  _maxLon = LimLon;
-  _minLat = -LimLat;
-  _maxLat = LimLat;
+  _minLon = MinLon;
+  _maxLon = MaxLon;
+  _minLat = MinLat;
+  _maxLat = MaxLat;
   _setBounds = SetBounds::Geo;
 }
 
