@@ -84,9 +84,6 @@ TileGrabberUrl::onHandleRequest(const std::array<int, 3> &zxy) {
   tile.code = curl_easy_perform(curl);
   curl_easy_cleanup(curl);
 
-  if (tile.code == CURLE_OK) {
-  }
-
   return tile;
 }
 

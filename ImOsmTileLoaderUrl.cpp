@@ -75,7 +75,7 @@ ImTextureID TileLoaderUrl::tileAt(int z, int x, int y) {
   return _blankTile.imID();
 }
 
-TileLoaderUrl::RemoteTile
+TileLoaderUrl::Tile::Remote
 TileLoaderUrl::onHandleRequest(const std::array<int, 3> &zxy) {
 
   std::ostringstream urlmaker;
@@ -83,7 +83,7 @@ TileLoaderUrl::onHandleRequest(const std::array<int, 3> &zxy) {
            << _tileExtension;
   const auto url{urlmaker.str()};
 
-  RemoteTile tile;
+  Tile::Remote tile;
   CURL *curl{curl_easy_init()};
   curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
   curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
@@ -109,7 +109,7 @@ TileLoaderUrl::onHandleRequest(const std::array<int, 3> &zxy) {
 size_t TileLoaderUrl::onPullResponse(void *data, size_t size, size_t nmemb,
                                      void *userp) {
   size_t realsize{size * nmemb};
-  auto &tile{*static_cast<RemoteTile *>(userp)};
+  auto &tile{*static_cast<Tile::Remote *>(userp)};
   auto const *const dataptr{static_cast<std::byte *>(data)};
   tile.blob.insert(tile.blob.cend(), dataptr, dataptr + realsize);
 

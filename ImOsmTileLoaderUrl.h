@@ -29,15 +29,14 @@ public:
   inline const std::string &clientName() const { return _clientName; }
 
 private:
-  struct RemoteTile {
-    std::vector<std::byte> blob;
-    std::shared_ptr<TileTexture> texture;
-    CURLcode code{CURLE_OK};
-  };
-
   struct Tile {
+    struct Remote {
+      std::vector<std::byte> blob;
+      std::shared_ptr<TileTexture> texture;
+      CURLcode code{CURLE_OK};
+    };
     std::array<int, 3> zxy{0, 0, 0};
-    std::future<RemoteTile> future;
+    std::future<Remote> future;
     std::shared_ptr<TileTexture> texture;
     bool operator==(const Tile &other) { return this->zxy == other.zxy; }
   };
@@ -52,7 +51,7 @@ private:
   const int _futureLimit{4}, _textureLimit{1};
   int _textureCounter{0}, _futureCounter{0};
 
-  RemoteTile onHandleRequest(const std::array<int, 3> &zxy);
+  Tile::Remote onHandleRequest(const std::array<int, 3> &zxy);
 
   static size_t onPullResponse(void *data, size_t size, size_t nmemb,
                                void *userp);
