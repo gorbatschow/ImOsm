@@ -1,12 +1,16 @@
 #include "ImOsmTileGrabber.h"
 #include "ImOsmCoords.h"
+#include "ImOsmTileSaver.h"
 #include "ImOsmTileSourceUrl.h"
 
 namespace ImOsm {
-TileGrabber::TileGrabber() : _source{std::make_shared<TileSourceUrl>()} {}
+TileGrabber::TileGrabber()
+    : _source{std::make_shared<TileSourceUrl>()},
+      _saver{std::make_shared<TileSaverDir>()} {}
 
-TileGrabber::TileGrabber(std::shared_ptr<ITileSource> source)
-    : _source{source} {}
+TileGrabber::TileGrabber(std::shared_ptr<ITileSource> source,
+                         std::shared_ptr<ITileSaver> saver)
+    : _source{source}, _saver{saver} {}
 
 void TileGrabber::grab(int minZ, int maxZ, float minLon, float maxLon,
                        float minLat, float maxLat) {
@@ -31,23 +35,13 @@ TileGrabber::FutureData TileGrabber::onLaunchGrab(int minZ, int maxZ,
         if (_source->canRequest()) {
           _source->request(z, x, y);
         } else {
-          waitAndSave();
+          _source->takeAll(_saver);
         }
       }
     }
   }
-  waitAndSave();
+  _source->takeAll(_saver);
   return data;
-}
-
-void TileGrabber::waitAndSave() const {
-  std::vector<std::shared_ptr<Tile>> tiles;
-  while (!_source->takeAll(tiles)) {
-    std::this_thread::sleep_for(1s);
-  }
-  for (const auto &tile : tiles) {
-    tile->saveFile(_tileSavePath, _source->tileExtension());
-  }
 }
 
 } // namespace ImOsm

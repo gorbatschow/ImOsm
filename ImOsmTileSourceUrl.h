@@ -1,6 +1,8 @@
 #pragma once
 #include "ImOsmTileSourceAsync.h"
 #include <curl/curl.h>
+#include <ostream>
+#include <sstream>
 
 namespace ImOsm {
 class TileSourceUrl : public TileSourceAsync {
@@ -22,12 +24,12 @@ public:
   inline const std::string &clientName() const { return _clientName; }
 
 private:
-  AsyncTile::FutureData onHandleRequest(int z, int x, int y) override {
+  TileAsync::FutureData onHandleRequest(int z, int x, int y) override {
     std::ostringstream urlmaker;
     urlmaker << _tileProvider << z << '/' << x << '/' << y << _tileExtension;
     const auto url{urlmaker.str()};
 
-    AsyncTile::FutureData tile;
+    typename TileAsync::FutureData tile;
     CURL *curl{curl_easy_init()};
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
     curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
@@ -46,7 +48,7 @@ private:
   static size_t onPullResponse(void *data, size_t size, size_t nmemb,
                                void *userp) {
     size_t realsize{size * nmemb};
-    auto &tile{*static_cast<AsyncTile::FutureData *>(userp)};
+    auto &tile{*static_cast<typename TileAsync::FutureData *>(userp)};
     auto const *const dataptr{static_cast<std::byte *>(data)};
     tile.blob.insert(tile.blob.cend(), dataptr, dataptr + realsize);
 

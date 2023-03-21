@@ -1,5 +1,6 @@
 #pragma once
-#include "ImOsmTile.h"
+#include "ImOsmITile.h"
+#include "ImOsmITileSaver.h"
 #include <memory>
 #include <vector>
 
@@ -12,7 +13,8 @@ public:
   virtual bool canRequest() = 0;
   virtual bool request(int z, int x, int y) = 0;
   virtual bool canTakeAll() = 0;
-  virtual bool takeAll(std::vector<std::shared_ptr<Tile>> &tiles) = 0;
+  virtual bool takeAll(std::vector<std::shared_ptr<ITile>> &tiles) = 0;
+  virtual bool takeAll(std::shared_ptr<ITileSaver> saver) = 0;
 
   virtual const std::string &tileExtension() const = 0;
 };
