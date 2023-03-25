@@ -1,12 +1,15 @@
 #include "ImOsmTileGrabber.h"
 #include "ImOsmCoords.h"
 #include "ImOsmTileSaver.h"
-#include "ImOsmTileSourceUrl.h"
+#include "ImOsmTileSourceUrlImpl.h"
 
 namespace ImOsm {
 TileGrabber::TileGrabber()
-    : _source{std::make_shared<TileSourceUrl>()},
+    : _source{std::make_shared<TileSourceUrlOsm>()},
       _saver{std::make_shared<TileSaverDir>()} {}
+
+TileGrabber::TileGrabber(std::shared_ptr<ITileSource> source)
+    : _source{source}, _saver{std::make_shared<TileSaverDir>()} {}
 
 TileGrabber::TileGrabber(std::shared_ptr<ITileSource> source,
                          std::shared_ptr<ITileSaver> saver)

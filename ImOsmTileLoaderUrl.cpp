@@ -79,8 +79,7 @@ TileLoaderUrl::Tile::Remote
 TileLoaderUrl::onHandleRequest(const std::array<int, 3> &zxy) {
 
   std::ostringstream urlmaker;
-  urlmaker << _tileProvider << zxy[0] << '/' << zxy[1] << '/' << zxy[2]
-           << _tileExtension;
+  urlmaker << _tileProvider << zxy[0] << '/' << zxy[2] << '/' << zxy[1];
   const auto url{urlmaker.str()};
 
   Tile::Remote tile;

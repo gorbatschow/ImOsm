@@ -10,31 +10,20 @@ public:
   TileSourceUrl() = default;
   virtual ~TileSourceUrl() = default;
 
-  virtual const std::string &tileExtension() const override {
-    return _tileExtension;
-  }
+  inline void setUserAgent(const std::string &name) { _userAgent = name; }
+  inline const std::string &userAgent() const { return _userAgent; }
 
-  inline void setTileProvider(const std::string &url) { _tileProvider = url; }
-  inline const std::string &tileProvider() const { return _tileProvider; }
+protected:
+  virtual TileAsync::FutureData onHandleRequest(int z, int x, int y) override {
 
-  inline void setTileExtension(const std::string &ext) { _tileExtension = ext; }
-  inline const std::string &tileExtensioin() const { return _tileExtension; }
-
-  inline void setClientName(const std::string &name) { _clientName = name; }
-  inline const std::string &clientName() const { return _clientName; }
-
-private:
-  TileAsync::FutureData onHandleRequest(int z, int x, int y) override {
-    std::ostringstream urlmaker;
-    urlmaker << _tileProvider << z << '/' << x << '/' << y << _tileExtension;
-    const auto url{urlmaker.str()};
+    const auto url{makeUrl(z, x, y)};
 
     typename TileAsync::FutureData tile;
     CURL *curl{curl_easy_init()};
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
     curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
     // curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
-    curl_easy_setopt(curl, CURLOPT_USERAGENT, _clientName.c_str());
+    curl_easy_setopt(curl, CURLOPT_USERAGENT, _userAgent.c_str());
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, 1);
     curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 1);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&tile);
@@ -45,6 +34,9 @@ private:
     return tile;
   }
 
+  virtual std::string makeUrl(int z, int x, int y) = 0;
+
+private:
   static size_t onPullResponse(void *data, size_t size, size_t nmemb,
                                void *userp) {
     size_t realsize{size * nmemb};
@@ -55,8 +47,6 @@ private:
     return realsize;
   }
 
-  std::string _clientName{"curl"};
-  std::string _tileProvider{"http://a.tile.openstreetmap.org/"};
-  std::string _tileExtension{".png"};
+  std::string _userAgent{"curl"};
 };
 } // namespace ImOsm

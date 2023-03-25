@@ -15,8 +15,6 @@ public:
   virtual bool canTakeAll() = 0;
   virtual bool takeAll(std::vector<std::shared_ptr<ITile>> &tiles) = 0;
   virtual bool takeAll(std::shared_ptr<ITileSaver> saver) = 0;
-
-  virtual const std::string &tileExtension() const = 0;
 };
 
 } // namespace ImOsm

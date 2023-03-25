@@ -9,6 +9,9 @@ namespace ImOsm {
 class TileGrabber {
 public:
   TileGrabber();
+
+  TileGrabber(std::shared_ptr<ITileSource> source);
+
   TileGrabber(std::shared_ptr<ITileSource> source,
               std::shared_ptr<ITileSaver> saver);
 
