@@ -6,13 +6,29 @@
 #include <string>
 
 namespace ImOsm {
-class TileSaverDir : public ITileSaver {
+class TileSaver : public ITileSaver {
+public:
+  TileSaver() {}
+  virtual ~TileSaver() = default;
+
+  virtual bool
+  saveMulti(const std::vector<std::shared_ptr<ITile>> &tiles) const {
+    for (std::shared_ptr<ITile> tile : tiles) {
+      if (!save(tile)) {
+        return false;
+      }
+    }
+    return true;
+  }
+};
+
+class TileSaverDir : public TileSaver {
 public:
   TileSaverDir() {}
-
   TileSaverDir(const std::string &dname) : _dname{dname} {}
+  virtual ~TileSaverDir() = default;
 
-  virtual bool save(std::shared_ptr<ITile> tile) override {
+  virtual bool save(std::shared_ptr<ITile> tile) const override {
     if (!std::filesystem::exists(_dname)) {
       std::filesystem::create_directories(_dname);
     }
@@ -24,8 +40,7 @@ public:
     std::ofstream file_maker(fname_maker.str().c_str(),
                              std::fstream::out | std::fstream::binary);
     if (file_maker) {
-      file_maker.write(reinterpret_cast<const char *>(tile->blob().data()),
-                       tile->blob().size());
+      file_maker.write(tile->rawBlob(), tile->rawBlobSize());
       return true;
     }
     return false;

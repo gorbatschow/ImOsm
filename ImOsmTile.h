@@ -1,27 +1,42 @@
 #pragma once
-#include "ImOsmITile.h"
-#include <filesystem>
-#include <fstream>
+#include "ImOsmTileDummy.h"
+#include <GL/gl.h>
 #include <string>
 #include <vector>
 
 namespace ImOsm {
-class Tile : public ITile {
+class Tile : public TileDummy {
 public:
-  Tile(int z, int x, int y, const std::vector<std::byte> &blob,
-       TileFormat ext = TileFormat::PNG, bool ok = true);
-  virtual ~Tile() = default;
+  Tile(int z, int x, int y, const std::vector<std::byte> &rawBlob,
+       bool preload = true);
+  virtual ~Tile();
 
-  void loadTexture() override {}
+  virtual const char *rawBlob() const override {
+    return reinterpret_cast<const char *>(_rawBlob.data());
+  }
 
-  virtual int z() const override { return _z; }
-  virtual int x() const override { return _x; }
-  virtual int y() const override { return _y; }
-  virtual const std::vector<std::byte> &blob() const override { return _blob; }
+  virtual std::size_t rawBlobSize() const override { return _rawBlob.size(); }
+
+  virtual const char *rgbaBlob() const override {
+    return reinterpret_cast<const char *>(_rgbaBlob.data());
+  }
+
+  virtual std::size_t rgbaBlobSize() const override { return _rgbaBlob.size(); }
+
+  virtual ImTextureID texture() const override {
+    return (ImTextureID)(intptr_t)glID();
+  }
 
 private:
-  int _z{}, _x{}, _y{};
-  std::vector<std::byte> _blob;
-  bool _ok{};
+  GLuint glID() const;
+  void stbLoad() const;
+  void glLoad() const;
+
+  std::vector<std::byte> _rawBlob;
+
+  mutable int _pxW{}, _pxH{};
+  mutable int _channels{};
+  mutable std::vector<std::byte> _rgbaBlob;
+  mutable GLuint _id{0};
 };
 } // namespace ImOsm

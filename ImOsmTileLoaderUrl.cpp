@@ -90,7 +90,7 @@ TileLoaderUrl::onHandleRequest(const std::array<int, 3> &zxy) {
   curl_easy_setopt(curl, CURLOPT_USERAGENT, _clientName.c_str());
   curl_easy_setopt(curl, CURLOPT_TIMEOUT, 1);
   curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 1);
-  curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&tile);
+  curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&tile.blob);
   curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, onPullResponse);
   tile.code = curl_easy_perform(curl);
   curl_easy_cleanup(curl);
@@ -108,9 +108,9 @@ TileLoaderUrl::onHandleRequest(const std::array<int, 3> &zxy) {
 size_t TileLoaderUrl::onPullResponse(void *data, size_t size, size_t nmemb,
                                      void *userp) {
   size_t realsize{size * nmemb};
-  auto &tile{*static_cast<Tile::Remote *>(userp)};
+  auto &blob{*static_cast<std::vector<std::byte> *>(userp)};
   auto const *const dataptr{static_cast<std::byte *>(data)};
-  tile.blob.insert(tile.blob.cend(), dataptr, dataptr + realsize);
+  blob.insert(blob.cend(), dataptr, dataptr + realsize);
 
   return realsize;
 }

@@ -38,12 +38,12 @@ TileGrabber::FutureData TileGrabber::onLaunchGrab(int minZ, int maxZ,
         if (_source->canRequest()) {
           _source->request(z, x, y);
         } else {
-          _source->takeAll(_saver);
+          _source->saveAll(_saver);
         }
       }
     }
   }
-  _source->takeAll(_saver);
+  _source->saveAll(_saver);
   return data;
 }
 
