@@ -6,7 +6,7 @@
 #include <implot.h>
 
 namespace ImOsm {
-MapPlot::MapPlot() : _loader{new TileLoader()} {}
+MapPlot::MapPlot() : _loader{std::make_shared<TileLoader>()} {}
 
 MapPlot::MapPlot(std::shared_ptr<ITileLoader> &loader) : _loader{loader} {
   resetBounds();

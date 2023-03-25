@@ -32,11 +32,9 @@ public:
     if (!std::filesystem::exists(_dname)) {
       std::filesystem::create_directories(_dname);
     }
-
     std::ostringstream fname_maker;
     fname_maker << _dname << '/' << tile->z() << '-' << tile->x() << '-'
                 << tile->y();
-
     std::ofstream file_maker(fname_maker.str().c_str(),
                              std::fstream::out | std::fstream::binary);
     if (file_maker) {

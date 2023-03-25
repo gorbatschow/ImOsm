@@ -7,11 +7,13 @@ set(CXX_CMAKE_STANDARD_REQUIRED ON)
 
 set(IMOSM_SRC
     ImOsmTile.cpp
+    ImOsmTileLoader.cpp
+    ImOsmTileSourceAsync.cpp
+    ImOsmTileGrabberUrl.cpp
+    ImOsmTileGrabber.cpp
     ImOsmMapPlot.cpp
     ImOsmTileLoaderUrl.cpp
     ImOsmTileTexture.cpp
-    ImOsmTileGrabberUrl.cpp
-    ImOsmTileGrabber.cpp
 )
 
 add_library(${PROJECT_NAME} ${IMOSM_SRC})
