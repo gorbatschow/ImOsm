@@ -8,6 +8,7 @@
 #include <vector>
 
 namespace ImOsm {
+namespace Old {
 class TileGrabberUrl {
 public:
   TileGrabberUrl();
@@ -45,4 +46,5 @@ private:
 
   void saveFile(Tile &tile);
 };
+} // namespace Old
 }; // namespace ImOsm

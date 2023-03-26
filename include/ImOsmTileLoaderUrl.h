@@ -10,6 +10,7 @@
 #include <memory>
 
 namespace ImOsm {
+namespace Old {
 class TileLoaderUrl : public ITileLoader {
 public:
   TileLoaderUrl();
@@ -57,4 +58,5 @@ private:
   static size_t onPullResponse(void *data, size_t size, size_t nmemb,
                                void *userp);
 };
+} // namespace Old
 } // namespace ImOsm
