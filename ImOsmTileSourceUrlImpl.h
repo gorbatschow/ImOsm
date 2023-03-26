@@ -2,6 +2,9 @@
 #include "ImOsmTileSourceUrl.h"
 #include <array>
 
+// https://www.arcgis.com/apps/mapviewer/index.html
+// See Basemap
+
 namespace ImOsm {
 class TileSourceUrlCustom : public TileSourceUrl {
 public:
@@ -20,6 +23,8 @@ private:
   const std::string _url_tpl;
 };
 
+// -----------------------------------------------------------------------------
+
 class TileSourceUrlOsm : public TileSourceUrl {
 protected:
   virtual std::string makeUrl(int z, int x, int y) override {
@@ -30,8 +35,7 @@ protected:
   }
 };
 
-// https://www.arcgis.com/apps/mapviewer/index.html
-// See Basemap
+// -----------------------------------------------------------------------------
 
 class TileSourceUrlArcImagery : public TileSourceUrl {
 protected:
