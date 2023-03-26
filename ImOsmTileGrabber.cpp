@@ -35,11 +35,10 @@ TileGrabber::FutureData TileGrabber::onLaunchGrab(int minZ, int maxZ,
                     std::clamp(lat2ty(maxLat, z), 0, tilesNum - 1))};
     for (auto x{tx.first}; x != tx.second + 1; ++x) {
       for (auto y{ty.first}; y != ty.second + 1; ++y) {
-        if (_source->canRequest()) {
-          _source->request(z, x, y);
-        } else {
+        if (!_source->canRequest()) {
           _source->saveAll(_saver);
         }
+        _source->request(z, x, y);
       }
     }
   }
