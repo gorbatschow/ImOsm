@@ -2,6 +2,8 @@
 #include "ImOsmTile.h"
 
 namespace ImOsm {
+TileSourceAsync::TileSourceAsync() {}
+
 TileSourceAsync::TileSourceAsync(int requestLimit, bool preload)
     : _requestLimit{requestLimit}, _preload{preload} {}
 

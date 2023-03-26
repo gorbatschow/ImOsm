@@ -12,7 +12,8 @@ using namespace std::chrono_literals;
 
 class TileSourceAsync : public ITileSource {
 public:
-  TileSourceAsync(int requestLimit = 10, bool preload = true);
+  TileSourceAsync();
+  TileSourceAsync(int requestLimit, bool preload);
   virtual ~TileSourceAsync() = default;
 
   virtual bool hasRequest() override;
