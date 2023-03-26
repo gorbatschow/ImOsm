@@ -1,0 +1,22 @@
+#pragma once
+#include "ImOsmITileLoader.h"
+#include "ImOsmITileSource.h"
+
+namespace ImOsm {
+class TileLoader : public ITileLoader {
+public:
+  TileLoader();
+  TileLoader(std::shared_ptr<ITileSource> source);
+  virtual ~TileLoader() = default;
+
+  virtual void beginLoad(int z, int xmin, int xmax, int ymin,
+                         int ymax) override;
+  virtual ImTextureID tileAt(int z, int x, int y) override;
+  virtual int tileCount() const override { return _tiles.size(); };
+  virtual void endLoad() override {}
+
+private:
+  std::shared_ptr<ITileSource> _source;
+  std::vector<std::shared_ptr<ITile>> _tiles;
+};
+}; // namespace ImOsm

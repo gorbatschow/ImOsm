@@ -42,7 +42,8 @@ private:
   };
 
   std::string _clientName{"curl"};
-  std::string _tileProvider{"http://a.tile.openstreetmap.org/"};
+  std::string _tileProvider{"https://server.arcgisonline.com/ArcGIS/rest/"
+                            "services/World_Imagery/MapServer/tile/"};
   std::string _tileExtension{".png"};
 
   const int _tileSizePx{256};

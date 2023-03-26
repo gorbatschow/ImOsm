@@ -17,9 +17,6 @@ TileTexture::TileTexture(int size, TextureColor color)
 }
 
 TileTexture::TileTexture(int size, const std::vector<std::byte> &blob) {
-  _width = size;
-  _height = size;
-
   stbi_set_flip_vertically_on_load(false);
   const auto ptr{
       stbi_load_from_memory(reinterpret_cast<stbi_uc const *>(blob.data()),
@@ -28,7 +25,7 @@ TileTexture::TileTexture(int size, const std::vector<std::byte> &blob) {
   if (ptr) {
     const auto byteptr{reinterpret_cast<std::byte *>(ptr)};
     _blob.insert(_blob.begin(), byteptr,
-                 byteptr + _width * _height * TextureColor::RGBA_SZ);
+                 byteptr + _width * _height * STBI_rgb_alpha);
     stbi_image_free(ptr);
   }
 }
@@ -42,7 +39,6 @@ void TileTexture::loadTexture() const {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
   glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, GL_RGBA,
-               GL_UNSIGNED_BYTE,
-               reinterpret_cast<const uint8_t *>(_blob.data()));
+               GL_UNSIGNED_BYTE, reinterpret_cast<const char *>(_blob.data()));
 }
 } // namespace ImOsm

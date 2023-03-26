@@ -1,11 +1,11 @@
 #include "ImOsmMapPlot.h"
 #include "ImOsmCoords.h"
-#include "ImOsmTileLoaderUrl.h"
+#include "ImOsmTileLoader.h"
 #include <algorithm>
 #include <implot.h>
 
 namespace ImOsm {
-MapPlot::MapPlot() : _loader{new TileLoaderUrl()} {}
+MapPlot::MapPlot() : _loader{std::make_shared<TileLoader>()} {}
 
 MapPlot::MapPlot(std::shared_ptr<ITileLoader> &loader) : _loader{loader} {
   resetBounds();
