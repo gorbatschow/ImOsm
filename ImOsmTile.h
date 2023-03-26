@@ -9,7 +9,7 @@ class Tile : public TileDummy {
 public:
   Tile(int z, int x, int y, const std::vector<std::byte> &rawBlob,
        bool preload = true);
-  virtual ~Tile();
+  virtual ~Tile() override;
 
   virtual const char *rawBlob() const override {
     return reinterpret_cast<const char *>(_rawBlob.data());

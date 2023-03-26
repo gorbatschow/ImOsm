@@ -5,7 +5,7 @@ namespace ImOsm {
 class TileDummy : public ITile {
 public:
   TileDummy(int z, int x, int y) : _z{z}, _x{x}, _y{y} {}
-  virtual ~TileDummy() = default;
+  virtual ~TileDummy() override = default;
 
   virtual int z() const override { return _z; }
   virtual int x() const override { return _x; }
