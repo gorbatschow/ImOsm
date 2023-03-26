@@ -3,6 +3,7 @@
 #include <cmath>
 
 namespace ImOsm {
+namespace Old {
 TileTexture::TileTexture(int size, TextureColor color)
     : _width(size), _height(size) {
 
@@ -41,4 +42,5 @@ void TileTexture::loadTexture() const {
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, GL_RGBA,
                GL_UNSIGNED_BYTE, reinterpret_cast<const char *>(_blob.data()));
 }
+} // namespace Old
 } // namespace ImOsm

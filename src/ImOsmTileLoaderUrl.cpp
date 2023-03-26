@@ -11,6 +11,7 @@
 using namespace std::chrono_literals;
 
 namespace ImOsm {
+namespace Old {
 TileLoaderUrl::TileLoaderUrl() {}
 
 TileLoaderUrl::~TileLoaderUrl() {}
@@ -114,4 +115,5 @@ size_t TileLoaderUrl::onPullResponse(void *data, size_t size, size_t nmemb,
 
   return realsize;
 }
+} // namespace Old
 } // namespace ImOsm

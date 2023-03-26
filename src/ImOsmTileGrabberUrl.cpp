@@ -8,7 +8,7 @@
 using namespace std::chrono_literals;
 
 namespace ImOsm {
-
+namespace Old {
 TileGrabberUrl::TileGrabberUrl() {}
 
 void TileGrabberUrl::grab(int minZ, int maxZ, float minLon, float maxLon,
@@ -112,4 +112,5 @@ void TileGrabberUrl::saveFile(Tile &tile) {
     stream.write(reinterpret_cast<const char *>(blob.data()), blob.size());
   }
 }
+} // namespace Old
 } // namespace ImOsm
