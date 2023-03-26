@@ -8,8 +8,8 @@ TileSourceAsync::TileSourceAsync(int requestLimit, bool preload)
 bool TileSourceAsync::hasRequest() { return !_requests.empty(); }
 
 bool TileSourceAsync::hasRequest(int z, int x, int y) {
-  const auto it{std::find(_requests.begin(), _requests.end(),
-                          std::array<int, 3>{z, x, y})};
+  const auto it{
+      std::find(_requests.begin(), _requests.end(), std::array{z, x, y})};
   return it != _requests.end();
 }
 
@@ -26,40 +26,42 @@ bool TileSourceAsync::request(int z, int x, int y) {
   return false;
 }
 
+void TileSourceAsync::waitAll() {
+  while (!canTakeAll()) {
+    std::this_thread::sleep_for(1s);
+  }
+}
+
 bool TileSourceAsync::canTakeAll() {
   return std::all_of(std::begin(_requests), std::end(_requests),
                      [](TileAsync &tile) { return tile.ready(); });
 }
 
-bool TileSourceAsync::takeAll(std::vector<std::shared_ptr<ITile>> &tiles) {
-  if (canTakeAll()) {
-    for (auto &request : _requests) {
-      tiles.push_back(request.future.get().tile);
-    }
-    _requests.clear();
-    return true;
+void TileSourceAsync::takeAll(std::vector<std::shared_ptr<ITile>> &tiles) {
+  waitAll();
+  for (auto &request : _requests) {
+    tiles.push_back(request.future.get().tile);
   }
-  return false;
+  _requests.clear();
 }
 
-bool TileSourceAsync::takeReady(std::vector<std::shared_ptr<ITile>> &tiles) {
-  const bool sz = _requests.size();
+int TileSourceAsync::takeReady(std::vector<std::shared_ptr<ITile>> &tiles) {
+  int taked{};
   for (auto it{_requests.begin()}; it != _requests.end();) {
     if (it->ready()) {
       tiles.push_back((*it).future.get().tile);
       it = _requests.erase(it);
+      ++taked;
     } else {
       ++it;
     }
   }
-  return sz != _requests.size() && sz != 0;
+  return taked;
 }
 
 bool TileSourceAsync::saveAll(std::shared_ptr<ITileSaver> saver) {
   std::vector<std::shared_ptr<ITile>> tiles;
-  while (!takeAll(tiles)) {
-    std::this_thread::sleep_for(1s);
-  }
+  takeAll(tiles);
   return saver->saveMulti(tiles);
 }
 

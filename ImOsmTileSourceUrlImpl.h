@@ -21,7 +21,7 @@ private:
 };
 
 class TileSourceUrlOsm : public TileSourceUrl {
-public:
+protected:
   virtual std::string makeUrl(int z, int x, int y) override {
     std::ostringstream urlmaker;
     urlmaker << "https://a.tile.openstreetmap.org";
@@ -34,7 +34,7 @@ public:
 // See Basemap
 
 class TileSourceUrlArcImagery : public TileSourceUrl {
-public:
+protected:
   virtual std::string makeUrl(int z, int x, int y) override {
     std::ostringstream urlmaker;
     urlmaker << "https://server.arcgisonline.com/ArcGIS/rest/"

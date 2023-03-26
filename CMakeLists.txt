@@ -9,6 +9,7 @@ set(IMOSM_SRC
     ImOsmTile.cpp
     ImOsmTileLoader.cpp
     ImOsmTileSourceAsync.cpp
+    ImOsmTileSourceUrl.cpp
     ImOsmTileGrabberUrl.cpp
     ImOsmTileGrabber.cpp
     ImOsmMapPlot.cpp

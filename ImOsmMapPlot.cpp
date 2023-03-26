@@ -1,7 +1,6 @@
 #include "ImOsmMapPlot.h"
 #include "ImOsmCoords.h"
 #include "ImOsmTileLoader.h"
-#include "ImOsmTileLoaderUrl.h"
 #include <algorithm>
 #include <implot.h>
 

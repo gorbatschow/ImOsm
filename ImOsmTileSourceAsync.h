@@ -19,9 +19,10 @@ public:
   virtual bool hasRequest(int z, int x, int y) override;
   virtual bool canRequest() override;
   virtual bool request(int z, int x, int y) override;
+  virtual void waitAll() override;
   virtual bool canTakeAll() override;
-  virtual bool takeAll(std::vector<std::shared_ptr<ITile>> &tiles) override;
-  virtual bool takeReady(std::vector<std::shared_ptr<ITile>> &tiles) override;
+  virtual void takeAll(std::vector<std::shared_ptr<ITile>> &tiles) override;
+  virtual int takeReady(std::vector<std::shared_ptr<ITile>> &tiles) override;
   virtual bool saveAll(std::shared_ptr<ITileSaver> saver) override;
 
 protected:

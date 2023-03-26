@@ -3,9 +3,9 @@
 #include <future>
 #include <memory>
 #include <vector>
-class ITile;
 
 namespace ImOsm {
+class ITile;
 using namespace std::chrono_literals;
 
 struct TileAsync {
