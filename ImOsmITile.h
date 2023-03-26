@@ -20,6 +20,7 @@ public:
   virtual const char *rawBlob() const = 0;
   virtual std::size_t rawBlobSize() const = 0;
 
+  virtual void rgbaLoad() const = 0;
   virtual const char *rgbaBlob() const = 0;
   virtual std::size_t rgbaBlobSize() const = 0;
 

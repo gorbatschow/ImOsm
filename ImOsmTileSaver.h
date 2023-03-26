@@ -37,7 +37,12 @@ public:
 
 protected:
   virtual std::filesystem::path dirPath(std::shared_ptr<ITile>) const = 0;
-  virtual std::string fileName(std::shared_ptr<ITile>) const = 0;
+
+  virtual std::string fileName(std::shared_ptr<ITile> tile) const {
+    std::ostringstream fname_maker;
+    fname_maker << tile->z() << '-' << tile->x() << '-' << tile->y();
+    return fname_maker.str();
+  }
 };
 
 // -----------------------------------------------------------------------------
@@ -45,27 +50,38 @@ protected:
 class TileSaverDir : public TileSaver {
 public:
   TileSaverDir() {}
-  TileSaverDir(const std::filesystem::path &dirPath) : _dirPath{dirPath} {}
+  TileSaverDir(const std::filesystem::path &basePath) : _basePath{basePath} {}
   virtual ~TileSaverDir() = default;
 
 protected:
   virtual std::filesystem::path dirPath(std::shared_ptr<ITile>) const override {
-    return _dirPath;
-  }
-
-  virtual std::string fileName(std::shared_ptr<ITile> tile) const override {
-    std::ostringstream fname_maker;
-    fname_maker << tile->z() << '-' << tile->x() << '-' << tile->y();
-    return fname_maker.str();
+    return _basePath;
   }
 
 private:
-  std::filesystem::path _dirPath{
+  std::filesystem::path _basePath{
       std::filesystem::current_path().append("tiles")};
 };
 
 // -----------------------------------------------------------------------------
 
-class TileSaverSubDir {};
+class TileSaverSubDir : public TileSaver {
+public:
+  TileSaverSubDir() {}
+  TileSaverSubDir(const std::filesystem::path &basePath)
+      : _basePath{basePath} {}
+  virtual ~TileSaverSubDir() = default;
+
+protected:
+  virtual std::filesystem::path
+  dirPath(std::shared_ptr<ITile> tile) const override {
+    auto path{_basePath};
+    return path.append(std::to_string(tile->z()));
+  }
+
+private:
+  std::filesystem::path _basePath{
+      std::filesystem::current_path().append("tiles")};
+};
 
 } // namespace ImOsm

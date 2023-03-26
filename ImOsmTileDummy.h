@@ -28,6 +28,7 @@ public:
   virtual const char *rawBlob() const override { return nullptr; }
   virtual std::size_t rawBlobSize() const override { return 0; }
 
+  virtual void rgbaLoad() const override {}
   virtual const char *rgbaBlob() const override { return nullptr; }
   virtual std::size_t rgbaBlobSize() const override { return 0; }
 

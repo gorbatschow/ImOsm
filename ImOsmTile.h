@@ -17,6 +17,8 @@ public:
 
   virtual std::size_t rawBlobSize() const override { return _rawBlob.size(); }
 
+  virtual void rgbaLoad() const override { stbLoad(); }
+
   virtual const char *rgbaBlob() const override {
     return reinterpret_cast<const char *>(_rgbaBlob.data());
   }
