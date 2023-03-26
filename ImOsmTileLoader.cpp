@@ -1,8 +1,9 @@
 #include "ImOsmTileLoader.h"
+#include "ImOsmTileSourceFs.h"
 #include "ImOsmTileSourceUrlImpl.h"
 
 ImOsm::TileLoader::TileLoader()
-    : _source{std::make_shared<TileSourceUrlArcImagery>()} {}
+    : _source{std::make_shared<TileSourceUrlOsm>()} {}
 
 ImOsm::TileLoader::TileLoader(std::shared_ptr<ITileSource> source)
     : _source{source} {}

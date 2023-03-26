@@ -1,6 +1,7 @@
 #pragma once
 #include "ImOsmITile.h"
 #include "ImOsmITileSaver.h"
+#include "ImOsmTileSourceFs.h"
 #include <filesystem>
 #include <fstream>
 #include <string>
@@ -39,9 +40,7 @@ protected:
   virtual std::filesystem::path dirPath(std::shared_ptr<ITile>) const = 0;
 
   virtual std::string fileName(std::shared_ptr<ITile> tile) const {
-    std::ostringstream fname_maker;
-    fname_maker << tile->z() << '-' << tile->x() << '-' << tile->y();
-    return fname_maker.str();
+    return TileSourceFs::FileName(tile->z(), tile->x(), tile->y());
   }
 };
 
@@ -54,13 +53,13 @@ public:
   virtual ~TileSaverDir() = default;
 
 protected:
-  virtual std::filesystem::path dirPath(std::shared_ptr<ITile>) const override {
-    return _basePath;
+  virtual std::filesystem::path
+  dirPath(std::shared_ptr<ITile> tile) const override {
+    return TileSourceFsDir::DirPath(_basePath, tile->z(), tile->x(), tile->y());
   }
 
 private:
-  std::filesystem::path _basePath{
-      std::filesystem::current_path().append("tiles")};
+  std::filesystem::path _basePath{TileSourceFs::BasePathDefault()};
 };
 
 // -----------------------------------------------------------------------------
@@ -75,13 +74,12 @@ public:
 protected:
   virtual std::filesystem::path
   dirPath(std::shared_ptr<ITile> tile) const override {
-    auto path{_basePath};
-    return path.append(std::to_string(tile->z()));
+    return TileSourceFsSubDir::DirPath(_basePath, tile->z(), tile->x(),
+                                       tile->y());
   }
 
 private:
-  std::filesystem::path _basePath{
-      std::filesystem::current_path().append("tiles")};
+  std::filesystem::path _basePath{TileSourceFs::BasePathDefault()};
 };
 
 } // namespace ImOsm
