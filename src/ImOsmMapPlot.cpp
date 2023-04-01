@@ -57,15 +57,20 @@ void MapPlot::paint() {
     _tilesNum = (1 << _zoom);
     _tileSize = 1.0 / float(_tilesNum);
 
-    _minLon = x2lon(_minX * _tilesNum, _zoom);
-    _maxLon = x2lon(_maxX * _tilesNum, _zoom);
-    _minLat = y2lat(_minY * _tilesNum, _zoom);
-    _maxLat = y2lat(_maxY * _tilesNum, _zoom);
+    const auto minMaxLat{std::minmax(y2lat(_minY * _tilesNum, _zoom),
+                                     y2lat(_maxY * _tilesNum, _zoom))};
+    const auto minMaxLon{std::minmax(x2lon(_minX * _tilesNum, _zoom),
+                                     x2lon(_maxX * _tilesNum, _zoom))};
 
-    _minTX = std::clamp(lon2tx(_minLon, _zoom), 0, _tilesNum - 1);
-    _maxTX = std::clamp(lon2tx(_maxLon, _zoom), 0, _tilesNum - 1);
-    _minTY = std::clamp(lat2ty(_minLat, _zoom), 0, _tilesNum - 1);
-    _maxTY = std::clamp(lat2ty(_maxLat, _zoom), 0, _tilesNum - 1);
+    _minLat = minMaxLat.first;
+    _maxLat = minMaxLat.second;
+    _minLon = minMaxLon.first;
+    _maxLon = minMaxLon.second;
+
+    _minTX = std::clamp(int(_minX * _tilesNum), 0, _tilesNum - 1);
+    _maxTX = std::clamp(int(_maxX * _tilesNum), 0, _tilesNum - 1);
+    _minTY = std::clamp(int(_minY * _tilesNum), 0, _tilesNum - 1);
+    _maxTY = std::clamp(int(_maxY * _tilesNum), 0, _tilesNum - 1);
 
     _loader->beginLoad(_zoom, _minTX, _maxTX, _minTY, _maxTY);
 

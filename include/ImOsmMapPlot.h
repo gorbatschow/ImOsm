@@ -17,19 +17,27 @@ public:
   inline void resetBounds();
 
   // Geo CS routines
-  inline void setBoundsGeo(float minLon, float maxLon, float minLat,
-                           float maxLat);
+  inline void setBoundsGeo(float minLat,
+                           float maxLat,
+                           float minLon,
+                           float maxLon);
 
-  inline void getBoundsGeo(float &minLon, float &maxLon, float &minLat,
-                           float &maxLat) const;
+  inline void getBoundsGeo(float &minLat,
+                           float &maxLat,
+                           float &minLon,
+                           float &maxLon) const;
 
-  inline float minLon() const { return _minLon; }
-  inline float maxLon() const { return _maxLon; }
   inline float minLat() const { return _minLat; }
   inline float maxLat() const { return _maxLat; }
+  inline float minLon() const { return _minLon; }
+  inline float maxLon() const { return _maxLon; }
 
-  inline float mouseLon() const { return _mouseLon; }
   inline float mouseLat() const { return _mouseLat; }
+  inline float mouseLon() const { return _mouseLon; }
+
+  inline bool inBoundsGeo(float lat, float lon) const {
+    return lat > _minLat && lat < _maxLat && lon > _minLon && lon < _maxLon;
+  }
 
   // Tile CS routines
   inline void getBoundsTile(int &minTX, int &maxTX, int &minTY,
@@ -53,6 +61,10 @@ public:
   inline int minLocalY() const { return _minY; };
   inline int maxLocalY() const { return _maxY; };
 
+  inline bool inBoundsLocal(float x, float y) const {
+    return x > _minX && x < _maxX && y > _minY && y < _maxY;
+  }
+
 private:
   constexpr static const ImPlotFlags _plotFlags{ImPlotFlags_Equal |
                                                 ImPlotFlags_NoLegend};
@@ -75,8 +87,8 @@ private:
 
   float _tilePixels{256.0};
   float _tileSize{};
-  float _minLon{MinLon}, _maxLon{MaxLon};
   float _minLat{MinLat}, _maxLat{MaxLat};
+  float _minLon{MinLon}, _maxLon{MaxLon};
   float _minX{}, _maxX{};
   float _minY{}, _maxY{};
   int _minTX{}, _maxTX{};
@@ -86,7 +98,7 @@ private:
   float _rangeX{}, _rangeY{};
   float _resX{}, _resY{};
   int _tilesNum{};
-  float _mouseLon{}, _mouseLat{};
+  float _mouseLat{}, _mouseLon{};
 
   enum class SetBounds { None, Geo, Local };
   SetBounds _setBounds{SetBounds::None};
@@ -95,28 +107,32 @@ private:
 };
 
 inline void MapPlot::resetBounds() {
-  _minLon = MinLon;
-  _maxLon = MaxLon;
   _minLat = MinLat;
   _maxLat = MaxLat;
+  _minLon = MinLon;
+  _maxLon = MaxLon;
   _setBounds = SetBounds::Geo;
 }
 
-inline void MapPlot::setBoundsGeo(float minLon, float maxLon, float minLat,
-                                  float maxLat) {
-  _minLon = minLon;
-  _maxLon = maxLon;
+inline void MapPlot::setBoundsGeo(float minLat,
+                                  float maxLat,
+                                  float minLon,
+                                  float maxLon) {
   _minLat = minLat;
   _maxLat = maxLat;
+  _minLon = minLon;
+  _maxLon = maxLon;
   _setBounds = SetBounds::Geo;
 }
 
-inline void MapPlot::getBoundsGeo(float &minLon, float &maxLon, float &minLat,
-                                  float &maxLat) const {
-  minLon = _minLon;
-  maxLon = _maxLon;
+inline void MapPlot::getBoundsGeo(float &minLat,
+                                  float &maxLat,
+                                  float &minLon,
+                                  float &maxLon) const {
   minLat = _minLat;
   maxLat = _maxLat;
+  minLon = _minLon;
+  maxLon = _maxLon;
 }
 
 inline void MapPlot::getBoundsTile(int &minTX, int &maxTX, int &minTY,
