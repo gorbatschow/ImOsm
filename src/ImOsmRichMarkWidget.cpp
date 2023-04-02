@@ -24,10 +24,10 @@ void ImOsm::RichMarkWidget::paint() {
 
   if (_isMarkAdd) {
     _isMarkAdd = false;
-    _markItems.push_back(std::make_shared<RichMarkItem>(_latLon[0],
-                                                        _latLon[1],
-                                                        _markNameInputText));
-    _plot->addItem(_markItems.back());
+    _markItems.push_back({std::make_shared<RichMarkItem>(_latLon[0],
+                                                         _latLon[1],
+                                                         _markNameInputText)});
+    _plot->addItem(_markItems.back().ptr);
   }
 }
 
@@ -71,49 +71,56 @@ void ImOsm::RichMarkWidget::paint_markTable() {
     ImGui::TableSetupColumn("Setup", colFlags, 50);
     ImGui::TableSetupColumn("Delete", colFlags, 50);
     ImGui::TableHeadersRow();
-    std::for_each(_markItems.begin(), _markItems.end(), [this](auto item) {
+
+    _markItems.erase(std::remove_if(_markItems.begin(),
+                                    _markItems.end(),
+                                    [](auto &item) { return item.rmFlag; }),
+                     _markItems.end());
+
+    std::for_each(_markItems.begin(), _markItems.end(), [this](auto &item) {
       ImGui::TableNextRow();
-      ImGui::PushID(item.get());
+      ImGui::PushID(item.ptr.get());
       paint_markTableRow(item);
       ImGui::PopID();
     });
+
     ImGui::EndTable();
   }
 }
 
-void ImOsm::RichMarkWidget::paint_markTableRow(
-    std::shared_ptr<RichMarkItem> item) {
+void ImOsm::RichMarkWidget::paint_markTableRow(ItemNode &item) {
   // Name
   ImGui::TableNextColumn();
-  ImGui::TextUnformatted(item->text().c_str());
+  ImGui::TextUnformatted(item.ptr->text().c_str());
 
   // Lat
   ImGui::TableNextColumn();
-  ImGui::Text(_latLonFormat, item->lat());
+  ImGui::Text(_latLonFormat, item.ptr->lat());
 
   // Lon
   ImGui::TableNextColumn();
-  ImGui::Text(_latLonFormat, item->lon());
+  ImGui::Text(_latLonFormat, item.ptr->lon());
 
   // Setup
   ImGui::TableNextColumn();
   if (ImGui::Button("Setup")) {
     ImGui::OpenPopup("Setup Item");
-    _itemWidget = std::make_unique<RichMarkItemWidget>(item, _latLon);
+    _itemWidget = std::make_unique<RichMarkItemWidget>(item.ptr, _latLon);
   }
 
   if (ImGui::BeginPopupModal("Setup Item")) {
     // Draw popup contents.
-    ImOsm::RichMarkItemWidget w(item);
     _itemWidget->paint();
     ImGui::Separator();
     if (ImGui::Button("Cancel")) {
       ImGui::CloseCurrentPopup();
+      _itemWidget.reset();
     }
     ImGui::SameLine();
     if (ImGui::Button("Apply")) {
       _itemWidget->apply();
       ImGui::CloseCurrentPopup();
+      _itemWidget.reset();
     }
     ImGui::EndPopup();
   }
@@ -121,5 +128,6 @@ void ImOsm::RichMarkWidget::paint_markTableRow(
   // Delete
   ImGui::TableNextColumn();
   if (ImGui::Button("Delete")) {
+    item.rmFlag = true;
   }
 }
