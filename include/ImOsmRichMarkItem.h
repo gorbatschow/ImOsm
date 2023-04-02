@@ -13,7 +13,7 @@ public:
     bool textEnabled{true};
     bool markerEnabled{true};
     ImPlotMarker markerType{ImPlotMarker_Circle};
-    float markerSize{15.f};
+    float markerSize{10.f};
     float markerWeight{};
     ImVec4 markerFill{0.f, 1.f, 1.f, 1.f};
     ImVec4 markerOutline{};
@@ -54,7 +54,7 @@ public:
       ImPlot::PlotText(_text.c_str(),
                        _x,
                        _y,
-                       {_style.markerSize, _style.markerSize});
+                       {0.f, _style.markerSize + ImGui::GetFontSize()});
       ImGui::PopStyleColor();
     }
   }

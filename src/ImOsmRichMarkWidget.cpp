@@ -32,12 +32,12 @@ void ImOsm::RichMarkWidget::paint() {
 }
 
 void ImOsm::RichMarkWidget::paint_latLonInput() {
-  ImGui::InputFloat2("Lat/Lon##", _latLon.data(), _latLonFormat);
+  ImGui::InputFloat2("Lat/Lon", _latLon.data(), _latLonFormat);
 }
 
 void ImOsm::RichMarkWidget::paint_mousePickBtn() {
   if (!_isMousePick) {
-    if (ImGui::Button("Mouse Pick##")) {
+    if (ImGui::Button("Mouse Pick")) {
       _isMousePick = !_isMousePick;
     }
   } else {
@@ -51,11 +51,11 @@ void ImOsm::RichMarkWidget::paint_mousePickBtn() {
 }
 
 void ImOsm::RichMarkWidget::paint_markNameInput() {
-  ImGui::InputText("Mark Name##", &_markNameInputText);
+  ImGui::InputText("Mark Name", &_markNameInputText);
 }
 
 void ImOsm::RichMarkWidget::paint_addMarkBtn() {
-  if (ImGui::Button("Add Mark##")) {
+  if (ImGui::Button("Add Mark")) {
     _isMarkAdd = true;
   }
 }
@@ -97,20 +97,21 @@ void ImOsm::RichMarkWidget::paint_markTableRow(
 
   // Setup
   ImGui::TableNextColumn();
-  if (ImGui::Button("Setup##")) {
-    ImGui::OpenPopup("Setup Item##");
+  if (ImGui::Button("Setup")) {
+    ImGui::OpenPopup("Setup Item");
     _itemWidget = std::make_unique<RichMarkItemWidget>(item, _latLon);
   }
 
-  if (ImGui::BeginPopupModal("Setup Item##")) {
+  if (ImGui::BeginPopupModal("Setup Item")) {
     // Draw popup contents.
     ImOsm::RichMarkItemWidget w(item);
     _itemWidget->paint();
-    if (ImGui::Button("Cancel##")) {
+    ImGui::Separator();
+    if (ImGui::Button("Cancel")) {
       ImGui::CloseCurrentPopup();
     }
     ImGui::SameLine();
-    if (ImGui::Button("Apply##")) {
+    if (ImGui::Button("Apply")) {
       _itemWidget->apply();
       ImGui::CloseCurrentPopup();
     }
@@ -119,6 +120,6 @@ void ImOsm::RichMarkWidget::paint_markTableRow(
 
   // Delete
   ImGui::TableNextColumn();
-  if (ImGui::Button("Delete##")) {
+  if (ImGui::Button("Delete")) {
   }
 }

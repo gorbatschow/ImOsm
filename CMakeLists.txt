@@ -16,6 +16,7 @@ set(IMOSM_SRC
     src/ImOsmTileLoaderUrl.cpp
     src/ImOsmTileTexture.cpp
     src/ImOsmRichMarkWidget.cpp
+    src/ImOsmRichMarkItemWidget.cpp
 )
 
 add_library(${PROJECT_NAME} ${IMOSM_SRC})
