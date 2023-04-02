@@ -15,7 +15,7 @@ public:
     ImPlotMarker markerType{ImPlotMarker_Circle};
     float markerSize{10.f};
     float markerWeight{};
-    ImVec4 markerFill{1.f, 1.f, 1.f, 1.f};
+    ImVec4 markerFill{0.f, 1.f, 1.f, 1.f};
     ImVec4 markerOutline{};
   };
 
@@ -36,14 +36,10 @@ public:
     return _lat > minLat && _lat < maxLat && _lon > minLon && _lon < maxLon;
   }
 
-  virtual void paint() override {
-    if (_style.textEnabled) {
-      ImPlot::PlotText(_text.c_str(),
-                       _x,
-                       _y,
-                       {_style.markerSize, _style.markerSize});
-    }
+  virtual void setEnabled(bool enabled) override { _enabled = enabled; }
+  virtual bool enabled() const override { return _enabled; }
 
+  virtual void paint() override {
     if (_style.markerEnabled) {
       ImPlot::SetNextMarkerStyle(_style.markerType,
                                  _style.markerSize,
@@ -51,6 +47,15 @@ public:
                                  _style.markerWeight,
                                  _style.markerOutline);
       ImPlot::PlotScatter("##", &_x, &_y, 1);
+    }
+
+    if (_style.textEnabled) {
+      ImGui::PushStyleColor(ImGuiCol_Text, _style.markerFill);
+      ImPlot::PlotText(_text.c_str(),
+                       _x,
+                       _y,
+                       {_style.markerSize, _style.markerSize});
+      ImGui::PopStyleColor();
     }
   }
 
@@ -72,6 +77,7 @@ public:
   inline Style &style() { return _style; }
 
 private:
+  bool _enabled{true};
   std::string _text;
   float _lat{}, _lon{};
   float _x{}, _y{};

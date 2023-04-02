@@ -11,6 +11,8 @@ public:
                         float minLon,
                         float maxLon) const
       = 0;
+  virtual void setEnabled(bool enabled) = 0;
+  virtual bool enabled() const = 0;
   virtual void paint() = 0;
 };
 } // namespace ImOsm
