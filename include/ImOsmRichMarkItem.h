@@ -13,7 +13,7 @@ public:
     bool textEnabled{true};
     bool markerEnabled{true};
     ImPlotMarker markerType{ImPlotMarker_Circle};
-    float markerSize{10.f};
+    float markerSize{15.f};
     float markerWeight{};
     ImVec4 markerFill{0.f, 1.f, 1.f, 1.f};
     ImVec4 markerOutline{};

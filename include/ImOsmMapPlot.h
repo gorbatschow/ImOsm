@@ -65,6 +65,11 @@ public:
     return x > _minX && x < _maxX && y > _minY && y < _maxY;
   }
 
+  inline bool mouseOnPlot() const {
+    return _mousePos.x > _plotLims.X.Min && _mousePos.x < _plotLims.X.Max
+           && _mousePos.y > _plotLims.Y.Min && _mousePos.y < _plotLims.Y.Max;
+  }
+
 private:
   constexpr static const ImPlotFlags _plotFlags{ImPlotFlags_Equal |
                                                 ImPlotFlags_NoLegend};
@@ -99,6 +104,7 @@ private:
   float _resX{}, _resY{};
   int _tilesNum{};
   float _mouseLat{}, _mouseLon{};
+  float _mouseClickedLat{}, _mouseClickedLon{};
 
   enum class SetBounds { None, Geo, Local };
   SetBounds _setBounds{SetBounds::None};

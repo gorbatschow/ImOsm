@@ -2,6 +2,8 @@
 #include "ImOsmIRichItem.h"
 #include "ImOsmMapPlot.h"
 #include <algorithm>
+#include <imgui.h>
+#include <iostream>
 #include <vector>
 
 namespace ImOsm {
@@ -12,8 +14,6 @@ class RichMapPlot : public MapPlot
 public:
   RichMapPlot() {}
   virtual ~RichMapPlot() = default;
-
-  void addGeoItem(std::weak_ptr<IRichItem> item) { _items.push_back(item); }
 
   virtual void paintOverMap() override {
     MapPlot::paintOverMap();
@@ -29,6 +29,8 @@ public:
         item->paint();
     });
   }
+
+  inline void addItem(std::weak_ptr<IRichItem> item) { _items.push_back(item); }
 
 private:
   std::vector<std::weak_ptr<IRichItem> > _items;

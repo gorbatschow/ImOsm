@@ -1,12 +1,9 @@
 #pragma once
 #include <ImOsmCoords.h>
-#include <ImOsmIRichItem.h>
 #include <ImOsmITile.h>
 #include <ImOsmITileSaver.h>
 #include <ImOsmITileSource.h>
 #include <ImOsmMapPlot.h>
-#include <ImOsmRichMapPlot.h>
-#include <ImOsmRichMarkItem.h>
 #include <ImOsmTile.h>
 #include <ImOsmTileAsync.h>
 #include <ImOsmTileDummy.h>
