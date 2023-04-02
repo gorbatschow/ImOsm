@@ -10,11 +10,13 @@ class RichMarkItem : public IRichItem
 public:
   struct Style
   {
-    ImPlotMarker marker{ImPlotMarker_Circle};
-    float size{10.f};
-    float weight{};
-    ImVec4 fill{1.f, 1.f, 1.f, 1.f};
-    ImVec4 outline{};
+    bool textEnabled{true};
+    bool markerEnabled{true};
+    ImPlotMarker markerType{ImPlotMarker_Circle};
+    float markerSize{10.f};
+    float markerWeight{};
+    ImVec4 markerFill{1.f, 1.f, 1.f, 1.f};
+    ImVec4 markerOutline{};
   };
 
   RichMarkItem(float lat, float lon, const std::string &text)
@@ -35,13 +37,19 @@ public:
   }
 
   virtual void paint() override {
-    if (!_text.empty()) {
-      ImPlot::PlotText(_text.c_str(), _x, _y);
-      ImPlot::SetNextMarkerStyle(_style.marker,
-                                 _style.size,
-                                 _style.fill,
-                                 _style.weight,
-                                 _style.outline);
+    if (_style.textEnabled) {
+      ImPlot::PlotText(_text.c_str(),
+                       _x,
+                       _y,
+                       {_style.markerSize, _style.markerSize});
+    }
+
+    if (_style.markerEnabled) {
+      ImPlot::SetNextMarkerStyle(_style.markerType,
+                                 _style.markerSize,
+                                 _style.markerFill,
+                                 _style.markerWeight,
+                                 _style.markerOutline);
       ImPlot::PlotScatter("##", &_x, &_y, 1);
     }
   }
