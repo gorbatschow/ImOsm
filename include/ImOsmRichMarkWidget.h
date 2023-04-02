@@ -15,15 +15,20 @@ public:
   void paint();
 
 private:
+  struct ItemNode
+  {
+    std::shared_ptr<RichMarkItem> ptr;
+    bool rmFlag{false};
+  };
+
   void paint_latLonInput();
   void paint_mousePickBtn();
   void paint_markNameInput();
   void paint_addMarkBtn();
   void paint_markTable();
-  void paint_markTableRow(std::shared_ptr<RichMarkItem> item);
+  void paint_markTableRow(ItemNode& item);
 
-  std::vector<std::shared_ptr<RichMarkItem> > _markItems;
-
+  std::vector<ItemNode> _markItems;
   std::array<float, 2> _latLon{};
   std::shared_ptr<RichMapPlot> _plot;
   std::unique_ptr<RichMarkItemWidget> _itemWidget;

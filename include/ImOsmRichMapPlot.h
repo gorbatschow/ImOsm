@@ -17,10 +17,11 @@ public:
 
   virtual void paintOverMap() override {
     MapPlot::paintOverMap();
-    /*
-    _items.erase(
-        std::remove_if(_items.begin(), _items.end(), [](auto item) { return item.expired(); }));
-*/
+
+    _items.erase(std::remove_if(_items.begin(),
+                                _items.end(),
+                                [](auto item) { return item.expired(); }),
+                 _items.end());
 
     std::for_each(_items.begin(), _items.end(), [this](auto ptr) {
       auto item{ptr.lock()};
