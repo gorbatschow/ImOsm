@@ -6,17 +6,17 @@
 #include <imgui.h>
 
 namespace ImOsm {
-class RichMarkWidget
-{
+class RichMarkWidget {
 public:
   RichMarkWidget(std::shared_ptr<RichMapPlot> plot);
   virtual ~RichMarkWidget() = default;
 
   void paint();
 
+  std::weak_ptr<RichMarkItem> findMark(const std::string &name) const;
+
 private:
-  struct ItemNode
-  {
+  struct ItemNode {
     std::shared_ptr<RichMarkItem> ptr;
     bool rmFlag{false};
   };
@@ -26,7 +26,7 @@ private:
   void paint_markNameInput();
   void paint_addMarkBtn();
   void paint_markTable();
-  void paint_markTableRow(ItemNode& item);
+  void paint_markTableRow(ItemNode &item);
 
   std::vector<ItemNode> _markItems;
   std::array<float, 2> _latLon{};

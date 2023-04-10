@@ -24,11 +24,21 @@ void ImOsm::RichMarkWidget::paint() {
 
   if (_isMarkAdd) {
     _isMarkAdd = false;
-    _markItems.push_back({std::make_shared<RichMarkItem>(_latLon[0],
-                                                         _latLon[1],
+    _markItems.push_back({std::make_shared<RichMarkItem>(_latLon[0], _latLon[1],
                                                          _markNameInputText)});
     _plot->addItem(_markItems.back().ptr);
   }
+}
+
+std::weak_ptr<ImOsm::RichMarkItem>
+ImOsm::RichMarkWidget::findMark(const std::string &name) const {
+  const auto it{std::find_if(
+      _markItems.begin(), _markItems.end(),
+      [name](const ItemNode &node) { return node.ptr->text() == name; })};
+  if (it != _markItems.end()) {
+    return (*it).ptr;
+  }
+  return std::weak_ptr<ImOsm::RichMarkItem>();
 }
 
 void ImOsm::RichMarkWidget::paint_latLonInput() {
@@ -72,8 +82,7 @@ void ImOsm::RichMarkWidget::paint_markTable() {
     ImGui::TableSetupColumn("Delete", colFlags, 50);
     ImGui::TableHeadersRow();
 
-    _markItems.erase(std::remove_if(_markItems.begin(),
-                                    _markItems.end(),
+    _markItems.erase(std::remove_if(_markItems.begin(), _markItems.end(),
                                     [](auto &item) { return item.rmFlag; }),
                      _markItems.end());
 
