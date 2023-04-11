@@ -8,6 +8,10 @@ ImOsm::RichMarkWidget::RichMarkWidget(std::shared_ptr<RichMapPlot> plot,
   _markNameInputText.reserve(32);
 }
 
+void ImOsm::RichMarkWidget::loadState(const mINI::INIStructure &ini) {}
+
+void ImOsm::RichMarkWidget::saveState(mINI::INIStructure &ini) const {}
+
 void ImOsm::RichMarkWidget::paint() {
   paint_latLonInput();
   ImGui::SameLine();
@@ -27,6 +31,12 @@ void ImOsm::RichMarkWidget::paint() {
     _isMarkAdd = false;
     _storage->addMark(_latlon, _markNameInputText);
     _plot->addItem(_storage->_markItems.back().ptr);
+  }
+
+  if (_storage->handleLoadState()) {
+    const auto &markItems{_storage->markItems()};
+    std::for_each(markItems.begin(), markItems.end(),
+                  [this](auto &item) { _plot->addItem(item.ptr); });
   }
 }
 

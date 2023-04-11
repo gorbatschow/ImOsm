@@ -4,6 +4,7 @@
 #include "ImOsmRichMarkStorage.h"
 #include <array>
 #include <imgui.h>
+#include <ini.h>
 
 namespace ImOsm {
 class RichMarkWidget {
@@ -12,6 +13,8 @@ public:
                  std::shared_ptr<RichMarkStorage> storage);
   virtual ~RichMarkWidget() = default;
 
+  void loadState(const mINI::INIStructure &ini);
+  void saveState(mINI::INIStructure &ini) const;
   void paint();
 
 private:

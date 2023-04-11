@@ -5,11 +5,9 @@
 #include <string>
 
 namespace ImOsm {
-class RichMarkItem : public IRichItem
-{
+class RichMarkItem : public IRichItem {
 public:
-  struct Style
-  {
+  struct Style {
     bool textEnabled{true};
     bool markerEnabled{true};
     ImPlotMarker markerType{ImPlotMarker_Circle};
@@ -19,19 +17,17 @@ public:
     ImVec4 markerOutline{};
   };
 
+  RichMarkItem() {}
+
   RichMarkItem(float lat, float lon, const std::string &text)
-      : _lat{lat}
-      , _lon{lon}
-      , _text{text} {
+      : _lat{lat}, _lon{lon}, _text{text} {
     _x = lon2x(_lon, 0);
     _y = lat2y(_lat, 0);
   }
 
   virtual ~RichMarkItem() = default;
 
-  virtual bool inBounds(float minLat,
-                        float maxLat,
-                        float minLon,
+  virtual bool inBounds(float minLat, float maxLat, float minLon,
                         float maxLon) const override {
     return _lat > minLat && _lat < maxLat && _lon > minLon && _lon < maxLon;
   }
@@ -41,19 +37,15 @@ public:
 
   virtual void paint() override {
     if (_style.markerEnabled) {
-      ImPlot::SetNextMarkerStyle(_style.markerType,
-                                 _style.markerSize,
-                                 _style.markerFill,
-                                 _style.markerWeight,
+      ImPlot::SetNextMarkerStyle(_style.markerType, _style.markerSize,
+                                 _style.markerFill, _style.markerWeight,
                                  _style.markerOutline);
       ImPlot::PlotScatter("##", &_x, &_y, 1);
     }
 
     if (_style.textEnabled) {
       ImGui::PushStyleColor(ImGuiCol_Text, _style.markerFill);
-      ImPlot::PlotText(_text.c_str(),
-                       _x,
-                       _y,
+      ImPlot::PlotText(_text.c_str(), _x, _y,
                        {0.f, _style.markerSize + ImGui::GetFontSize()});
       ImGui::PopStyleColor();
     }
