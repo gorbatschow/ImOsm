@@ -2,8 +2,9 @@
 #include "ImOsmRichMarkItemWidget.h"
 #include <misc/cpp/imgui_stdlib.h>
 
-ImOsm::RichMarkWidget::RichMarkWidget(std::shared_ptr<RichMapPlot> plot)
-    : _plot{plot} {
+ImOsm::RichMarkWidget::RichMarkWidget(std::shared_ptr<RichMapPlot> plot,
+                                      std::shared_ptr<RichMarkStorage> storage)
+    : _plot{plot}, _storage{storage} {
   _markNameInputText.reserve(32);
 }
 
@@ -18,31 +19,19 @@ void ImOsm::RichMarkWidget::paint() {
 
   if (_isMousePick && _plot->mouseOnPlot() && ImGui::IsMouseClicked(0)) {
     _isMousePick = false;
-    _latLon[0] = _plot->mouseLat();
-    _latLon[1] = _plot->mouseLon();
+    _latlon[0] = _plot->mouseLat();
+    _latlon[1] = _plot->mouseLon();
   }
 
   if (_isMarkAdd) {
     _isMarkAdd = false;
-    _markItems.push_back({std::make_shared<RichMarkItem>(_latLon[0], _latLon[1],
-                                                         _markNameInputText)});
-    _plot->addItem(_markItems.back().ptr);
+    _storage->addMark(_latlon, _markNameInputText);
+    _plot->addItem(_storage->_markItems.back().ptr);
   }
-}
-
-std::weak_ptr<ImOsm::RichMarkItem>
-ImOsm::RichMarkWidget::findMark(const std::string &name) const {
-  const auto it{std::find_if(
-      _markItems.begin(), _markItems.end(),
-      [name](const ItemNode &node) { return node.ptr->text() == name; })};
-  if (it != _markItems.end()) {
-    return (*it).ptr;
-  }
-  return std::weak_ptr<ImOsm::RichMarkItem>();
 }
 
 void ImOsm::RichMarkWidget::paint_latLonInput() {
-  ImGui::InputFloat2("Lat/Lon", _latLon.data(), _latLonFormat);
+  ImGui::InputFloat2("Lat/Lon", _latlon.data(), _latlonFormat);
 }
 
 void ImOsm::RichMarkWidget::paint_mousePickBtn() {
@@ -82,11 +71,10 @@ void ImOsm::RichMarkWidget::paint_markTable() {
     ImGui::TableSetupColumn("Delete", colFlags, 50);
     ImGui::TableHeadersRow();
 
-    _markItems.erase(std::remove_if(_markItems.begin(), _markItems.end(),
-                                    [](auto &item) { return item.rmFlag; }),
-                     _markItems.end());
+    _storage->rmMarks();
 
-    std::for_each(_markItems.begin(), _markItems.end(), [this](auto &item) {
+    const auto &markItems{_storage->markItems()};
+    std::for_each(markItems.begin(), markItems.end(), [this](auto &item) {
       ImGui::TableNextRow();
       ImGui::PushID(item.ptr.get());
       paint_markTableRow(item);
@@ -97,24 +85,25 @@ void ImOsm::RichMarkWidget::paint_markTable() {
   }
 }
 
-void ImOsm::RichMarkWidget::paint_markTableRow(ItemNode &item) {
+void ImOsm::RichMarkWidget::paint_markTableRow(
+    const RichMarkStorage::ItemNode &item) {
   // Name
   ImGui::TableNextColumn();
   ImGui::TextUnformatted(item.ptr->text().c_str());
 
   // Lat
   ImGui::TableNextColumn();
-  ImGui::Text(_latLonFormat, item.ptr->lat());
+  ImGui::Text(_latlonFormat, item.ptr->lat());
 
   // Lon
   ImGui::TableNextColumn();
-  ImGui::Text(_latLonFormat, item.ptr->lon());
+  ImGui::Text(_latlonFormat, item.ptr->lon());
 
   // Setup
   ImGui::TableNextColumn();
   if (ImGui::Button("Setup")) {
     ImGui::OpenPopup("Setup Item");
-    _itemWidget = std::make_unique<RichMarkItemWidget>(item.ptr, _latLon);
+    _itemWidget = std::make_unique<RichMarkItemWidget>(item.ptr, _latlon);
   }
 
   if (ImGui::BeginPopupModal("Setup Item")) {

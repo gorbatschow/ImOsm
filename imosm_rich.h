@@ -2,3 +2,4 @@
 #include <ImOsmIRichItem.h>
 #include <ImOsmRichMapPlot.h>
 #include <ImOsmRichMarkItem.h>
+#include <ImOsmRichMarkStorage.h>
