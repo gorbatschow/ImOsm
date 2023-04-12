@@ -1,44 +1,67 @@
 #pragma once
-#include <cmath>
+#include <array>
+#include <math.h>
+#include <numbers>
 
 namespace ImOsm {
-template<typename T>
-inline T lon2x(T lon, int z) {
-  return ((lon + 180.0) / 360.0 * T(1 << z));
+
+inline constexpr double PI{std::numbers::pi_v<double>};
+inline constexpr double PI2{std::numbers::pi_v<double> * 2.0};
+inline constexpr double RAD{std::numbers::pi_v<double> / 180.0};
+inline constexpr double DEG{180.0 / std::numbers::pi_v<double>};
+inline constexpr double R{6371.0};
+
+inline double lon2x(double lon, int z) {
+  return ((lon + 180.0) / 360.0 * (1 << z));
 }
 
-template<typename T>
-inline T lat2y(T lat, int z) {
-  lat = lat * M_PI / 180.0;
-  return (1.0 - asinh(tan(lat)) / M_PI) / 2.0 * T(1 << z);
+inline double lat2y(double lat, int z) {
+  lat = lat * RAD;
+  return (1.0 - asinh(tan(lat)) / PI) / 2.0 * double(1 << z);
 }
 
-template<typename T>
-inline T x2lon(T x, int z) {
-  return x / T(1 << z) * 360.0 - 180.0;
+inline double x2lon(double x, int z) { return x / (1 << z) * 360.0 - 180.0; }
+
+inline double y2lat(double y, int z) {
+  double n = PI - PI2 * y / double(1 << z);
+  return DEG * atan(0.5 * (exp(n) - exp(-n)));
 }
 
-template<typename T>
-inline T y2lat(T y, int z) {
-  T n = M_PI - 2.0 * M_PI * y / T(1 << z);
-  return 180.0 / M_PI * atan(0.5 * (exp(n) - exp(-n)));
+inline int lon2tx(double lon, int z) { return int(floor(lon2x(lon, z))); }
+
+inline int lat2ty(double lat, int z) { return int(floor(lat2y(lat, z))); }
+
+inline constexpr double MinLat{-85.0};
+inline constexpr double MaxLat{+85.0};
+inline constexpr double MinLon{-179.9};
+inline constexpr double MaxLon{+179.9};
+inline constexpr int MinZoom{0};
+inline constexpr int MaxZoom{18};
+
+inline std::array<double, 2> latlon(const std::array<double, 2> &latlon,
+                                    double d, double tc = 0.0) {
+  d /= R;
+  tc *= RAD;
+  const double lat1{latlon[0] * RAD};
+  const double lon1{latlon[1] * RAD};
+  const double lat2{asin(sin(lat1) * cos(d) + cos(lat1) * sin(d) * cos(tc))};
+  const double dlon{
+      atan2(sin(tc) * sin(d) * cos(lat1), cos(d) - sin(lat1) * sin(lat2))};
+  const double lon2{fmod(lon1 - dlon + PI, PI2) - PI};
+  return {lat2 * DEG, lon2 * DEG};
 }
 
-template<typename T>
-inline int lon2tx(T lon, int z) {
-  return int(floor(lon2x(lon, z)));
+inline double distance(const std::array<double, 2> &src,
+                       const std::array<double, 2> &dst) {
+  const double lat1{src[0] * RAD};
+  const double lon1{src[1] * RAD};
+  const double lat2{dst[0] * RAD};
+  const double lon2{dst[1] * RAD};
+  const double dlat{lat2 - lat1};
+  const double dlon{lon2 - lon1};
+  const double a{sin(dlat / 2.0) * sin(dlat / 2.0) +
+                 cos(lat1) * cos(lat2) * sin(dlon / 2.0) * sin(dlon / 2.0)};
+  return 2.0 * atan2(sqrt(a), sqrt(1.0 - a)) * R;
 }
-
-template<typename T>
-inline int lat2ty(T lat, int z) {
-  return int(floor(lat2y(lat, z)));
-}
-
-constexpr static const float MinLat{-85.0f};
-constexpr static const float MaxLat{+85.0f};
-constexpr static const float MinLon{-179.9f};
-constexpr static const float MaxLon{+179.9f};
-constexpr static const int MinZoom{0};
-constexpr static const int MaxZoom{18};
 
 } // namespace ImOsm
