@@ -51,17 +51,29 @@ inline std::array<double, 2> latlon(const std::array<double, 2> &latlon,
   return {lat2 * DEG, lon2 * DEG};
 }
 
-inline double distance(const std::array<double, 2> &src,
-                       const std::array<double, 2> &dst) {
-  const double lat1{src[0] * RAD};
-  const double lon1{src[1] * RAD};
-  const double lat2{dst[0] * RAD};
-  const double lon2{dst[1] * RAD};
+inline double distance(const std::array<double, 2> &src_latlon,
+                       const std::array<double, 2> &dst_latlon) {
+  const double lat1{src_latlon[0] * RAD};
+  const double lon1{src_latlon[1] * RAD};
+  const double lat2{dst_latlon[0] * RAD};
+  const double lon2{dst_latlon[1] * RAD};
   const double dlat{lat2 - lat1};
   const double dlon{lon2 - lon1};
   const double a{sin(dlat / 2.0) * sin(dlat / 2.0) +
                  cos(lat1) * cos(lat2) * sin(dlon / 2.0) * sin(dlon / 2.0)};
   return 2.0 * atan2(sqrt(a), sqrt(1.0 - a)) * R;
+}
+
+inline const std::array<double, 2>
+flatmean(const std::array<double, 2> &latlon_a,
+         const std::array<double, 2> &latlon_b) {
+  const double x1{lon2x(latlon_a[1], 0)};
+  const double y1{lat2y(latlon_a[0], 0)};
+  const double x2{lon2x(latlon_b[1], 0)};
+  const double y2{lat2y(latlon_b[0], 0)};
+  const double xm{(x1 + x2) / 2.0};
+  const double ym{(y1 + y2) / 2.0};
+  return {y2lat(ym, 0), x2lon(xm, 0)};
 }
 
 } // namespace ImOsm
