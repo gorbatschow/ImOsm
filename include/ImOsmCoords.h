@@ -16,14 +16,14 @@ inline double lon2x(double lon, int z) {
 }
 
 inline double lat2y(double lat, int z) {
-  lat = lat * RAD;
+  lat *= RAD;
   return (1.0 - asinh(tan(lat)) / PI) / 2.0 * double(1 << z);
 }
 
 inline double x2lon(double x, int z) { return x / (1 << z) * 360.0 - 180.0; }
 
 inline double y2lat(double y, int z) {
-  double n = PI - PI2 * y / double(1 << z);
+  const double n{PI - PI2 * y / double(1 << z)};
   return DEG * atan(0.5 * (exp(n) - exp(-n)));
 }
 
