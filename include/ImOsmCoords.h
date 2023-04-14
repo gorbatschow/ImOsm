@@ -66,7 +66,7 @@ inline GeoCoords OsmCoords::toGeoCoords() const { return {y2lat(y), x2lon(x)}; }
 
 inline GeoCoords latlon(const GeoCoords &src, double d, double tc = 0.0) {
   d /= R;
-  tc *= RAD;
+  tc = (-tc) * RAD; // TODO check formula (minus?)
   const double lat1{src.lat * RAD};
   const double lon1{src.lon * RAD};
   const double lat2{asin(sin(lat1) * cos(d) + cos(lat1) * sin(d) * cos(tc))};
