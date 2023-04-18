@@ -22,6 +22,7 @@ set(IMOSM_SRC
 add_library(${PROJECT_NAME} ${IMOSM_SRC})
 target_include_directories(${PROJECT_NAME} PUBLIC .)
 target_include_directories(${PROJECT_NAME} PUBLIC ./include)
+target_link_libraries(${PROJECT_NAME} PUBLIC latlon)
 target_link_libraries(${PROJECT_NAME} PUBLIC imgui)
 target_link_libraries(${PROJECT_NAME} PUBLIC implot)
 target_link_libraries(${PROJECT_NAME} PUBLIC stb)

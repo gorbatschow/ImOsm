@@ -1,6 +1,7 @@
 #pragma once
 #include "implot.h"
 #include <array>
+#include <latlon.h>
 #include <math.h>
 #include <numbers>
 
