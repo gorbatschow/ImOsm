@@ -44,6 +44,12 @@ inline constexpr int MaxZoom{18};
 
 struct OsmCoords;
 struct GeoCoords;
+struct LocalCoords;
+
+struct LocalCoords {
+  double x{};
+  double y{};
+};
 
 struct OsmCoords {
   double x{};
@@ -61,42 +67,34 @@ struct GeoCoords {
   inline OsmCoords toOsmCoords() const { return {lon2x(lon), lat2y(lat)}; }
   inline double toOsmX() const { return lon2x(lon); };
   inline double toOsmY() const { return lat2y(lat); };
+  inline LocalCoords toLocalCoords(const GeoCoords &o) const {
+    LocalCoords c;
+    LatLon::cartesian(c.x, c.y, lat, lon, o.lat, o.lon);
+    return c;
+  }
+  inline GeoCoords destination(const double d, const double b) const {
+    GeoCoords c;
+    LatLon::destination(c.lat, c.lon, lat, lon, d, b);
+    return c;
+  }
 };
 
 inline GeoCoords OsmCoords::toGeoCoords() const { return {y2lat(y), x2lon(x)}; }
 
-inline GeoCoords latlon(const GeoCoords &src, double d, double tc = 0.0) {
-  d /= R;
-  tc = (-tc) * RAD; // TODO check formula (minus?)
-  const double lat1{src.lat * RAD};
-  const double lon1{src.lon * RAD};
-  const double lat2{asin(sin(lat1) * cos(d) + cos(lat1) * sin(d) * cos(tc))};
-  const double dlon{
-      atan2(sin(tc) * sin(d) * cos(lat1), cos(d) - sin(lat1) * sin(lat2))};
-  const double lon2{fmod(lon1 - dlon + PI, PI2) - PI};
-  return {lat2 * DEG, lon2 * DEG};
+inline GeoCoords destination(const GeoCoords &src, double d, double b = 0.0) {
+  GeoCoords c;
+  LatLon::destination(c.lat, c.lon, src.lat, src.lon, d, b);
+  return c;
 }
 
-inline double distance(const GeoCoords &src, const GeoCoords &dst) {
-  const double lat1{src.lat * RAD};
-  const double lon1{src.lon * RAD};
-  const double lat2{dst.lat * RAD};
-  const double lon2{dst.lon * RAD};
-  const double dlat{lat2 - lat1};
-  const double dlon{lon2 - lon1};
-  const double a{sin(dlat / 2.0) * sin(dlat / 2.0) +
-                 cos(lat1) * cos(lat2) * sin(dlon / 2.0) * sin(dlon / 2.0)};
-  return 2.0 * atan2(sqrt(a), sqrt(1.0 - a)) * R;
+inline double distance(const GeoCoords &a, const GeoCoords &b) {
+  return LatLon::distance(a.lat, a.lon, b.lat, b.lon);
 }
 
-inline const OsmCoords flatmean(const GeoCoords &a, const GeoCoords &b) {
-  const double x1{lon2x(a.lon, 0)};
-  const double y1{lat2y(a.lat, 0)};
-  const double x2{lon2x(b.lon, 0)};
-  const double y2{lat2y(b.lat, 0)};
-  const double xm{(x1 + x2) / 2.0};
-  const double ym{(y1 + y2) / 2.0};
-  return {xm, ym};
+inline const GeoCoords midpoint(const GeoCoords &a, const GeoCoords &b) {
+  GeoCoords c;
+  LatLon::midpoint(c.lat, c.lon, a.lat, a.lon, b.lat, b.lon);
+  return c;
 }
 
 } // namespace ImOsm
