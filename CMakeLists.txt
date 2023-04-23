@@ -16,6 +16,7 @@ set(IMOSM_SRC
     src/ImOsmTileLoaderUrl.cpp
     src/ImOsmTileTexture.cpp
     src/ImOsmRichMarkItem.cpp
+    src/ImOsmRichMarkStorage.cpp
     src/ImOsmRichMarkWidget.cpp
     src/ImOsmRichMarkItemWidget.cpp
 )
