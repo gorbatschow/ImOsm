@@ -1,4 +1,5 @@
 #pragma once
+#include "ImOsmCoords.h"
 #include "ImOsmRichMarkItem.h"
 #include <algorithm>
 #include <array>
@@ -15,15 +16,21 @@ public:
   RichMarkStorage() = default;
   ~RichMarkStorage() = default;
 
-  bool findMark(std::array<float, 2> &mark, const std::string &name) const;
+  GeoCoords findMark(const std::string &name, bool &ok) const;
   void loadState(const mINI::INIStructure &ini);
   void saveState(mINI::INIStructure &ini) const;
 
+  inline void setPickCoords(const GeoCoords &coords) {
+    _pickCoords = coords;
+    _pickState = true;
+  }
+
 private:
-  void addMark(const std::array<float, 2> &latlon, const std::string &name);
+  void addMark(const GeoCoords &coords, const std::string &name);
   void rmMarks();
 
 private:
+  // Load State
   bool _loadState{false};
   inline bool handleLoadState() {
     const bool loadState{_loadState};
@@ -31,7 +38,18 @@ private:
     return loadState;
   }
 
-  struct ItemNode {
+  // Pick State
+  GeoCoords _pickCoords{};
+  bool _pickState{false};
+  inline bool handlePickState() {
+    const bool pickState{_pickState};
+    _pickState = false;
+    return pickState;
+  }
+
+  // Mark Items
+  struct ItemNode
+  {
     std::shared_ptr<RichMarkItem> ptr;
     mutable bool rmFlag{false};
   };

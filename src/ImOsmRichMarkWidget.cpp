@@ -1,7 +1,7 @@
 #include "ImOsmRichMarkWidget.h"
 #include "ImOsmRichMarkItemWidget.h"
+#include <memory>
 #include <misc/cpp/imgui_stdlib.h>
-
 ImOsm::RichMarkWidget::RichMarkWidget(std::shared_ptr<RichMapPlot> plot,
                                       std::shared_ptr<RichMarkStorage> storage)
     : _plot{plot}, _storage{storage} {
@@ -13,6 +13,7 @@ void ImOsm::RichMarkWidget::loadState(const mINI::INIStructure &ini) {}
 void ImOsm::RichMarkWidget::saveState(mINI::INIStructure &ini) const {}
 
 void ImOsm::RichMarkWidget::paint() {
+  ImGui::TextUnformatted("Mark Editor");
   paint_latLonInput();
   ImGui::SameLine();
   paint_mousePickBtn();
@@ -23,13 +24,12 @@ void ImOsm::RichMarkWidget::paint() {
 
   if (_isMousePick && _plot->mouseOnPlot() && ImGui::IsMouseClicked(0)) {
     _isMousePick = false;
-    _latlon[0] = _plot->mouseLat();
-    _latlon[1] = _plot->mouseLon();
+    _latLonInput = {_plot->mouseLat(), _plot->mouseLon()};
   }
 
   if (_isMarkAdd) {
     _isMarkAdd = false;
-    _storage->addMark(_latlon, _markNameInputText);
+    _storage->addMark(_latLonInput, _markNameInputText);
     _plot->addItem(_storage->_markItems.back().ptr);
   }
 
@@ -38,10 +38,14 @@ void ImOsm::RichMarkWidget::paint() {
     std::for_each(markItems.begin(), markItems.end(),
                   [this](auto &item) { _plot->addItem(item.ptr); });
   }
+
+  if (_storage->handlePickState()) {
+    _latLonInput = _storage->_pickCoords;
+  }
 }
 
 void ImOsm::RichMarkWidget::paint_latLonInput() {
-  ImGui::InputFloat2("Lat/Lon", _latlon.data(), _latlonFormat);
+  ImGui::InputFloat2("Lat/Lon", _latLonInput.data(), _latlonFormat);
 }
 
 void ImOsm::RichMarkWidget::paint_mousePickBtn() {
@@ -103,17 +107,18 @@ void ImOsm::RichMarkWidget::paint_markTableRow(
 
   // Lat
   ImGui::TableNextColumn();
-  ImGui::Text(_latlonFormat, item.ptr->lat());
+  ImGui::Text(_latlonFormat, item.ptr->geoCoords().lat);
 
   // Lon
   ImGui::TableNextColumn();
-  ImGui::Text(_latlonFormat, item.ptr->lon());
+  ImGui::Text(_latlonFormat, item.ptr->geoCoords().lon);
 
   // Setup
   ImGui::TableNextColumn();
   if (ImGui::Button("Setup")) {
     ImGui::OpenPopup("Setup Item");
-    _itemWidget = std::make_unique<RichMarkItemWidget>(item.ptr, _latlon);
+    _itemWidget = std::make_unique<RichMarkItemWidget>(item.ptr,
+                                                       GeoCoords{_latLonInput});
   }
 
   if (ImGui::BeginPopupModal("Setup Item")) {

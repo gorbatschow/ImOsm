@@ -1,16 +1,16 @@
 #include <ImOsmRichMarkItem.h>
 
 ImOsm::RichMarkItem::RichMarkItem() {
+  _osmCoords = _geoCoords.toOsmCoords();
   _rx.resize(int(360.0 / _dphi) + 1);
   _ry.resize(int(360.0 / _dphi) + 1);
 }
 
-ImOsm::RichMarkItem::RichMarkItem(float lat, float lon, const std::string &text)
-    : _lat{lat}
-    , _lon{lon}
+ImOsm::RichMarkItem::RichMarkItem(const GeoCoords &coords,
+                                  const std::string &text)
+    : _geoCoords{coords}
     , _text{text} {
-  _x = lon2x(_lon, 0);
-  _y = lat2y(_lat, 0);
+  _osmCoords = _geoCoords.toOsmCoords();
   _rx.resize(int(360.0 / _dphi) + 1);
   _ry.resize(int(360.0 / _dphi) + 1);
 }
@@ -39,8 +39,8 @@ void ImOsm::RichMarkItem::paint() {
                                _style.markerFill,
                                _style.markerWeight,
                                _style.markerOutline);
-    ImGui::PushID(&_x);
-    ImPlot::PlotScatter("##", &_x, &_y, 1);
+    ImGui::PushID(&_osmCoords);
+    ImPlot::PlotScatter("##", &_osmCoords.x, &_osmCoords.y, 1);
     ImGui::PopID();
   }
 
@@ -48,8 +48,8 @@ void ImOsm::RichMarkItem::paint() {
     ImGui::PushStyleColor(ImGuiCol_Text, _style.markerFill);
     ImGui::PushID(_text.c_str());
     ImPlot::PlotText(_text.c_str(),
-                     _x,
-                     _y,
+                     _osmCoords.x,
+                     _osmCoords.y,
                      {0.f, _style.markerSize + ImGui::GetFontSize()});
     ImGui::PopID();
     ImGui::PopStyleColor();
@@ -75,9 +75,10 @@ void ImOsm::RichMarkItem::updateRadiusPoints() {
   } */
 
   double lat{}, lon{};
-  LatLon::destination(lat, lon, _lat, _lon, _r, {});
+  LatLon::destination(lat, lon, _geoCoords.lat, _geoCoords.lon, _r, {});
   const double x{lon2x(lon)}, y{lat2y(lat)};
-  const double r{sqrt(std::pow(x - _x, 2.0) + std::pow(y - _y, 2.0))};
+  const double r{
+      sqrt(std::pow(x - _osmCoords.x, 2.0) + std::pow(y - _osmCoords.y, 2.0))};
   const double dphi{_dphi * LatLon::RAD};
   const double x0{x}, y0{y + r};
   double phi{};
@@ -88,8 +89,8 @@ void ImOsm::RichMarkItem::updateRadiusPoints() {
 }
 
 void ImOsm::RichMarkItem::updateRadiusBounds() {
-  LatLon::destination(_latTR, _lonTR, _lat, _lon, _r, 45.0);
-  LatLon::destination(_latBR, _lonBR, _lat, _lon, _r, 135.0);
-  LatLon::destination(_latBL, _lonBL, _lat, _lon, _r, 225.0);
-  LatLon::destination(_latTL, _lonTL, _lat, _lon, _r, 315.0);
+  LatLon::destination(_latTR, _lonTR, _geoCoords.lat, _geoCoords.lon, _r, 45.0);
+  LatLon::destination(_latBR, _lonBR, _geoCoords.lat, _geoCoords.lon, _r, 135.0);
+  LatLon::destination(_latBL, _lonBL, _geoCoords.lat, _geoCoords.lon, _r, 225.0);
+  LatLon::destination(_latTL, _lonTL, _geoCoords.lat, _geoCoords.lon, _r, 315.0);
 }

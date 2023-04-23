@@ -9,7 +9,7 @@ class RichMarkItemWidget
 {
 public:
   RichMarkItemWidget(std::shared_ptr<RichMarkItem> item,
-                     std::array<float, 2> latLonPicked = {});
+                     const GeoCoords &pickedCoords);
   ~RichMarkItemWidget() = default;
   void paint();
   void apply();
@@ -20,7 +20,7 @@ private:
 
 private:
   std::shared_ptr<RichMarkItem> _item;
-  std::array<float, 2> _latLonPicked{};
+  GeoCoords _pickedCoords{};
 
   inline static constexpr char _latLonFormat[]{"%.6f"};
   std::array<float, 2> _latLon{};

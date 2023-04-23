@@ -5,12 +5,12 @@ namespace ImOsm {
 inline static constexpr const char* MarkerTypeName(ImPlotMarker marker);
 
 RichMarkItemWidget::RichMarkItemWidget(std::shared_ptr<RichMarkItem> item,
-                                       std::array<float, 2> latLonPicked)
+                                       const GeoCoords& latLonPicked)
     : _item{item}
-    , _latLonPicked{latLonPicked} {
+    , _pickedCoords{latLonPicked} {
   _text = _item->text();
-  _latLon[0] = _item->lat();
-  _latLon[1] = _item->lon();
+  _latLon[0] = _item->geoCoords().lat;
+  _latLon[1] = _item->geoCoords().lon;
   _radius = _item->radius();
   _textEnabled = _item->style().textEnabled;
   _markerEnabled = _item->style().markerEnabled;
@@ -47,7 +47,7 @@ void RichMarkItemWidget::paint() {
 
 void RichMarkItemWidget::apply() {
   _item->setText(_text);
-  _item->setLatLon(_latLon[0], _latLon[1]);
+  _item->setCoords({_latLon[0], _latLon[1]});
   _item->setRadius(_radius);
 
   _item->style().textEnabled = _textEnabled;
@@ -66,7 +66,7 @@ void RichMarkItemWidget::apply() {
 
 void RichMarkItemWidget::paint_pickedBtn() {
   if (ImGui::Button("Picked")) {
-    _latLon = _latLonPicked;
+    _latLon = {float(_pickedCoords.lat), float(_pickedCoords.lon)};
   }
 }
 

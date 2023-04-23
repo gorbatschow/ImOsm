@@ -77,6 +77,36 @@ struct GeoCoords {
     LatLon::destination(c.lat, c.lon, lat, lon, d, b);
     return c;
   }
+
+  GeoCoords() = default;
+  GeoCoords(double lat_, double lon_)
+      : lat{lat_}
+      , lon{lon_} {}
+  GeoCoords(const std::array<double, 2> &arr)
+      : lat{arr.front()}
+      , lon{arr.back()} {}
+  GeoCoords(const std::array<float, 2> &arr)
+      : lat{arr.front()}
+      , lon{arr.back()} {}
+
+  inline double distance(const GeoCoords &other) const {
+    return LatLon::distance(lat, lon, other.lat, other.lon);
+  }
+
+  inline double bearing(const GeoCoords &other) const {
+    return LatLon::bearing(lat, lon, other.lat, other.lon);
+  }
+
+  inline GeoCoords midpoint(const GeoCoords &other) {
+    double lat_{}, lon_{};
+    LatLon::midpoint(lat_, lon_, lat, lon, other.lat, other.lon);
+    return {lat_, lon_};
+  }
+
+  inline operator std::array<double, 2>() const { return {lat, lon}; }
+  inline operator std::array<float, 2>() const {
+    return {float(lat), float(lon)};
+  }
 };
 
 inline GeoCoords OsmCoords::toGeoCoords() const { return {y2lat(y), x2lon(x)}; }

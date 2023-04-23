@@ -25,7 +25,7 @@ private:
   void paint_markTable();
   void paint_markTableRow(const RichMarkStorage::ItemNode &item);
 
-  std::array<float, 2> _latlon{};
+  std::array<float, 2> _latLonInput{0.f, 0.f};
   std::shared_ptr<RichMapPlot> _plot;
   std::shared_ptr<RichMarkStorage> _storage;
   std::unique_ptr<RichMarkItemWidget> _itemWidget;

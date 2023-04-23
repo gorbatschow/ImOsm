@@ -1,20 +1,21 @@
 #include "ImOsmRichMarkStorage.h"
 
-bool ImOsm::RichMarkStorage::findMark(std::array<float, 2> &mark,
-                                      const std::string &name) const {
+namespace ImOsm {
+GeoCoords RichMarkStorage::findMark(const std::string &name, bool &ok) const {
   const auto it{std::find_if(_markItems.begin(),
                              _markItems.end(),
                              [name](const ItemNode &node) {
                                return node.ptr->text() == name;
                              })};
   if (it != _markItems.end()) {
-    mark = {(*it).ptr->lat(), (*it).ptr->lon()};
-    return true;
+    ok = true;
+    return (*it).ptr->geoCoords();
   }
-  return false;
+  ok = false;
+  return {};
 }
 
-void ImOsm::RichMarkStorage::loadState(const mINI::INIStructure &ini) {
+void RichMarkStorage::loadState(const mINI::INIStructure &ini) {
   for (auto it{ini.begin()}; it != ini.end(); ++it) {
     if (it->first.starts_with("mark_")) {
       auto ptr{std::make_shared<RichMarkItem>()};
@@ -22,8 +23,8 @@ void ImOsm::RichMarkStorage::loadState(const mINI::INIStructure &ini) {
         ptr->setText(it->second.get("text"));
       }
       if (it->second.has("lat") && it->second.has("lon")) {
-        ptr->setLatLon(std::stof(it->second.get("lat")),
-                       std::stof(it->second.get("lon")));
+        ptr->setCoords({std::stof(it->second.get("lat")),
+                        std::stof(it->second.get("lon"))});
       }
       if (it->second.has("radius")) {
         ptr->setRadius(std::stof(it->second.get("radius")));
@@ -66,14 +67,14 @@ void ImOsm::RichMarkStorage::loadState(const mINI::INIStructure &ini) {
   _loadState = true;
 }
 
-void ImOsm::RichMarkStorage::saveState(mINI::INIStructure &ini) const {
+void RichMarkStorage::saveState(mINI::INIStructure &ini) const {
   static const auto key_base{"mark_"};
   unsigned index{};
   for (const auto &item : _markItems) {
     const std::string key{key_base + std::to_string(index++)};
     ini[key]["text"] = item.ptr->text();
-    ini[key]["lat"] = std::to_string(item.ptr->lat());
-    ini[key]["lon"] = std::to_string(item.ptr->lon());
+    ini[key]["lat"] = std::to_string(item.ptr->geoCoords().lat);
+    ini[key]["lon"] = std::to_string(item.ptr->geoCoords().lon);
     ini[key]["radius"] = std::to_string(item.ptr->radius());
     ini[key]["text_enabled"] = std::to_string(item.ptr->style().textEnabled);
     ini[key]["marker_enabled"] = std::to_string(item.ptr->style().markerEnabled);
@@ -89,15 +90,14 @@ void ImOsm::RichMarkStorage::saveState(mINI::INIStructure &ini) const {
   }
 }
 
-void ImOsm::RichMarkStorage::addMark(const std::array<float, 2> &latlon,
-                                     const std::string &name) {
-  _markItems.push_back(
-      {std::make_shared<RichMarkItem>(latlon[0], latlon[1], name)});
+void RichMarkStorage::addMark(const GeoCoords &coords, const std::string &name) {
+  _markItems.push_back({std::make_shared<RichMarkItem>(coords, name)});
 }
 
-void ImOsm::RichMarkStorage::rmMarks() {
+void RichMarkStorage::rmMarks() {
   _markItems.erase(std::remove_if(_markItems.begin(),
                                   _markItems.end(),
                                   [](auto &item) { return item.rmFlag; }),
                    _markItems.end());
 }
+} // namespace ImOsm

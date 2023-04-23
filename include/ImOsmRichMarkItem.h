@@ -21,7 +21,7 @@ public:
   };
 
   RichMarkItem();
-  RichMarkItem(float lat, float lon, const std::string &text);
+  RichMarkItem(const GeoCoords &coords, const std::string &text);
   virtual ~RichMarkItem() override;
 
   virtual bool inBounds(float minLat,
@@ -34,19 +34,17 @@ public:
 
   virtual void paint() override;
 
-  inline void setLatLon(float lat, float lon) {
-    _lat = lat;
-    _lon = lon;
-    _x = lon2x(_lon);
-    _y = lat2y(_lat);
+  inline void setCoords(const GeoCoords &coords) {
+    _geoCoords = coords;
+    _osmCoords = _geoCoords.toOsmCoords();
     if (_r > 0.0) {
       updateRadiusPoints();
       updateRadiusBounds();
     }
   }
 
-  inline float lat() const { return _lat; }
-  inline float lon() const { return _lon; }
+  inline const GeoCoords &geoCoords() const { return _geoCoords; }
+  inline const OsmCoords &osmCoords() const { return _osmCoords; }
 
   inline void setRadius(float r) {
     _r = r;
@@ -68,12 +66,12 @@ private:
 
 private:
   bool _enabled{true};
+  GeoCoords _geoCoords{};
+  OsmCoords _osmCoords{};
   std::string _text;
-  float _lat{}, _lon{};
   double _latTL{}, _latTR{}, _latBL{}, _latBR{};
   double _lonTL{}, _lonTR{}, _lonBL{}, _lonBR{};
   float _r{};
-  float _x{}, _y{};
   std::vector<float> _rx, _ry;
   float _dphi{1.0};
   Style _style;
