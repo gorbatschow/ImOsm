@@ -17,7 +17,7 @@ set(IMOSM_SRC
     src/ImOsmTileTexture.cpp
     src/ImOsmRichMarkItem.cpp
     src/ImOsmRichMarkStorage.cpp
-    src/ImOsmRichMarkWidget.cpp
+    src/ImOsmRichMarkEditorWidget.cpp
     src/ImOsmRichMarkItemWidget.cpp
 )
 

@@ -3,6 +3,6 @@
 #include <ImOsmRichDestinationCalcWidget.h>
 #include <ImOsmRichDistanceCalcWidget.h>
 #include <ImOsmRichMapPlot.h>
+#include <ImOsmRichMarkEditorWidget.h>
 #include <ImOsmRichMarkItem.h>
 #include <ImOsmRichMarkStorage.h>
-#include <ImOsmRichMarkWidget.h>

@@ -10,7 +10,7 @@
 namespace ImOsm {
 class RichMarkStorage
 {
-  friend class RichMarkWidget;
+  friend class RichMarkEditorWidget;
 
 public:
   RichMarkStorage() = default;

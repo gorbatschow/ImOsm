@@ -7,11 +7,12 @@
 #include <ini.h>
 
 namespace ImOsm {
-class RichMarkWidget {
+class RichMarkEditorWidget
+{
 public:
-  RichMarkWidget(std::shared_ptr<RichMapPlot> plot,
-                 std::shared_ptr<RichMarkStorage> storage);
-  virtual ~RichMarkWidget() = default;
+  RichMarkEditorWidget(std::shared_ptr<RichMapPlot> plot,
+                       std::shared_ptr<RichMarkStorage> storage);
+  virtual ~RichMarkEditorWidget() = default;
 
   void loadState(const mINI::INIStructure &ini);
   void saveState(mINI::INIStructure &ini) const;

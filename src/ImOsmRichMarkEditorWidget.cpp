@@ -1,18 +1,19 @@
-#include "ImOsmRichMarkWidget.h"
+#include "ImOsmRichMarkEditorWidget.h"
 #include "ImOsmRichMarkItemWidget.h"
 #include <memory>
 #include <misc/cpp/imgui_stdlib.h>
-ImOsm::RichMarkWidget::RichMarkWidget(std::shared_ptr<RichMapPlot> plot,
-                                      std::shared_ptr<RichMarkStorage> storage)
-    : _plot{plot}, _storage{storage} {
+ImOsm::RichMarkEditorWidget::RichMarkEditorWidget(
+    std::shared_ptr<RichMapPlot> plot, std::shared_ptr<RichMarkStorage> storage)
+    : _plot{plot}
+    , _storage{storage} {
   _markNameInputText.reserve(32);
 }
 
-void ImOsm::RichMarkWidget::loadState(const mINI::INIStructure &ini) {}
+void ImOsm::RichMarkEditorWidget::loadState(const mINI::INIStructure &ini) {}
 
-void ImOsm::RichMarkWidget::saveState(mINI::INIStructure &ini) const {}
+void ImOsm::RichMarkEditorWidget::saveState(mINI::INIStructure &ini) const {}
 
-void ImOsm::RichMarkWidget::paint() {
+void ImOsm::RichMarkEditorWidget::paint() {
   ImGui::TextUnformatted("Mark Editor");
   paint_latLonInput();
   ImGui::SameLine();
@@ -44,11 +45,11 @@ void ImOsm::RichMarkWidget::paint() {
   }
 }
 
-void ImOsm::RichMarkWidget::paint_latLonInput() {
+void ImOsm::RichMarkEditorWidget::paint_latLonInput() {
   ImGui::InputFloat2("Lat/Lon", _latLonInput.data(), _latlonFormat);
 }
 
-void ImOsm::RichMarkWidget::paint_mousePickBtn() {
+void ImOsm::RichMarkEditorWidget::paint_mousePickBtn() {
   if (!_isMousePick) {
     if (ImGui::Button("Mouse Pick")) {
       _isMousePick = !_isMousePick;
@@ -63,17 +64,17 @@ void ImOsm::RichMarkWidget::paint_mousePickBtn() {
   }
 }
 
-void ImOsm::RichMarkWidget::paint_markNameInput() {
+void ImOsm::RichMarkEditorWidget::paint_markNameInput() {
   ImGui::InputText("Mark Name", &_markNameInputText);
 }
 
-void ImOsm::RichMarkWidget::paint_addMarkBtn() {
+void ImOsm::RichMarkEditorWidget::paint_addMarkBtn() {
   if (ImGui::Button("Add Mark")) {
     _isMarkAdd = true;
   }
 }
 
-void ImOsm::RichMarkWidget::paint_markTable() {
+void ImOsm::RichMarkEditorWidget::paint_markTable() {
   static const int tableCols{4};
   static const ImGuiTableColumnFlags colFlags{ImGuiTableColumnFlags_WidthFixed};
 
@@ -99,7 +100,7 @@ void ImOsm::RichMarkWidget::paint_markTable() {
   }
 }
 
-void ImOsm::RichMarkWidget::paint_markTableRow(
+void ImOsm::RichMarkEditorWidget::paint_markTableRow(
     const RichMarkStorage::ItemNode &item) {
   // Name
   ImGui::TableNextColumn();
