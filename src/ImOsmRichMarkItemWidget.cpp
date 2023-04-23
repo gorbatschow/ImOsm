@@ -11,8 +11,11 @@ RichMarkItemWidget::RichMarkItemWidget(std::shared_ptr<RichMarkItem> item,
   _text = _item->text();
   _latLon[0] = _item->lat();
   _latLon[1] = _item->lon();
+  _radius = _item->radius();
   _textEnabled = _item->style().textEnabled;
   _markerEnabled = _item->style().markerEnabled;
+  _radiusEnabled = _item->style().radiusEnabled;
+  _radiusWeight = _item->style().radiusWeight;
   _markerType = _item->style().markerType;
   _markerTypeName = MarkerTypeName(_markerType);
   _markerSize = _item->style().markerSize;
@@ -24,14 +27,18 @@ RichMarkItemWidget::RichMarkItemWidget(std::shared_ptr<RichMarkItem> item,
 
 void RichMarkItemWidget::paint() {
   ImGui::InputText("Name", &_text);
-  ImGui::InputFloat2("Lat/Lon", _latLon.data(), _latLonFormat);
+  ImGui::InputFloat2("Lat/Lon [deg]", _latLon.data(), _latLonFormat);
   ImGui::SameLine();
   paint_pickedBtn();
+  ImGui::InputFloat("Radius [m]", &_radius, {}, {}, _radiusFormat);
   ImGui::Separator();
   ImGui::TextUnformatted("Style");
   ImGui::Checkbox("Text Enabled", &_textEnabled);
   ImGui::SameLine();
   ImGui::Checkbox("Marker Enabled", &_markerEnabled);
+  ImGui::SameLine();
+  ImGui::Checkbox("Radius Enabled", &_radiusEnabled);
+  ImGui::InputFloat("Radius Weight", &_radiusWeight, 1.0f);
   paint_markerCombo();
   ImGui::InputFloat("Marker Size", &_markerSize, 1.0f);
   //ImGui::InputFloat("Marker Weight", &_markerWeight, 1.0f);
@@ -41,8 +48,13 @@ void RichMarkItemWidget::paint() {
 void RichMarkItemWidget::apply() {
   _item->setText(_text);
   _item->setLatLon(_latLon[0], _latLon[1]);
+  _item->setRadius(_radius);
+
   _item->style().textEnabled = _textEnabled;
   _item->style().markerEnabled = _markerEnabled;
+  _item->style().radiusEnabled = _radiusEnabled;
+
+  _item->style().radiusWeight = _radiusWeight;
   _item->style().markerType = _markerType;
   _item->style().markerSize = _markerSize;
   _item->style().markerWeight = _markerWeight;

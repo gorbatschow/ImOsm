@@ -15,6 +15,7 @@ set(IMOSM_SRC
     src/ImOsmMapPlot.cpp
     src/ImOsmTileLoaderUrl.cpp
     src/ImOsmTileTexture.cpp
+    src/ImOsmRichMarkItem.cpp
     src/ImOsmRichMarkWidget.cpp
     src/ImOsmRichMarkItemWidget.cpp
 )

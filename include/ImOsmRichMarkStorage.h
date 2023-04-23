@@ -33,12 +33,23 @@ public:
           ptr->setLatLon(std::stof(it->second.get("lat")),
                          std::stof(it->second.get("lon")));
         }
+        if (it->second.has("radius")) {
+          ptr->setRadius(std::stof(it->second.get("radius")));
+        }
         if (it->second.has("text_enabled")) {
           ptr->style().textEnabled = std::stoi(it->second.get("text_enabled"));
         }
         if (it->second.has("marker_enabled")) {
           ptr->style().markerEnabled =
               std::stoi(it->second.get("marker_enabled"));
+        }
+        if (it->second.has("radius_enabled")) {
+          ptr->style().markerEnabled = std::stoi(
+              it->second.get("radius_enabled"));
+        }
+        if (it->second.has("radius_weight")) {
+          ptr->style().radiusWeight = std::stof(
+              it->second.get("radius_weight"));
         }
         if (it->second.has("marker_type")) {
           ptr->style().markerType = std::stoi(it->second.get("marker_type"));
@@ -75,9 +86,13 @@ public:
       ini[key]["text"] = item.ptr->text();
       ini[key]["lat"] = std::to_string(item.ptr->lat());
       ini[key]["lon"] = std::to_string(item.ptr->lon());
+      ini[key]["radius"] = std::to_string(item.ptr->radius());
       ini[key]["text_enabled"] = std::to_string(item.ptr->style().textEnabled);
       ini[key]["marker_enabled"] =
           std::to_string(item.ptr->style().markerEnabled);
+      ini[key]["radius_enabled"] = std::to_string(
+          item.ptr->style().radiusEnabled);
+      ini[key]["radius_weight"] = std::to_string(item.ptr->style().radiusWeight);
       ini[key]["marker_type"] = std::to_string(item.ptr->style().markerType);
       ini[key]["marker_size"] = std::to_string(item.ptr->style().markerSize);
       ini[key]["marker_weight"] =
