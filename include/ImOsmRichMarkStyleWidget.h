@@ -5,8 +5,7 @@ namespace Rich {
 
 class MarkStyleWidget
 {
-public
-  {}
+public:
 };
 } // namespace Rich
 } // namespace ImOsm
