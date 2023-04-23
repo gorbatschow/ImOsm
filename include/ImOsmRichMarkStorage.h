@@ -8,13 +8,14 @@
 #include <vector>
 
 namespace ImOsm {
-class RichMarkStorage
+namespace Rich {
+class MarkStorage
 {
-  friend class RichMarkEditorWidget;
+  friend class MarkEditorWidget;
 
 public:
-  RichMarkStorage() = default;
-  ~RichMarkStorage() = default;
+  MarkStorage() = default;
+  ~MarkStorage() = default;
 
   GeoCoords findMark(const std::string &name, bool &ok) const;
   void loadState(const mINI::INIStructure &ini);
@@ -50,11 +51,12 @@ private:
   // Mark Items
   struct ItemNode
   {
-    std::shared_ptr<RichMarkItem> ptr;
+    std::shared_ptr<MarkItem> ptr;
     mutable bool rmFlag{false};
   };
   std::vector<ItemNode> _markItems;
   inline std::vector<ItemNode> &markItems() { return _markItems; }
   inline const std::vector<ItemNode> &markItems() const { return _markItems; }
 };
+} // namespace Rich
 } // namespace ImOsm

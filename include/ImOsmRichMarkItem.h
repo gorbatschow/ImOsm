@@ -5,7 +5,9 @@
 #include <vector>
 
 namespace ImOsm {
-class RichMarkItem : public IRichItem {
+namespace Rich {
+class MarkItem : public IRichItem
+{
 public:
   struct Style {
     //using ImPlotMarker = int;
@@ -20,9 +22,9 @@ public:
     float radiusWeight{5.f};
   };
 
-  RichMarkItem();
-  RichMarkItem(const GeoCoords &coords, const std::string &text);
-  virtual ~RichMarkItem() override;
+  MarkItem();
+  MarkItem(const GeoCoords &coords, const std::string &text);
+  virtual ~MarkItem() override;
 
   virtual bool inBounds(float minLat,
                         float maxLat,
@@ -76,4 +78,5 @@ private:
   float _dphi{1.0};
   Style _style;
 };
+} // namespace Rich
 } // namespace ImOsm

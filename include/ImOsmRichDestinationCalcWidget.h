@@ -4,10 +4,11 @@
 #include <misc/cpp/imgui_stdlib.h>
 
 namespace ImOsm {
-class RichDestinationCalcWidget
+namespace Rich {
+class DestinationCalcWidget
 {
 public:
-  RichDestinationCalcWidget(std::shared_ptr<RichMarkStorage> storage)
+  DestinationCalcWidget(std::shared_ptr<MarkStorage> storage)
       : _storage{storage} {}
 
   void paint() {
@@ -37,9 +38,10 @@ public:
   }
 
 private:
-  std::shared_ptr<RichMarkStorage> _storage;
+  std::shared_ptr<MarkStorage> _storage;
   std::string _markNameA;
   GeoCoords _markA, _markB;
   float _distance{}, _bearing{};
 };
+} // namespace Rich
 } // namespace ImOsm

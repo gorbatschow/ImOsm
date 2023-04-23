@@ -2,18 +2,21 @@
 #include "ImOsmRichMarkItemWidget.h"
 #include <memory>
 #include <misc/cpp/imgui_stdlib.h>
-ImOsm::RichMarkEditorWidget::RichMarkEditorWidget(
-    std::shared_ptr<RichMapPlot> plot, std::shared_ptr<RichMarkStorage> storage)
+
+namespace ImOsm {
+namespace Rich {
+MarkEditorWidget::MarkEditorWidget(std::shared_ptr<RichMapPlot> plot,
+                                   std::shared_ptr<MarkStorage> storage)
     : _plot{plot}
     , _storage{storage} {
   _markNameInputText.reserve(32);
 }
 
-void ImOsm::RichMarkEditorWidget::loadState(const mINI::INIStructure &ini) {}
+void MarkEditorWidget::loadState(const mINI::INIStructure &ini) {}
 
-void ImOsm::RichMarkEditorWidget::saveState(mINI::INIStructure &ini) const {}
+void MarkEditorWidget::saveState(mINI::INIStructure &ini) const {}
 
-void ImOsm::RichMarkEditorWidget::paint() {
+void MarkEditorWidget::paint() {
   ImGui::TextUnformatted("Mark Editor");
   paint_latLonInput();
   ImGui::SameLine();
@@ -45,11 +48,11 @@ void ImOsm::RichMarkEditorWidget::paint() {
   }
 }
 
-void ImOsm::RichMarkEditorWidget::paint_latLonInput() {
+void MarkEditorWidget::paint_latLonInput() {
   ImGui::InputFloat2("Lat/Lon", _latLonInput.data(), _latlonFormat);
 }
 
-void ImOsm::RichMarkEditorWidget::paint_mousePickBtn() {
+void MarkEditorWidget::paint_mousePickBtn() {
   if (!_isMousePick) {
     if (ImGui::Button("Mouse Pick")) {
       _isMousePick = !_isMousePick;
@@ -64,17 +67,17 @@ void ImOsm::RichMarkEditorWidget::paint_mousePickBtn() {
   }
 }
 
-void ImOsm::RichMarkEditorWidget::paint_markNameInput() {
+void MarkEditorWidget::paint_markNameInput() {
   ImGui::InputText("Mark Name", &_markNameInputText);
 }
 
-void ImOsm::RichMarkEditorWidget::paint_addMarkBtn() {
+void MarkEditorWidget::paint_addMarkBtn() {
   if (ImGui::Button("Add Mark")) {
     _isMarkAdd = true;
   }
 }
 
-void ImOsm::RichMarkEditorWidget::paint_markTable() {
+void MarkEditorWidget::paint_markTable() {
   static const int tableCols{4};
   static const ImGuiTableColumnFlags colFlags{ImGuiTableColumnFlags_WidthFixed};
 
@@ -100,8 +103,7 @@ void ImOsm::RichMarkEditorWidget::paint_markTable() {
   }
 }
 
-void ImOsm::RichMarkEditorWidget::paint_markTableRow(
-    const RichMarkStorage::ItemNode &item) {
+void MarkEditorWidget::paint_markTableRow(const MarkStorage::ItemNode &item) {
   // Name
   ImGui::TableNextColumn();
   ImGui::TextUnformatted(item.ptr->text().c_str());
@@ -118,8 +120,8 @@ void ImOsm::RichMarkEditorWidget::paint_markTableRow(
   ImGui::TableNextColumn();
   if (ImGui::Button("Setup")) {
     ImGui::OpenPopup("Setup Item");
-    _itemWidget = std::make_unique<RichMarkItemWidget>(item.ptr,
-                                                       GeoCoords{_latLonInput});
+    _itemWidget = std::make_unique<MarkItemWidget>(item.ptr,
+                                                   GeoCoords{_latLonInput});
   }
 
   if (ImGui::BeginPopupModal("Setup Item")) {
@@ -145,3 +147,5 @@ void ImOsm::RichMarkEditorWidget::paint_markTableRow(
     item.rmFlag = true;
   }
 }
+} // namespace Rich
+} // namespace ImOsm

@@ -7,12 +7,13 @@
 #include <ini.h>
 
 namespace ImOsm {
-class RichMarkEditorWidget
+namespace Rich {
+class MarkEditorWidget
 {
 public:
-  RichMarkEditorWidget(std::shared_ptr<RichMapPlot> plot,
-                       std::shared_ptr<RichMarkStorage> storage);
-  virtual ~RichMarkEditorWidget() = default;
+  MarkEditorWidget(std::shared_ptr<RichMapPlot> plot,
+                   std::shared_ptr<MarkStorage> storage);
+  virtual ~MarkEditorWidget() = default;
 
   void loadState(const mINI::INIStructure &ini);
   void saveState(mINI::INIStructure &ini) const;
@@ -24,12 +25,12 @@ private:
   void paint_markNameInput();
   void paint_addMarkBtn();
   void paint_markTable();
-  void paint_markTableRow(const RichMarkStorage::ItemNode &item);
+  void paint_markTableRow(const MarkStorage::ItemNode &item);
 
   std::array<float, 2> _latLonInput{0.f, 0.f};
   std::shared_ptr<RichMapPlot> _plot;
-  std::shared_ptr<RichMarkStorage> _storage;
-  std::unique_ptr<RichMarkItemWidget> _itemWidget;
+  std::shared_ptr<MarkStorage> _storage;
+  std::unique_ptr<MarkItemWidget> _itemWidget;
 
   bool _isMousePick{false};
   std::string _markNameInputText{};
@@ -37,4 +38,5 @@ private:
 
   inline static const char _latlonFormat[]{"%.6f"};
 };
+} // namespace Rich
 } // namespace ImOsm

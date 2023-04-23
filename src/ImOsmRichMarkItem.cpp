@@ -1,13 +1,14 @@
 #include <ImOsmRichMarkItem.h>
 
-ImOsm::RichMarkItem::RichMarkItem() {
+namespace ImOsm {
+namespace Rich {
+MarkItem::MarkItem() {
   _osmCoords = _geoCoords.toOsmCoords();
   _rx.resize(int(360.0 / _dphi) + 1);
   _ry.resize(int(360.0 / _dphi) + 1);
 }
 
-ImOsm::RichMarkItem::RichMarkItem(const GeoCoords &coords,
-                                  const std::string &text)
+MarkItem::MarkItem(const GeoCoords &coords, const std::string &text)
     : _geoCoords{coords}
     , _text{text} {
   _osmCoords = _geoCoords.toOsmCoords();
@@ -15,12 +16,12 @@ ImOsm::RichMarkItem::RichMarkItem(const GeoCoords &coords,
   _ry.resize(int(360.0 / _dphi) + 1);
 }
 
-ImOsm::RichMarkItem::~RichMarkItem() = default;
+MarkItem::~MarkItem() = default;
 
-bool ImOsm::RichMarkItem::inBounds(float minLat,
-                                   float maxLat,
-                                   float minLon,
-                                   float maxLon) const {
+bool MarkItem::inBounds(float minLat,
+                        float maxLat,
+                        float minLon,
+                        float maxLon) const {
   /*
   const auto check{[minLat, maxLat, minLon, maxLon](double lat, double lon) {
     return lat > minLat && lat < maxLat && lon > minLon && lon < maxLon;
@@ -32,7 +33,7 @@ bool ImOsm::RichMarkItem::inBounds(float minLat,
   return true;
 }
 
-void ImOsm::RichMarkItem::paint() {
+void MarkItem::paint() {
   if (_style.markerEnabled) {
     ImPlot::SetNextMarkerStyle(_style.markerType,
                                _style.markerSize,
@@ -63,7 +64,7 @@ void ImOsm::RichMarkItem::paint() {
   }
 }
 
-void ImOsm::RichMarkItem::updateRadiusPoints() {
+void MarkItem::updateRadiusPoints() {
   /*
   double lat{}, lon{};
   double x{}, y{};
@@ -88,9 +89,11 @@ void ImOsm::RichMarkItem::updateRadiusPoints() {
   }
 }
 
-void ImOsm::RichMarkItem::updateRadiusBounds() {
+void MarkItem::updateRadiusBounds() {
   LatLon::destination(_latTR, _lonTR, _geoCoords.lat, _geoCoords.lon, _r, 45.0);
   LatLon::destination(_latBR, _lonBR, _geoCoords.lat, _geoCoords.lon, _r, 135.0);
   LatLon::destination(_latBL, _lonBL, _geoCoords.lat, _geoCoords.lon, _r, 225.0);
   LatLon::destination(_latTL, _lonTL, _geoCoords.lat, _geoCoords.lon, _r, 315.0);
 }
+} // namespace Rich
+} // namespace ImOsm

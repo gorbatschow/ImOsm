@@ -1,7 +1,8 @@
 #include "ImOsmRichMarkStorage.h"
 
 namespace ImOsm {
-GeoCoords RichMarkStorage::findMark(const std::string &name, bool &ok) const {
+namespace Rich {
+GeoCoords MarkStorage::findMark(const std::string &name, bool &ok) const {
   const auto it{std::find_if(_markItems.begin(),
                              _markItems.end(),
                              [name](const ItemNode &node) {
@@ -15,10 +16,10 @@ GeoCoords RichMarkStorage::findMark(const std::string &name, bool &ok) const {
   return {};
 }
 
-void RichMarkStorage::loadState(const mINI::INIStructure &ini) {
+void MarkStorage::loadState(const mINI::INIStructure &ini) {
   for (auto it{ini.begin()}; it != ini.end(); ++it) {
     if (it->first.starts_with("mark_")) {
-      auto ptr{std::make_shared<RichMarkItem>()};
+      auto ptr{std::make_shared<MarkItem>()};
       if (it->second.has("text")) {
         ptr->setText(it->second.get("text"));
       }
@@ -67,7 +68,7 @@ void RichMarkStorage::loadState(const mINI::INIStructure &ini) {
   _loadState = true;
 }
 
-void RichMarkStorage::saveState(mINI::INIStructure &ini) const {
+void MarkStorage::saveState(mINI::INIStructure &ini) const {
   static const auto key_base{"mark_"};
   unsigned index{};
   for (const auto &item : _markItems) {
@@ -90,14 +91,16 @@ void RichMarkStorage::saveState(mINI::INIStructure &ini) const {
   }
 }
 
-void RichMarkStorage::addMark(const GeoCoords &coords, const std::string &name) {
-  _markItems.push_back({std::make_shared<RichMarkItem>(coords, name)});
+void MarkStorage::addMark(const GeoCoords &coords, const std::string &name) {
+  _markItems.push_back({std::make_shared<MarkItem>(coords, name)});
 }
 
-void RichMarkStorage::rmMarks() {
+void MarkStorage::rmMarks() {
   _markItems.erase(std::remove_if(_markItems.begin(),
                                   _markItems.end(),
                                   [](auto &item) { return item.rmFlag; }),
                    _markItems.end());
 }
+
+} // namespace Rich
 } // namespace ImOsm

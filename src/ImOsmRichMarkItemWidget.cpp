@@ -1,11 +1,11 @@
 #include "ImOsmRichMarkItemWidget.h"
 
 namespace ImOsm {
-
+namespace Rich {
 inline static constexpr const char* MarkerTypeName(ImPlotMarker marker);
 
-RichMarkItemWidget::RichMarkItemWidget(std::shared_ptr<RichMarkItem> item,
-                                       const GeoCoords& latLonPicked)
+MarkItemWidget::MarkItemWidget(std::shared_ptr<MarkItem> item,
+                               const GeoCoords& latLonPicked)
     : _item{item}
     , _pickedCoords{latLonPicked} {
   _text = _item->text();
@@ -25,7 +25,7 @@ RichMarkItemWidget::RichMarkItemWidget(std::shared_ptr<RichMarkItem> item,
                  _item->style().markerFill.z};
 }
 
-void RichMarkItemWidget::paint() {
+void MarkItemWidget::paint() {
   ImGui::InputText("Name", &_text);
   ImGui::InputFloat2("Lat/Lon [deg]", _latLon.data(), _latLonFormat);
   ImGui::SameLine();
@@ -45,7 +45,7 @@ void RichMarkItemWidget::paint() {
   ImGui::ColorEdit3("Marker Fill", _markerFill.data());
 }
 
-void RichMarkItemWidget::apply() {
+void MarkItemWidget::apply() {
   _item->setText(_text);
   _item->setCoords({_latLon[0], _latLon[1]});
   _item->setRadius(_radius);
@@ -64,13 +64,13 @@ void RichMarkItemWidget::apply() {
                                1.0};
 }
 
-void RichMarkItemWidget::paint_pickedBtn() {
+void MarkItemWidget::paint_pickedBtn() {
   if (ImGui::Button("Picked")) {
     _latLon = {float(_pickedCoords.lat), float(_pickedCoords.lon)};
   }
 }
 
-void RichMarkItemWidget::paint_markerCombo() {
+void MarkItemWidget::paint_markerCombo() {
   if (ImGui::BeginCombo("Marker", _markerTypeName.c_str())) {
     if (ImGui::Selectable(MarkerTypeName(ImPlotMarker_Circle),
                           _markerType == ImPlotMarker_Circle)) {
@@ -105,5 +105,5 @@ inline static constexpr const char* MarkerTypeName(ImPlotMarker marker) {
   }
   return "Unknow";
 }
-
+} // namespace Rich
 } // namespace ImOsm

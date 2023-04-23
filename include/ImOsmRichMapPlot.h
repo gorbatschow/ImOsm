@@ -7,16 +7,18 @@
 #include <vector>
 
 namespace ImOsm {
+
+namespace Rich {
 enum class GeoMarkType { Text };
 
-class RichMapPlot : public MapPlot
+class RichMapPlot : public ImOsm::MapPlot
 {
 public:
   RichMapPlot() {}
   virtual ~RichMapPlot() = default;
 
   virtual void paintOverMap() override {
-    MapPlot::paintOverMap();
+    ImOsm::MapPlot::paintOverMap();
 
     _items.erase(std::remove_if(_items.begin(),
                                 _items.end(),
@@ -36,4 +38,5 @@ public:
 private:
   std::vector<std::weak_ptr<IRichItem> > _items;
 };
+} // namespace Rich
 } // namespace ImOsm

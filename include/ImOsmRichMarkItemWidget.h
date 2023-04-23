@@ -5,12 +5,12 @@
 #include <misc/cpp/imgui_stdlib.h>
 
 namespace ImOsm {
-class RichMarkItemWidget
+namespace Rich {
+class MarkItemWidget
 {
 public:
-  RichMarkItemWidget(std::shared_ptr<RichMarkItem> item,
-                     const GeoCoords &pickedCoords);
-  ~RichMarkItemWidget() = default;
+  MarkItemWidget(std::shared_ptr<MarkItem> item, const GeoCoords &pickedCoords);
+  ~MarkItemWidget() = default;
   void paint();
   void apply();
 
@@ -19,7 +19,7 @@ private:
   void paint_markerCombo();
 
 private:
-  std::shared_ptr<RichMarkItem> _item;
+  std::shared_ptr<MarkItem> _item;
   GeoCoords _pickedCoords{};
 
   inline static constexpr char _latLonFormat[]{"%.6f"};
@@ -33,5 +33,5 @@ private:
   float _markerSize{}, _markerWeight{}, _radiusWeight{};
   std::array<float, 3> _markerFill{};
 };
-
+} // namespace Rich
 } // namespace ImOsm

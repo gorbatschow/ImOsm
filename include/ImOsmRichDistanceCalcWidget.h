@@ -6,10 +6,11 @@
 #include <string>
 
 namespace ImOsm {
-class RichDistanceCalcWidget
+namespace Rich {
+class DistanceCalcWidget
 {
 public:
-  RichDistanceCalcWidget(std::shared_ptr<RichMarkStorage> storage)
+  DistanceCalcWidget(std::shared_ptr<MarkStorage> storage)
       : _storage{storage} {}
 
   void paint() {
@@ -48,7 +49,8 @@ public:
 private:
   std::string _markNameA, _markNameB;
   GeoCoords _markA, _markB, _markC;
-  std::shared_ptr<RichMarkStorage> _storage;
+  std::shared_ptr<MarkStorage> _storage;
   double _distance{}, _bearing{};
 };
+} // namespace Rich
 } // namespace ImOsm
