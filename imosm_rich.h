@@ -5,4 +5,5 @@
 #include <ImOsmRichMapPlot.h>
 #include <ImOsmRichMarkEditorWidget.h>
 #include <ImOsmRichMarkItem.h>
+#include <ImOsmRichMarkItemWidget.h>
 #include <ImOsmRichMarkStorage.h>
