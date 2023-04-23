@@ -19,7 +19,7 @@ public:
     float markerWeight{};
     ImVec4 markerFill{1.f, 0.f, 0.f, 1.f};
     ImVec4 markerOutline{};
-    float radiusWeight{5.f};
+    float radiusWeight{3.f};
   };
 
   MarkItem();
