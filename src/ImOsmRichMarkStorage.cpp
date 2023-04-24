@@ -3,11 +3,9 @@
 namespace ImOsm {
 namespace Rich {
 GeoCoords MarkStorage::findMark(const std::string &name, bool &ok) const {
-  const auto it{std::find_if(_markItems.begin(),
-                             _markItems.end(),
-                             [name](const ItemNode &node) {
-                               return node.ptr->text() == name;
-                             })};
+  const auto it{std::find_if(
+      _markItems.begin(), _markItems.end(),
+      [name](const ItemNode &node) { return node.ptr->text() == name; })};
   if (it != _markItems.end()) {
     ok = true;
     return (*it).ptr->geoCoords();
@@ -34,12 +32,12 @@ void MarkStorage::loadState(const mINI::INIStructure &ini) {
         ptr->style().textEnabled = std::stoi(it->second.get("text_enabled"));
       }
       if (it->second.has("marker_enabled")) {
-        ptr->style().markerEnabled = std::stoi(
-            it->second.get("marker_enabled"));
+        ptr->style().markerEnabled =
+            std::stoi(it->second.get("marker_enabled"));
       }
       if (it->second.has("radius_enabled")) {
-        ptr->style().markerEnabled = std::stoi(
-            it->second.get("radius_enabled"));
+        ptr->style().radiusEnabled =
+            std::stoi(it->second.get("radius_enabled"));
       }
       if (it->second.has("radius_weight")) {
         ptr->style().radiusWeight = std::stof(it->second.get("radius_weight"));
@@ -53,9 +51,8 @@ void MarkStorage::loadState(const mINI::INIStructure &ini) {
       if (it->second.has("marker_weight")) {
         ptr->style().markerWeight = std::stof(it->second.get("marker_weight"));
       }
-      if (it->second.has("marker_fill_x") && it->second.has("marker_fill_y")
-          && it->second.has("marker_fill_z")
-          && it->second.has("marker_fill_w")) {
+      if (it->second.has("marker_fill_x") && it->second.has("marker_fill_y") &&
+          it->second.has("marker_fill_z") && it->second.has("marker_fill_w")) {
         ptr->style().markerFill = {std::stof(it->second.get("marker_fill_x")),
                                    std::stof(it->second.get("marker_fill_y")),
                                    std::stof(it->second.get("marker_fill_z")),
@@ -78,8 +75,10 @@ void MarkStorage::saveState(mINI::INIStructure &ini) const {
     ini[key]["lon"] = std::to_string(item.ptr->geoCoords().lon);
     ini[key]["radius"] = std::to_string(item.ptr->radius());
     ini[key]["text_enabled"] = std::to_string(item.ptr->style().textEnabled);
-    ini[key]["marker_enabled"] = std::to_string(item.ptr->style().markerEnabled);
-    ini[key]["radius_enabled"] = std::to_string(item.ptr->style().radiusEnabled);
+    ini[key]["marker_enabled"] =
+        std::to_string(item.ptr->style().markerEnabled);
+    ini[key]["radius_enabled"] =
+        std::to_string(item.ptr->style().radiusEnabled);
     ini[key]["radius_weight"] = std::to_string(item.ptr->style().radiusWeight);
     ini[key]["marker_type"] = std::to_string(item.ptr->style().markerType);
     ini[key]["marker_size"] = std::to_string(item.ptr->style().markerSize);
@@ -96,8 +95,7 @@ void MarkStorage::addMark(const GeoCoords &coords, const std::string &name) {
 }
 
 void MarkStorage::rmMarks() {
-  _markItems.erase(std::remove_if(_markItems.begin(),
-                                  _markItems.end(),
+  _markItems.erase(std::remove_if(_markItems.begin(), _markItems.end(),
                                   [](auto &item) { return item.rmFlag; }),
                    _markItems.end());
 }
