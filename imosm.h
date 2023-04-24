@@ -9,6 +9,7 @@
 #include <ImOsmTileDummy.h>
 #include <ImOsmTileGrabber.h>
 #include <ImOsmTileGrabberUrl.h>
+#include <ImOsmTileGrabberWidget.h>
 #include <ImOsmTileLoader.h>
 #include <ImOsmTileLoaderUrl.h>
 #include <ImOsmTileSaver.h>
