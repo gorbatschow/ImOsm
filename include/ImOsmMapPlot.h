@@ -11,6 +11,10 @@ public:
   MapPlot(std::shared_ptr<ITileLoader> &loader);
   virtual ~MapPlot() = default;
 
+  inline void setTileLoader(std::shared_ptr<ITileLoader> loader) {
+    _loader = loader;
+  }
+
   virtual void paint();
   virtual void paintOverMap() {}
 
