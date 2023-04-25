@@ -1,5 +1,6 @@
 #pragma once
 #include "implot.h"
+#include <algorithm>
 #include <array>
 #include <latlon.h>
 #include <math.h>
@@ -34,6 +35,32 @@ inline double y2lat(double y, int z = 0) {
 inline int lon2tx(double lon, int z) { return int(floor(lon2x(lon, z))); }
 
 inline int lat2ty(double lat, int z) { return int(floor(lat2y(lat, z))); }
+
+inline std::pair<int, int> minmax_lon2tx(const double minLon,
+                                         const double maxLon, const int z) {
+  const auto tilesNum{(1 << z)};
+  return {std::minmax(std::clamp(lon2tx(minLon, z), 0, tilesNum),
+                      std::clamp(lon2tx(maxLon, z), 0, tilesNum))};
+}
+
+inline std::pair<int, int> minmax_lat2ty(const double minLat,
+                                         const double maxLat, const int z) {
+  const auto tilesNum{(1 << z)};
+  return {std::minmax(std::clamp(lat2ty(minLat, z), 0, tilesNum),
+                      std::clamp(lat2ty(maxLat, z), 0, tilesNum))};
+}
+
+inline int countTiles(const double minLat, const double maxLat,
+                      const double minLon, const double maxLon, const int minZ,
+                      const int maxZ) {
+  int counter{};
+  for (auto z{minZ}; z != maxZ + 1; ++z) {
+    const auto tx{minmax_lon2tx(minLon, maxLon, z)};
+    const auto ty{minmax_lat2ty(minLat, maxLat, z)};
+    counter += (tx.second - tx.first) * (ty.second - ty.first);
+  }
+  return counter;
+}
 
 inline constexpr double MinLat{-85.0};
 inline constexpr double MaxLat{+85.0};
@@ -79,15 +106,11 @@ struct GeoCoords {
   }
 
   GeoCoords() = default;
-  GeoCoords(double lat_, double lon_)
-      : lat{lat_}
-      , lon{lon_} {}
+  GeoCoords(double lat_, double lon_) : lat{lat_}, lon{lon_} {}
   GeoCoords(const std::array<double, 2> &arr)
-      : lat{arr.front()}
-      , lon{arr.back()} {}
+      : lat{arr.front()}, lon{arr.back()} {}
   GeoCoords(const std::array<float, 2> &arr)
-      : lat{arr.front()}
-      , lon{arr.back()} {}
+      : lat{arr.front()}, lon{arr.back()} {}
 
   inline double distance(const GeoCoords &other) const {
     return LatLon::distance(lat, lon, other.lat, other.lon);

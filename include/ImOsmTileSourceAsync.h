@@ -12,7 +12,6 @@ using namespace std::chrono_literals;
 
 class TileSourceAsync : public ITileSource {
 public:
-  TileSourceAsync();
   TileSourceAsync(int requestLimit, bool preload);
   virtual ~TileSourceAsync() = default;
 
@@ -25,6 +24,9 @@ public:
   virtual void takeAll(std::vector<std::shared_ptr<ITile>> &tiles) override;
   virtual int takeReady(std::vector<std::shared_ptr<ITile>> &tiles) override;
   virtual bool saveAll(std::shared_ptr<ITileSaver> saver) override;
+
+  virtual bool preload() const override { return _preload; }
+  virtual int requestLimit() const override { return _requestLimit; }
 
 protected:
   virtual bool receiveTile(int z, int x, int y,

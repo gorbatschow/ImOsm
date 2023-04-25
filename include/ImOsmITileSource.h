@@ -18,8 +18,10 @@ public:
   virtual bool canTakeAll() = 0;
   virtual void takeAll(std::vector<std::shared_ptr<ITile>> &tiles) = 0;
   virtual int takeReady(std::vector<std::shared_ptr<ITile>> &tiles) = 0;
-
   virtual bool saveAll(std::shared_ptr<ITileSaver> saver) = 0;
+
+  virtual bool preload() const = 0;
+  virtual int requestLimit() const = 0;
 };
 
 } // namespace ImOsm

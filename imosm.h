@@ -16,4 +16,5 @@
 #include <ImOsmTileSourceAsync.h>
 #include <ImOsmTileSourceUrl.h>
 #include <ImOsmTileSourceUrlImpl.h>
+#include <ImOsmTileSourceWidget.h>
 #include <ImOsmTileTexture.h>

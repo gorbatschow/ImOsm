@@ -1,10 +1,10 @@
 #include "ImOsmTileSourceUrl.h"
 
 namespace ImOsm {
-TileSourceUrl::TileSourceUrl() {}
 
-TileSourceUrl::TileSourceUrl(const std::string &userAgent)
-    : _userAgent{userAgent} {}
+TileSourceUrl::TileSourceUrl(int requestLimit, bool preload,
+                             const std::string &userAgent)
+    : TileSourceAsync{requestLimit, preload}, _userAgent{userAgent} {}
 
 bool TileSourceUrl::receiveTile(int z, int x, int y,
                                 std::vector<std::byte> &blob) {

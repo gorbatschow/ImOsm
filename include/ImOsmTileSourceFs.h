@@ -6,8 +6,9 @@
 namespace ImOsm {
 class TileSourceFs : public TileSourceAsync {
 public:
-  TileSourceFs() {}
-  TileSourceFs(const std::filesystem::path &basePath) : _basePath{basePath} {}
+  TileSourceFs(int requestLimit, bool preload,
+               const std::filesystem::path &basePath)
+      : TileSourceAsync{requestLimit, preload}, _basePath{basePath} {}
   virtual ~TileSourceFs() = default;
 
   static std::string FileName(int z, int x, int y) {
@@ -49,9 +50,9 @@ private:
 
 class TileSourceFsDir : public TileSourceFs {
 public:
-  TileSourceFsDir() {}
-  TileSourceFsDir(const std::filesystem::path &basePath)
-      : TileSourceFs{basePath} {}
+  TileSourceFsDir(int requestLimit, bool preload,
+                  const std::filesystem::path &basePath)
+      : TileSourceFs{requestLimit, preload, basePath} {}
   virtual ~TileSourceFsDir() = default;
 
   static std::filesystem::path DirPath(std::filesystem::path basePath,
@@ -71,9 +72,9 @@ protected:
 
 class TileSourceFsSubDir : public TileSourceFs {
 public:
-  TileSourceFsSubDir() {}
-  TileSourceFsSubDir(const std::filesystem::path &basePath)
-      : TileSourceFs{basePath} {}
+  TileSourceFsSubDir(int requestLimit, bool preload,
+                     const std::filesystem::path &basePath)
+      : TileSourceFs{requestLimit, preload, basePath} {}
   virtual ~TileSourceFsSubDir() = default;
 
   static std::filesystem::path DirPath(std::filesystem::path basePath, int z,

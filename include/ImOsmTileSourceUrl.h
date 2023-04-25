@@ -7,8 +7,8 @@
 namespace ImOsm {
 class TileSourceUrl : public TileSourceAsync {
 public:
-  TileSourceUrl();
-  TileSourceUrl(const std::string &userAgent);
+  TileSourceUrl(int requestLimit, bool preload,
+                const std::string &userAgent = "curl");
   virtual ~TileSourceUrl() = default;
 
 protected:

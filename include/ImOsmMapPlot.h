@@ -21,14 +21,10 @@ public:
   inline void resetBounds();
 
   // Geo CS routines
-  inline void setBoundsGeo(float minLat,
-                           float maxLat,
-                           float minLon,
+  inline void setBoundsGeo(float minLat, float maxLat, float minLon,
                            float maxLon);
 
-  inline void getBoundsGeo(float &minLat,
-                           float &maxLat,
-                           float &minLon,
+  inline void getBoundsGeo(float &minLat, float &maxLat, float &minLon,
                            float &maxLon) const;
 
   inline float minLat() const { return _minLat; }
@@ -70,8 +66,8 @@ public:
   }
 
   inline bool mouseOnPlot() const {
-    return _mousePos.x > _plotLims.X.Min && _mousePos.x < _plotLims.X.Max
-           && _mousePos.y > _plotLims.Y.Min && _mousePos.y < _plotLims.Y.Max;
+    return _mousePos.x > _plotLims.X.Min && _mousePos.x < _plotLims.X.Max &&
+           _mousePos.y > _plotLims.Y.Min && _mousePos.y < _plotLims.Y.Max;
   }
 
 private:
@@ -124,9 +120,7 @@ inline void MapPlot::resetBounds() {
   _setBounds = SetBounds::Geo;
 }
 
-inline void MapPlot::setBoundsGeo(float minLat,
-                                  float maxLat,
-                                  float minLon,
+inline void MapPlot::setBoundsGeo(float minLat, float maxLat, float minLon,
                                   float maxLon) {
   _minLat = minLat;
   _maxLat = maxLat;
@@ -135,9 +129,7 @@ inline void MapPlot::setBoundsGeo(float minLat,
   _setBounds = SetBounds::Geo;
 }
 
-inline void MapPlot::getBoundsGeo(float &minLat,
-                                  float &maxLat,
-                                  float &minLon,
+inline void MapPlot::getBoundsGeo(float &minLat, float &maxLat, float &minLon,
                                   float &maxLon) const {
   minLat = _minLat;
   maxLat = _maxLat;
