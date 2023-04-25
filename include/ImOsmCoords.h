@@ -14,46 +14,62 @@ inline constexpr double RAD{std::numbers::pi_v<double> / 180.0};
 inline constexpr double DEG{180.0 / std::numbers::pi_v<double>};
 inline constexpr double R{6371.0};
 
+inline constexpr double MinLat{-85.0};
+inline constexpr double MaxLat{+85.0};
+inline constexpr double MinLon{-179.9};
+inline constexpr double MaxLon{+179.9};
+inline constexpr int MinZoom{0};
+inline constexpr int MaxZoom{18};
+
+inline constexpr int POW2[]{1,     2,     4,     8,      16,    32,   64,
+                            128,   256,   512,   102,    2048,  4096, 8192,
+                            16384, 32768, 65536, 131072, 262144};
+
 inline double lon2x(double lon, int z = 0) {
-  return ((lon + 180.0) / 360.0 * (1 << z));
+  return (lon + 180.0) / 360.0 * double(POW2[z]);
 }
 
 inline double lat2y(double lat, int z = 0) {
   lat *= RAD;
-  return (1.0 - asinh(tan(lat)) / PI) / 2.0 * double(1 << z);
+  return (1.0 - asinh(tan(lat)) / PI) / 2.0 * double(POW2[z]);
 }
 
 inline double x2lon(double x, int z = 0) {
-  return x / (1 << z) * 360.0 - 180.0;
+  return x / double(POW2[z]) * 360.0 - 180.0;
 }
 
 inline double y2lat(double y, int z = 0) {
-  const double n{PI - PI2 * y / double(1 << z)};
+  const double n{PI - PI2 * y / double(POW2[z])};
   return DEG * atan(0.5 * (exp(n) - exp(-n)));
 }
 
-inline int lon2tx(double lon, int z) { return int(floor(lon2x(lon, z))); }
+inline int lon2tx(double lon, int z) {
+  return std::clamp(int(floor(lon2x(lon, z))), 0, POW2[z]);
+}
 
-inline int lat2ty(double lat, int z) { return int(floor(lat2y(lat, z))); }
+inline int lat2ty(double lat, int z) {
+  return std::clamp(int(floor(lat2y(lat, z))), 0, POW2[z]);
+}
 
 inline std::pair<int, int> minmax_lon2tx(const double minLon,
                                          const double maxLon, const int z) {
-  const auto tilesNum{(1 << z)};
-  return {std::minmax(std::clamp(lon2tx(minLon, z), 0, tilesNum),
-                      std::clamp(lon2tx(maxLon, z), 0, tilesNum))};
+  std::pair<int, int> mm{std::minmax(lon2tx(minLon, z), lon2tx(maxLon, z))};
+  mm.second += 1;
+  return mm;
 }
 
 inline std::pair<int, int> minmax_lat2ty(const double minLat,
                                          const double maxLat, const int z) {
-  const auto tilesNum{(1 << z)};
-  return {std::minmax(std::clamp(lat2ty(minLat, z), 0, tilesNum),
-                      std::clamp(lat2ty(maxLat, z), 0, tilesNum))};
+  std::pair<int, int> mm{std::minmax(lat2ty(minLat, z), lat2ty(maxLat, z))};
+  mm.second += 1;
+  return mm;
 }
 
 inline int countTiles(const double minLat, const double maxLat,
                       const double minLon, const double maxLon, const int minZ,
-                      const int maxZ) {
+                      int maxZ) {
   int counter{};
+  maxZ = std::clamp(maxZ, MinZoom, MaxZoom - 1);
   for (auto z{minZ}; z != maxZ + 1; ++z) {
     const auto tx{minmax_lon2tx(minLon, maxLon, z)};
     const auto ty{minmax_lat2ty(minLat, maxLat, z)};
@@ -61,13 +77,6 @@ inline int countTiles(const double minLat, const double maxLat,
   }
   return counter;
 }
-
-inline constexpr double MinLat{-85.0};
-inline constexpr double MaxLat{+85.0};
-inline constexpr double MinLon{-179.9};
-inline constexpr double MaxLon{+179.9};
-inline constexpr int MinZoom{0};
-inline constexpr int MaxZoom{18};
 
 struct OsmCoords;
 struct GeoCoords;
