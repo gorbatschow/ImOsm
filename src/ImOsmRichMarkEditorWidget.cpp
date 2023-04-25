@@ -7,8 +7,7 @@ namespace ImOsm {
 namespace Rich {
 MarkEditorWidget::MarkEditorWidget(std::shared_ptr<RichMapPlot> plot,
                                    std::shared_ptr<MarkStorage> storage)
-    : _plot{plot}
-    , _storage{storage} {
+    : _plot{plot}, _storage{storage} {
   _markNameInputText.reserve(32);
 }
 
@@ -49,7 +48,9 @@ void MarkEditorWidget::paint() {
 }
 
 void MarkEditorWidget::paint_latLonInput() {
+  ImGui::PushItemWidth(200 + ImGui::GetStyle().ItemSpacing.x / 2);
   ImGui::InputFloat2("Lat/Lon", _latLonInput.data(), _latlonFormat);
+  ImGui::PopItemWidth();
 }
 
 void MarkEditorWidget::paint_mousePickBtn() {
@@ -68,7 +69,9 @@ void MarkEditorWidget::paint_mousePickBtn() {
 }
 
 void MarkEditorWidget::paint_markNameInput() {
+  ImGui::PushItemWidth(100);
   ImGui::InputText("Mark Name", &_markNameInputText);
+  ImGui::PopItemWidth();
 }
 
 void MarkEditorWidget::paint_addMarkBtn() {
@@ -120,8 +123,8 @@ void MarkEditorWidget::paint_markTableRow(const MarkStorage::ItemNode &item) {
   ImGui::TableNextColumn();
   if (ImGui::Button("Setup")) {
     ImGui::OpenPopup("Setup Item");
-    _itemWidget = std::make_unique<MarkItemWidget>(item.ptr,
-                                                   GeoCoords{_latLonInput});
+    _itemWidget =
+        std::make_unique<MarkItemWidget>(item.ptr, GeoCoords{_latLonInput});
   }
 
   if (ImGui::BeginPopupModal("Setup Item")) {
