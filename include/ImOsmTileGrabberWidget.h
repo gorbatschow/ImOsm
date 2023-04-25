@@ -21,16 +21,19 @@ public:
     ImGui::Text("Max Lat %.6f, Max Lon %.6f", _mapPlot->maxLat(),
                 _mapPlot->maxLon());
     ImGui::AlignTextToFramePadding();
-    ImGui::Text("Min Z %d", _mapPlot->zoom());
+
+    ImGui::SetNextItemWidth(100);
+    ImGui::InputInt("Min Z", &_minZ);
+    _minZ = std::clamp(_minZ, 0, MaxZoom);
     ImGui::SameLine();
     ImGui::SetNextItemWidth(100);
     ImGui::InputInt("Max Z", &_maxZ);
-    _maxZ = std::clamp(_maxZ, _mapPlot->zoom(), MaxZoom);
+    _maxZ = std::clamp(_maxZ, 0, MaxZoom);
     ImGui::SameLine();
-    ImGui::Text("Tiles Count: %d",
+    ImGui::Text("Tiles Count: %lu",
                 countTiles(_mapPlot->minLat(), _mapPlot->maxLat(),
-                           _mapPlot->minLon(), _mapPlot->maxLon(),
-                           _mapPlot->zoom(), _maxZ));
+                           _mapPlot->minLon(), _mapPlot->maxLon(), _minZ,
+                           _maxZ));
 
     ImGui::InputText("Tile Server URL##", &_url);
 
@@ -50,13 +53,12 @@ public:
     if (ImGui::Button("Grab")) {
       _tileTotal =
           countTiles(_mapPlot->minLat(), _mapPlot->maxLat(), _mapPlot->minLon(),
-                     _mapPlot->maxLon(), _mapPlot->zoom(), _maxZ);
+                     _mapPlot->maxLon(), _minZ, _maxZ);
       _tileGrabber = std::make_unique<TileGrabber>(
           std::make_shared<TileSourceUrlCustom>(_requestLimit, _preload, _url),
           std::make_shared<TileSaverSubDir>(_dirname));
       _tileGrabber->grab(_mapPlot->minLat(), _mapPlot->maxLat(),
-                         _mapPlot->minLon(), _mapPlot->maxLon(),
-                         _mapPlot->zoom(), _maxZ);
+                         _mapPlot->minLon(), _mapPlot->maxLon(), _minZ, _maxZ);
     }
     ImGui::SameLine();
     if (ImGui::Button("Stop") && _tileGrabber) {
@@ -83,7 +85,7 @@ private:
   std::shared_ptr<MapPlot> _mapPlot;
   int _requestLimit{10};
   const bool _preload{false};
-  int _maxZ{18};
+  int _minZ{0}, _maxZ{18};
   int _tileCount{0}, _tileTotal{};
   float _progress{};
 };

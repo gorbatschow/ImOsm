@@ -54,7 +54,7 @@ void MapPlot::paint() {
     _resX = _pixelsX / _rangeX;
     _resY = _pixelsY / _rangeY;
     _zoom = std::clamp(int(floor(log2(_resX / _tilePixels))), MinZoom, MaxZoom);
-    _tilesNum = (1 << _zoom);
+    _tilesNum = POW2[_zoom];
     _tileSize = 1.0 / float(_tilesNum);
 
     const auto minMaxLat{std::minmax(y2lat(_minY * _tilesNum, _zoom),

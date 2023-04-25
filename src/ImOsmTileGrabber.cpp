@@ -30,10 +30,10 @@ TileGrabber::onLaunchGrab(const double minLat, const double maxLat,
   FutureData data;
 
   for (auto z{minZ}; z != maxZ + 1; ++z) {
-    const auto tx{minmax_lon2tx(minLon, maxLon, z)};
-    const auto ty{minmax_lat2ty(minLat, maxLat, z)};
-    for (auto x{tx.first}; x != tx.second; ++x) {
-      for (auto y{ty.first}; y != ty.second; ++y) {
+    const auto tx{minmax_tx(minLon, maxLon, z)};
+    const auto ty{minmax_ty(minLat, maxLat, z)};
+    for (auto x{tx.first}; x != tx.second + 1; ++x) {
+      for (auto y{ty.first}; y != ty.second + 1; ++y) {
         if (_stop) {
           return data;
         }
