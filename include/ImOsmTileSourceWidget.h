@@ -14,13 +14,13 @@ public:
 
   void loadState(const mINI::INIStructure &ini);
   void saveState(mINI::INIStructure &ini) const;
-
   void paint();
 
 private:
   std::shared_ptr<MapPlot> _mapPlot;
   std::shared_ptr<ITileLoader> _tileLoader;
-  std::string _source;
-  int _requestLimit{10};
+
+  struct Ui;
+  std::unique_ptr<Ui> _ui;
 };
 } // namespace ImOsm
