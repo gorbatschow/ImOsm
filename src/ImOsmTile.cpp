@@ -17,10 +17,26 @@ Tile::~Tile() {
   }
 }
 
+const char *Tile::rawBlob() const {
+  return reinterpret_cast<const char *>(_rawBlob.data());
+}
+
+std::size_t Tile::rawBlobSize() const { return _rawBlob.size(); }
+
+const char *Tile::rgbaBlob() const {
+  return reinterpret_cast<const char *>(_rgbaBlob.data());
+}
+
+std::size_t Tile::rgbaBlobSize() const { return _rgbaBlob.size(); }
+
+ImTextureID Tile::texture() const {
+  return (ImTextureID)(intptr_t)glID();
+}
+
 GLuint Tile::glID() const {
   if (_id == 0) {
     if (_rgbaBlob.empty()) {
-      stbLoad();
+        stbLoad();
     }
     glLoad();
   }

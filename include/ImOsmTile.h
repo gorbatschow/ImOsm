@@ -10,23 +10,12 @@ public:
        bool preload = true);
   virtual ~Tile() override;
 
-  virtual const char *rawBlob() const override {
-    return reinterpret_cast<const char *>(_rawBlob.data());
-  }
-
-  virtual std::size_t rawBlobSize() const override { return _rawBlob.size(); }
-
+  virtual const char *rawBlob() const override;
+  virtual std::size_t rawBlobSize() const override;
   virtual void rgbaLoad() const override { stbLoad(); }
-
-  virtual const char *rgbaBlob() const override {
-    return reinterpret_cast<const char *>(_rgbaBlob.data());
-  }
-
-  virtual std::size_t rgbaBlobSize() const override { return _rgbaBlob.size(); }
-
-  virtual ImTextureID texture() const override {
-    return (ImTextureID)(intptr_t)glID();
-  }
+  virtual const char *rgbaBlob() const override;
+  virtual std::size_t rgbaBlobSize() const override;
+  virtual ImTextureID texture() const override;
 
 private:
   using GLuint = unsigned int;
@@ -35,8 +24,8 @@ private:
   void stbLoad() const;
   void glLoad() const;
 
+private:
   std::vector<std::byte> _rawBlob;
-
   mutable int _pxW{}, _pxH{};
   mutable int _channels{};
   mutable std::vector<std::byte> _rgbaBlob;
