@@ -14,8 +14,6 @@ public:
   void paint() {
     ImGui::PushID(this);
     ImGui::TextUnformatted("Tile Source");
-    ImGui::InputText("Tile Source##", &_source);
-    ImGui::SameLine();
     if (ImGui::Button("Apply")) {
       if (_source.starts_with("http")) {
         _tileLoader =
@@ -25,6 +23,8 @@ public:
       }
       _mapPlot->setTileLoader(_tileLoader);
     }
+    ImGui::SameLine();
+    ImGui::InputText("Tile Source##", &_source);
 
     ImGui::SetNextItemWidth(100);
     ImGui::InputInt("Max. Requests", &_requestLimit);
