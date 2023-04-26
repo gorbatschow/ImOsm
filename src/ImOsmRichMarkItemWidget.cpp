@@ -22,7 +22,7 @@ inline static constexpr const char *MarkerTypeName(ImPlotMarker marker);
 
 MarkItemWidget::MarkItemWidget(std::shared_ptr<MarkItem> item,
                                const GeoCoords &latLonPicked)
-    : _item{item}, _pickedCoords{latLonPicked} {
+    : _item{item}, _pickedCoords{latLonPicked}, _ui{std::make_unique<Ui>()} {
   _ui->text = _item->text();
   _ui->latLon[0] = _item->geoCoords().lat;
   _ui->latLon[1] = _item->geoCoords().lon;

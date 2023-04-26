@@ -1,7 +1,12 @@
 #include "ImOsmRichMarkStorage.h"
+#include "ImOsmRichMarkItem.h"
 
 namespace ImOsm {
 namespace Rich {
+MarkStorage::MarkStorage() = default;
+
+MarkStorage::~MarkStorage() = default;
+
 GeoCoords MarkStorage::findMark(const std::string &name, bool &ok) const {
   const auto it{std::find_if(
       _markItems.begin(), _markItems.end(),
@@ -98,6 +103,18 @@ void MarkStorage::rmMarks() {
   _markItems.erase(std::remove_if(_markItems.begin(), _markItems.end(),
                                   [](auto &item) { return item.rmFlag; }),
                    _markItems.end());
+}
+
+bool MarkStorage::handleLoadState() {
+  const bool loadState{_loadState};
+  _loadState = false;
+  return loadState;
+}
+
+bool MarkStorage::handlePickState() {
+  const bool pickState{_pickState};
+  _pickState = false;
+  return pickState;
 }
 
 } // namespace Rich

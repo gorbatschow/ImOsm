@@ -1,4 +1,5 @@
 #pragma once
+#include <ini.h>
 #include <memory>
 #include <string>
 
@@ -10,6 +11,9 @@ class TileSourceWidget {
 public:
   TileSourceWidget(std::shared_ptr<MapPlot> mapPlot);
   ~TileSourceWidget();
+
+  void loadState(const mINI::INIStructure &ini);
+  void saveState(mINI::INIStructure &ini) const;
 
   void paint();
 

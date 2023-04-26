@@ -1,5 +1,6 @@
 #include "ImOsmRichMarkEditorWidget.h"
 #include "ImOsmRichMapPlot.h"
+#include "ImOsmRichMarkItem.h"
 #include "ImOsmRichMarkItemWidget.h"
 #include <misc/cpp/imgui_stdlib.h>
 
@@ -88,10 +89,10 @@ void MarkEditorWidget::paint_addMarkBtn() {
 }
 
 void MarkEditorWidget::paint_markTable() {
-  static const int tableCols{4};
+  static const int tableCols{5};
   static const ImGuiTableColumnFlags colFlags{ImGuiTableColumnFlags_WidthFixed};
 
-  if (ImGui::BeginTable("MarkTabe", 5)) {
+  if (ImGui::BeginTable("MarkTabe", tableCols)) {
     ImGui::TableSetupColumn("Name", colFlags, 200);
     ImGui::TableSetupColumn("Lat", colFlags, 100);
     ImGui::TableSetupColumn("Lon", colFlags, 100);

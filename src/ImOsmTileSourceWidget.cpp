@@ -8,7 +8,8 @@ namespace ImOsm {
 TileSourceWidget::TileSourceWidget(std::shared_ptr<MapPlot> mapPlot)
     : _mapPlot{mapPlot} {
   _source = TileSourceUrlOsm::URL_TPL;
-  _mapPlot->setTileLoader(std::make_shared<TileLoaderUrlMap>(_source));
+  _mapPlot->setTileLoader(
+      std::make_shared<TileLoaderUrlMap>(_source, _requestLimit));
 }
 
 TileSourceWidget::~TileSourceWidget() = default;
@@ -33,12 +34,12 @@ void TileSourceWidget::paint() {
   ImGui::SameLine();
   if (ImGui::Button("OSM")) {
     _source = TileSourceUrlOsm::URL_TPL;
-    _mapPlot->setTileLoader(std::make_shared<TileLoaderOsmMap>());
+    _mapPlot->setTileLoader(std::make_shared<TileLoaderOsmMap>(_requestLimit));
   };
   ImGui::SameLine();
   if (ImGui::Button("ARC")) {
     _source = TileSourceUrlArc::URL_TPL;
-    _mapPlot->setTileLoader(std::make_shared<TileLoaderArcMap>());
+    _mapPlot->setTileLoader(std::make_shared<TileLoaderArcMap>(_requestLimit));
   };
 
   ImGui::PopID();
