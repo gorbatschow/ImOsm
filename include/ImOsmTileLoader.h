@@ -1,8 +1,12 @@
 #pragma once
 #include "ImOsmITileLoader.h"
-#include "ImOsmITileSource.h"
+#include <memory>
+#include <vector>
 
 namespace ImOsm {
+class ITile;
+class ITileSource;
+
 class TileLoader : public ITileLoader {
 public:
   TileLoader(std::shared_ptr<ITileSource> source);

@@ -1,19 +1,15 @@
 #pragma once
-#include "ImOsmITileSaver.h"
 #include "ImOsmITileSource.h"
 #include "ImOsmTileAsync.h"
-#include <algorithm>
-#include <array>
-#include <future>
-#include <thread>
 
 namespace ImOsm {
-using namespace std::chrono_literals;
+class ITile;
+class ITileSaver;
 
 class TileSourceAsync : public ITileSource {
 public:
   TileSourceAsync(int requestLimit, bool preload);
-  virtual ~TileSourceAsync() = default;
+  virtual ~TileSourceAsync();
 
   virtual bool hasRequest() override;
   virtual bool hasRequest(int z, int x, int y) override;

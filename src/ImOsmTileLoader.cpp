@@ -1,8 +1,10 @@
 #include "ImOsmTileLoader.h"
+#include "ImOsmITile.h"
+#include "ImOsmITileSource.h"
 #include <algorithm>
 
-ImOsm::TileLoader::TileLoader(std::shared_ptr<ITileSource> source)
-    : _source{source} {}
+namespace ImOsm {
+TileLoader::TileLoader(std::shared_ptr<ITileSource> source) : _source{source} {}
 
 void ImOsm::TileLoader::beginLoad(int z, int xmin, int xmax, int ymin,
                                   int ymax) {
@@ -15,7 +17,7 @@ void ImOsm::TileLoader::beginLoad(int z, int xmin, int xmax, int ymin,
   _source->takeReady(_tiles);
 }
 
-ImTextureID ImOsm::TileLoader::tileAt(int z, int x, int y) {
+ImTextureID TileLoader::tileAt(int z, int x, int y) {
   const auto cond{[z, x, y](const std::shared_ptr<ITile> &tile) {
     return tile->isTileZXY(z, x, y);
   }};
@@ -33,3 +35,4 @@ ImTextureID ImOsm::TileLoader::tileAt(int z, int x, int y) {
 
   return 0;
 }
+} // namespace ImOsm

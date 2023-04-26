@@ -26,11 +26,11 @@ public:
   virtual bool isDummy() const override final { return rawBlob() == nullptr; }
 
   virtual const char *rawBlob() const override { return nullptr; }
-  virtual std::size_t rawBlobSize() const override { return 0; }
+  virtual size_t rawBlobSize() const override { return 0; }
 
   virtual void rgbaLoad() const override {}
   virtual const char *rgbaBlob() const override { return nullptr; }
-  virtual std::size_t rgbaBlobSize() const override { return 0; }
+  virtual size_t rgbaBlobSize() const override { return 0; }
 
   virtual ImTextureID texture() const override { return 0; }
 

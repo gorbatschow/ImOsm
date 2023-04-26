@@ -1,92 +1,23 @@
 #pragma once
-#include "ImOsmMapPlot.h"
-#include "ImOsmTileGrabber.h"
-#include "ImOsmTileSaver.h"
-#include "ImOsmTileSourceUrlImpl.h"
-#include <cmath>
-#include <imgui.h>
-#include <misc/cpp/imgui_stdlib.h>
-#include <string>
+#include <memory>
 
 namespace ImOsm {
+class MapPlot;
+class TileGrabber;
+class MapPlot;
+
 class TileGrabberWidget {
 public:
-  TileGrabberWidget(std::shared_ptr<MapPlot> mapPlot) : _mapPlot{mapPlot} {}
+  TileGrabberWidget(std::shared_ptr<MapPlot> mapPlot);
+  ~TileGrabberWidget();
 
-  void paint() {
-    ImGui::PushID(this);
-    ImGui::TextUnformatted("Tile Grabber");
-    ImGui::Text("Min Lat %.6f, Min Lon %.6f", _mapPlot->minLat(),
-                _mapPlot->minLon());
-    ImGui::Text("Max Lat %.6f, Max Lon %.6f", _mapPlot->maxLat(),
-                _mapPlot->maxLon());
-    ImGui::AlignTextToFramePadding();
-
-    ImGui::SetNextItemWidth(100);
-    ImGui::InputInt("Min Z", &_minZ);
-    _minZ = std::clamp(_minZ, 0, MaxZoom);
-    ImGui::SameLine();
-    ImGui::SetNextItemWidth(100);
-    ImGui::InputInt("Max Z", &_maxZ);
-    _maxZ = std::clamp(_maxZ, 0, MaxZoom);
-    ImGui::SameLine();
-    ImGui::Text("Tiles Count: %lu",
-                countTiles(_mapPlot->minLat(), _mapPlot->maxLat(),
-                           _mapPlot->minLon(), _mapPlot->maxLon(), _minZ,
-                           _maxZ));
-
-    ImGui::InputText("Tile Server URL##", &_url);
-
-    ImGui::SetNextItemWidth(100);
-    ImGui::InputInt("Max. Requests", &_requestLimit);
-    _requestLimit = std::clamp(_requestLimit, 1, 99);
-    ImGui::SameLine();
-    if (ImGui::Button("OSM")) {
-      _url = TileSourceUrlOsm::URL_TPL;
-    };
-    ImGui::SameLine();
-    if (ImGui::Button("ARC")) {
-      _url = TileSourceUrlArcImagery::URL_TPL;
-    };
-
-    ImGui::InputText("Destination Dir##", &_dirname);
-    if (ImGui::Button("Grab")) {
-      _tileTotal =
-          countTiles(_mapPlot->minLat(), _mapPlot->maxLat(), _mapPlot->minLon(),
-                     _mapPlot->maxLon(), _minZ, _maxZ);
-      _tileGrabber = std::make_unique<TileGrabber>(
-          std::make_shared<TileSourceUrlCustom>(_requestLimit, _preload, _url),
-          std::make_shared<TileSaverSubDir>(_dirname));
-      _tileGrabber->grab(_mapPlot->minLat(), _mapPlot->maxLat(),
-                         _mapPlot->minLon(), _mapPlot->maxLon(), _minZ, _maxZ);
-    }
-    ImGui::SameLine();
-    if (ImGui::Button("Stop") && _tileGrabber) {
-      _tileGrabber->stop();
-    }
-
-    if (_tileGrabber) {
-      _tileCount = _tileGrabber->tileCounter();
-    }
-    _progress = float(_tileCount) / float(_tileTotal);
-    _progress = std::isnan(_progress) ? 0.f : _progress;
-    ImGui::SameLine();
-    ImGui::Text("%d/%d", _tileCount, _tileTotal);
-    ImGui::SameLine();
-    ImGui::ProgressBar(_progress);
-
-    ImGui::PopID();
-  }
+  void paint();
 
 private:
-  std::string _url{TileSourceUrlOsm::URL_TPL};
-  std::string _dirname{"tiles"};
   std::unique_ptr<TileGrabber> _tileGrabber;
   std::shared_ptr<MapPlot> _mapPlot;
-  int _requestLimit{10};
-  const bool _preload{false};
-  int _minZ{0}, _maxZ{18};
-  int _tileCount{0}, _tileTotal{};
-  float _progress{};
+
+  struct Ui;
+  std::unique_ptr<Ui> _ui;
 };
 } // namespace ImOsm

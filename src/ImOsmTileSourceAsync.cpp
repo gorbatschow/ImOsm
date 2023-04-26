@@ -1,16 +1,22 @@
 #include "ImOsmTileSourceAsync.h"
+#include "ImOsmITileSaver.h"
 #include "ImOsmTile.h"
+#include "ImOsmTileAsync.h"
+#include <algorithm>
 
 namespace ImOsm {
+using namespace std::chrono_literals;
 
 TileSourceAsync::TileSourceAsync(int requestLimit, bool preload)
     : _requestLimit{requestLimit}, _preload{preload} {}
+
+TileSourceAsync::~TileSourceAsync() = default;
 
 bool TileSourceAsync::hasRequest() { return !_requests.empty(); }
 
 bool TileSourceAsync::hasRequest(int z, int x, int y) {
   const auto it{
-      std::find(_requests.begin(), _requests.end(), std::array{z, x, y})};
+      std::find(_requests.begin(), _requests.end(), TileAsync{z, x, y})};
   return it != _requests.end();
 }
 

@@ -1,4 +1,5 @@
 #include "ImOsmTileSourceUrl.h"
+#include <curl/curl.h>
 
 namespace ImOsm {
 

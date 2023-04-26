@@ -2,15 +2,13 @@
 #include "ImOsmCoords.h"
 #include "ImOsmRichMarkItem.h"
 #include <algorithm>
-#include <array>
 #include <ini.h>
 #include <memory>
 #include <vector>
 
 namespace ImOsm {
 namespace Rich {
-class MarkStorage
-{
+class MarkStorage {
   friend class MarkEditorWidget;
 
 public:
@@ -49,8 +47,7 @@ private:
   }
 
   // Mark Items
-  struct ItemNode
-  {
+  struct ItemNode {
     std::shared_ptr<MarkItem> ptr;
     mutable bool rmFlag{false};
   };

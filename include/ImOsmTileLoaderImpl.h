@@ -2,7 +2,6 @@
 #include "ImOsmTileLoader.h"
 #include "ImOsmTileSourceFs.h"
 #include "ImOsmTileSourceUrlImpl.h"
-
 #include <memory>
 
 namespace ImOsm {

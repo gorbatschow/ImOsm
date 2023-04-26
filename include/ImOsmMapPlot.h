@@ -1,10 +1,10 @@
 #pragma once
 #include "ImOsmCoords.h"
-#include "ImOsmITileLoader.h"
-#include <implot.h>
 #include <memory>
 
 namespace ImOsm {
+class ITileLoader;
+
 class MapPlot {
 public:
   MapPlot();

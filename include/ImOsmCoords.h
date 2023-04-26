@@ -105,6 +105,13 @@ struct OsmCoords {
 };
 
 struct GeoCoords {
+  GeoCoords() = default;
+  GeoCoords(double lat_, double lon_) : lat{lat_}, lon{lon_} {}
+  GeoCoords(const std::array<double, 2> &arr)
+      : lat{arr.front()}, lon{arr.back()} {}
+  GeoCoords(const std::array<float, 2> &arr)
+      : lat{arr.front()}, lon{arr.back()} {}
+
   double lat{};
   double lon{};
 
@@ -122,13 +129,6 @@ struct GeoCoords {
     LatLon::destination(c.lat, c.lon, lat, lon, d, b);
     return c;
   }
-
-  GeoCoords() = default;
-  GeoCoords(double lat_, double lon_) : lat{lat_}, lon{lon_} {}
-  GeoCoords(const std::array<double, 2> &arr)
-      : lat{arr.front()}, lon{arr.back()} {}
-  GeoCoords(const std::array<float, 2> &arr)
-      : lat{arr.front()}, lon{arr.back()} {}
 
   inline double distance(const GeoCoords &other) const {
     return LatLon::distance(lat, lon, other.lat, other.lon);

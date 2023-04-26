@@ -1,19 +1,26 @@
 #include "ImOsmRichMarkEditorWidget.h"
+#include "ImOsmRichMapPlot.h"
 #include "ImOsmRichMarkItemWidget.h"
-#include <memory>
 #include <misc/cpp/imgui_stdlib.h>
 
 namespace ImOsm {
 namespace Rich {
+
+struct MarkEditorWidget::Ui {
+  inline static const char latlonFormat[]{"%.6f"};
+  std::array<float, 2> latLonInput{0.f, 0.f};
+  std::string markNameInputText{};
+  bool isMousePick{false};
+  bool isMarkAdd{false};
+};
+
 MarkEditorWidget::MarkEditorWidget(std::shared_ptr<RichMapPlot> plot,
                                    std::shared_ptr<MarkStorage> storage)
-    : _plot{plot}, _storage{storage} {
-  _markNameInputText.reserve(32);
+    : _plot{plot}, _storage{storage}, _ui{std::make_unique<Ui>()} {
+  _ui->markNameInputText.reserve(32);
 }
 
-void MarkEditorWidget::loadState(const mINI::INIStructure &ini) {}
-
-void MarkEditorWidget::saveState(mINI::INIStructure &ini) const {}
+MarkEditorWidget::~MarkEditorWidget() = default;
 
 void MarkEditorWidget::paint() {
   ImGui::TextUnformatted("Mark Editor");
@@ -25,14 +32,14 @@ void MarkEditorWidget::paint() {
   paint_addMarkBtn();
   paint_markTable();
 
-  if (_isMousePick && _plot->mouseOnPlot() && ImGui::IsMouseClicked(0)) {
-    _isMousePick = false;
-    _latLonInput = {_plot->mouseLat(), _plot->mouseLon()};
+  if (_ui->isMousePick && _plot->mouseOnPlot() && ImGui::IsMouseClicked(0)) {
+    _ui->isMousePick = false;
+    _ui->latLonInput = {_plot->mouseLat(), _plot->mouseLon()};
   }
 
-  if (_isMarkAdd) {
-    _isMarkAdd = false;
-    _storage->addMark(_latLonInput, _markNameInputText);
+  if (_ui->isMarkAdd) {
+    _ui->isMarkAdd = false;
+    _storage->addMark(_ui->latLonInput, _ui->markNameInputText);
     _plot->addItem(_storage->_markItems.back().ptr);
   }
 
@@ -43,26 +50,26 @@ void MarkEditorWidget::paint() {
   }
 
   if (_storage->handlePickState()) {
-    _latLonInput = _storage->_pickCoords;
+    _ui->latLonInput = _storage->_pickCoords;
   }
 }
 
 void MarkEditorWidget::paint_latLonInput() {
   ImGui::PushItemWidth(200 + ImGui::GetStyle().ItemSpacing.x / 2);
-  ImGui::InputFloat2("Lat/Lon", _latLonInput.data(), _latlonFormat);
+  ImGui::InputFloat2("Lat/Lon", _ui->latLonInput.data(), _ui->latlonFormat);
   ImGui::PopItemWidth();
 }
 
 void MarkEditorWidget::paint_mousePickBtn() {
-  if (!_isMousePick) {
+  if (!_ui->isMousePick) {
     if (ImGui::Button("Mouse Pick")) {
-      _isMousePick = !_isMousePick;
+      _ui->isMousePick = !_ui->isMousePick;
     }
   } else {
     const auto color{ImGui::GetStyleColorVec4(ImGuiCol_ButtonHovered)};
     ImGui::PushStyleColor(ImGuiCol_Button, color);
     if (ImGui::Button("Mouse Pick")) {
-      _isMousePick = !_isMousePick;
+      _ui->isMousePick = !_ui->isMousePick;
     }
     ImGui::PopStyleColor();
   }
@@ -70,13 +77,13 @@ void MarkEditorWidget::paint_mousePickBtn() {
 
 void MarkEditorWidget::paint_markNameInput() {
   ImGui::PushItemWidth(100);
-  ImGui::InputText("Mark Name", &_markNameInputText);
+  ImGui::InputText("Mark Name", &_ui->markNameInputText);
   ImGui::PopItemWidth();
 }
 
 void MarkEditorWidget::paint_addMarkBtn() {
   if (ImGui::Button("Add Mark")) {
-    _isMarkAdd = true;
+    _ui->isMarkAdd = true;
   }
 }
 
@@ -113,18 +120,18 @@ void MarkEditorWidget::paint_markTableRow(const MarkStorage::ItemNode &item) {
 
   // Lat
   ImGui::TableNextColumn();
-  ImGui::Text(_latlonFormat, item.ptr->geoCoords().lat);
+  ImGui::Text(_ui->latlonFormat, item.ptr->geoCoords().lat);
 
   // Lon
   ImGui::TableNextColumn();
-  ImGui::Text(_latlonFormat, item.ptr->geoCoords().lon);
+  ImGui::Text(_ui->latlonFormat, item.ptr->geoCoords().lon);
 
   // Setup
   ImGui::TableNextColumn();
   if (ImGui::Button("Setup")) {
     ImGui::OpenPopup("Setup Item");
     _itemWidget =
-        std::make_unique<MarkItemWidget>(item.ptr, GeoCoords{_latLonInput});
+        std::make_unique<MarkItemWidget>(item.ptr, GeoCoords{_ui->latLonInput});
   }
 
   if (ImGui::BeginPopupModal("Setup Item")) {

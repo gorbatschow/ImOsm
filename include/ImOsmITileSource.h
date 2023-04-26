@@ -1,10 +1,11 @@
 #pragma once
-#include "ImOsmITile.h"
-#include "ImOsmITileSaver.h"
 #include <memory>
 #include <vector>
 
 namespace ImOsm {
+class ITile;
+class ITileSaver;
+
 class ITileSource {
 public:
   virtual ~ITileSource() = default;

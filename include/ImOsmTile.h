@@ -1,7 +1,6 @@
 #pragma once
 #include "ImOsmTileDummy.h"
-#include <GL/gl.h>
-#include <string>
+#include <stdint.h>
 #include <vector>
 
 namespace ImOsm {
@@ -30,6 +29,8 @@ public:
   }
 
 private:
+  using GLuint = unsigned int;
+
   GLuint glID() const;
   void stbLoad() const;
   void glLoad() const;

@@ -1,8 +1,5 @@
 #pragma once
 #include "ImOsmTileSourceAsync.h"
-#include <curl/curl.h>
-#include <ostream>
-#include <sstream>
 
 namespace ImOsm {
 class TileSourceUrl : public TileSourceAsync {
