@@ -17,6 +17,9 @@ public:
   void paint();
 
 private:
+  void updateTileLoader();
+
+private:
   std::shared_ptr<MapPlot> _mapPlot;
   std::shared_ptr<ITileLoader> _tileLoader;
 

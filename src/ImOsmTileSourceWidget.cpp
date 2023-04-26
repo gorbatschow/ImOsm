@@ -13,8 +13,7 @@ struct TileSourceWidget::Ui {
 
 TileSourceWidget::TileSourceWidget(std::shared_ptr<MapPlot> mapPlot)
     : _mapPlot{mapPlot}, _ui{std::make_unique<Ui>()} {
-  _mapPlot->setTileLoader(
-      std::make_shared<TileLoaderUrlMap>(_ui->source, _ui->requestLimit));
+  updateTileLoader();
 }
 
 void TileSourceWidget::loadState(const mINI::INIStructure &ini) {
@@ -25,10 +24,10 @@ void TileSourceWidget::loadState(const mINI::INIStructure &ini) {
     }
     if (opts.has("request_limit")) {
       _ui->requestLimit = stoi(opts.get("request_limit"));
+      std::clamp(_ui->requestLimit, 1, 99);
     }
   }
-  _mapPlot->setTileLoader(
-      std::make_shared<TileLoaderUrlMap>(_ui->source, _ui->requestLimit));
+  updateTileLoader();
 }
 
 void TileSourceWidget::saveState(mINI::INIStructure &ini) const {
@@ -43,14 +42,7 @@ void TileSourceWidget::paint() {
 
   ImGui::TextUnformatted("Tile Source");
   if (ImGui::Button("Apply")) {
-    if (_ui->source.starts_with("http")) {
-      _tileLoader =
-          std::make_shared<TileLoaderUrlMap>(_ui->source, _ui->requestLimit);
-    } else if (!_ui->source.empty()) {
-      _tileLoader =
-          std::make_shared<TileLoaderFsMap>(_ui->source, _ui->requestLimit);
-    }
-    _mapPlot->setTileLoader(_tileLoader);
+    updateTileLoader();
   }
   ImGui::SameLine();
   ImGui::InputText("Path / URL", &_ui->source);
@@ -72,6 +64,17 @@ void TileSourceWidget::paint() {
   };
 
   ImGui::PopID();
+}
+
+void TileSourceWidget::updateTileLoader() {
+  if (_ui->source.starts_with("http")) {
+    _tileLoader =
+        std::make_shared<TileLoaderUrlMap>(_ui->source, _ui->requestLimit);
+  } else if (!_ui->source.empty()) {
+    _tileLoader =
+        std::make_shared<TileLoaderFsMap>(_ui->source, _ui->requestLimit);
+  }
+  _mapPlot->setTileLoader(_tileLoader);
 }
 
 } // namespace ImOsm

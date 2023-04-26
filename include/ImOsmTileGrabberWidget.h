@@ -1,4 +1,5 @@
 #pragma once
+#include <ini.h>
 #include <memory>
 
 namespace ImOsm {
@@ -11,6 +12,8 @@ public:
   TileGrabberWidget(std::shared_ptr<MapPlot> mapPlot);
   ~TileGrabberWidget();
 
+  void loadState(const mINI::INIStructure &ini);
+  void saveState(mINI::INIStructure &ini) const;
   void paint();
 
 private:

@@ -8,9 +8,18 @@ TileSourceUrlCustom::TileSourceUrlCustom(int request_limit, bool preload,
 
 std::string TileSourceUrlCustom::makeUrl(int z, int x, int y) {
   std::string url{_url_tpl};
-  url.replace(url.find("$Z$"), 3, std::to_string(z));
-  url.replace(url.find("$X$"), 3, std::to_string(x));
-  url.replace(url.find("$Y$"), 3, std::to_string(y));
+  const auto pos_z{url.find("$Z$")};
+  if (pos_z < url.size()) {
+    url.replace(pos_z, 3, std::to_string(z));
+    const auto pos_x{url.find("$X$")};
+    if (pos_x < url.size()) {
+      url.replace(pos_x, 3, std::to_string(x));
+      const auto pos_y{url.find("$Y$")};
+      if (pos_y < url.size()) {
+        url.replace(pos_y, 3, std::to_string(y));
+      }
+    }
+  }
   return url;
 }
 

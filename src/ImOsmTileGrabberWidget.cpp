@@ -24,6 +24,38 @@ TileGrabberWidget::TileGrabberWidget(std::shared_ptr<MapPlot> mapPlot)
   _ui->url = TileSourceUrlOsm::URL_TPL;
 }
 
+void TileGrabberWidget::loadState(const mINI::INIStructure &ini) {
+  if (ini.has("tile_grabber")) {
+    const auto opts{ini.get("tile_grabber")};
+    if (opts.has("source_url")) {
+      _ui->url = opts.get("source_url");
+    }
+    if (opts.has("target_dir")) {
+      _ui->dirname = opts.get("target_dir");
+    }
+    if (opts.has("request_limit")) {
+      _ui->requestLimit = std::stoi(opts.get("request_limit"));
+      std::clamp(_ui->requestLimit, 1, 99);
+    }
+    if (opts.has("min_zoom")) {
+      _ui->minZ = std::stoi(opts.get("min_zoom"));
+      std::clamp(_ui->maxZ, MinZoom, MaxZoom);
+    }
+    if (opts.has("max_zoom")) {
+      _ui->maxZ = std::stoi(opts.get("max_zoom"));
+      std::clamp(_ui->maxZ, MinZoom, MaxZoom);
+    }
+  }
+}
+
+void TileGrabberWidget::saveState(mINI::INIStructure &ini) const {
+  ini["tile_grabber"].set("source_url", _ui->url);
+  ini["tile_grabber"].set("target_dir", _ui->dirname);
+  ini["tile_grabber"].set("request_limit", std::to_string(_ui->requestLimit));
+  ini["tile_grabber"].set("min_zoom", std::to_string(_ui->minZ));
+  ini["tile_grabber"].set("max_zoom", std::to_string(_ui->maxZ));
+}
+
 TileGrabberWidget::~TileGrabberWidget() = default;
 
 void ImOsm::TileGrabberWidget::paint() {
