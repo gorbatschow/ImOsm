@@ -10,7 +10,7 @@ using namespace std::chrono_literals;
 TileSourceAsync::TileSourceAsync(int requestLimit, bool preload)
     : _requestLimit{requestLimit}, _preload{preload} {}
 
-TileSourceAsync::~TileSourceAsync() = default;
+TileSourceAsync::~TileSourceAsync() { _interrupt = true; }
 
 bool TileSourceAsync::hasRequest() { return !_requests.empty(); }
 
@@ -73,13 +73,13 @@ bool TileSourceAsync::saveAll(std::shared_ptr<ITileSaver> saver) {
 }
 
 TileAsync::FutureData TileSourceAsync::onHandleRequest(int z, int x, int y) {
-  std::vector<std::byte> blob;
-  TileAsync::FutureData data;
-  if (receiveTile(z, x, y, blob)) {
-    data.tile = std::make_shared<Tile>(z, x, y, blob, _preload);
+  TileData tileData{_interrupt};
+  TileAsync::FutureData futureData;
+  if (receiveTile(z, x, y, tileData)) {
+    futureData.tile = std::make_shared<Tile>(z, x, y, tileData.blob, _preload);
   } else {
-    data.tile = std::make_shared<TileDummy>(z, x, y);
+    futureData.tile = std::make_shared<TileDummy>(z, x, y);
   }
-  return data;
+  return futureData;
 }
 } // namespace ImOsm

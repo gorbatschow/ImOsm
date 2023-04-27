@@ -13,8 +13,7 @@ public:
   static std::filesystem::path BasePathDefault();
 
 protected:
-  virtual bool receiveTile(int z, int x, int y,
-                           std::vector<std::byte> &blob) override;
+  virtual bool receiveTile(int z, int x, int y, TileData &tileData) override;
   inline std::filesystem::path basePath() const { return _basePath; }
 
   virtual std::filesystem::path dirPath(int z, int x, int y) const = 0;
