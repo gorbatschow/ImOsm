@@ -5,17 +5,45 @@
 #include <implot.h>
 
 namespace ImOsm {
-MapPlot::MapPlot() : _loader{std::make_shared<TileLoaderOsmMap>()} {}
 
-MapPlot::MapPlot(std::shared_ptr<ITileLoader> &loader) : _loader{loader} {
+struct MapPlot::Impl {
+  constexpr static const ImPlotFlags plotFlags{ImPlotFlags_Equal |
+                                               ImPlotFlags_NoLegend};
+
+  constexpr static const ImPlotAxisFlags xFlags{
+      ImPlotAxisFlags_NoLabel | ImPlotAxisFlags_NoGridLines |
+      ImPlotAxisFlags_NoTickMarks | ImPlotAxisFlags_NoTickLabels |
+      ImPlotAxisFlags_NoInitialFit | ImPlotAxisFlags_NoMenus |
+      ImPlotAxisFlags_NoMenus | ImPlotAxisFlags_NoHighlight};
+
+  constexpr static const ImPlotAxisFlags yFlags{xFlags |
+                                                ImPlotAxisFlags_Invert};
+
+  constexpr static const ImVec2 uv0{0, 1}, uv1{1, 0};
+  constexpr static const ImVec4 tint{1, 1, 1, 1};
+
+  ImPlotPoint mousePos{};
+  ImPlotRect plotLims{};
+  ImVec2 plotSize{};
+};
+
+MapPlot::MapPlot()
+    : _impl{std::make_unique<Impl>()},
+      _loader{std::make_shared<TileLoaderOsmMap>()} {}
+
+MapPlot::MapPlot(std::shared_ptr<ITileLoader> &loader)
+    : _impl{std::make_unique<Impl>()}, _loader{loader}, _minLat{MinLat},
+      _minLon{MinLon}, _maxLat{MaxLat}, _maxLon{MaxLon} {
   resetBounds();
 }
 
-void MapPlot::paint() {
-  if (ImPlot::BeginPlot("##ImOsmMapPlot", {-1, -1}, _plotFlags)) {
+MapPlot::~MapPlot() = default;
 
-    ImPlot::SetupAxis(ImAxis_X1, nullptr, _xFlags);
-    ImPlot::SetupAxis(ImAxis_Y1, nullptr, _yFlags);
+void MapPlot::paint() {
+  if (ImPlot::BeginPlot("##ImOsmMapPlot", {-1, -1}, _impl->plotFlags)) {
+
+    ImPlot::SetupAxis(ImAxis_X1, nullptr, _impl->xFlags);
+    ImPlot::SetupAxis(ImAxis_Y1, nullptr, _impl->yFlags);
     ImPlot::SetupAxisLimitsConstraints(ImAxis_Y1, 0.0, 1.0);
 
     if (_setBounds != SetBounds::None) {
@@ -34,20 +62,20 @@ void MapPlot::paint() {
 
     ImPlot::SetupFinish();
 
-    _mousePos = ImPlot::GetPlotMousePos(ImAxis_X1, ImAxis_Y1);
-    _plotLims = ImPlot::GetPlotLimits(ImAxis_X1, ImAxis_Y1);
-    _plotSize = ImPlot::GetPlotSize();
+    _impl->mousePos = ImPlot::GetPlotMousePos(ImAxis_X1, ImAxis_Y1);
+    _impl->plotLims = ImPlot::GetPlotLimits(ImAxis_X1, ImAxis_Y1);
+    _impl->plotSize = ImPlot::GetPlotSize();
 
-    _mouseLon = x2lon(_mousePos.x, 0);
-    _mouseLat = y2lat(_mousePos.y, 0);
+    _mouseLon = x2lon(_impl->mousePos.x, 0);
+    _mouseLat = y2lat(_impl->mousePos.y, 0);
 
-    _pixelsX = _plotSize.x;
-    _pixelsY = _plotSize.y;
+    _pixelsX = _impl->plotSize.x;
+    _pixelsY = _impl->plotSize.y;
 
-    _minX = _plotLims.X.Min;
-    _maxX = _plotLims.X.Max;
-    _minY = _plotLims.Y.Min;
-    _maxY = _plotLims.Y.Max;
+    _minX = _impl->plotLims.X.Min;
+    _maxX = _impl->plotLims.X.Max;
+    _minY = _impl->plotLims.Y.Min;
+    _maxY = _impl->plotLims.Y.Max;
     _rangeX = fabs(_maxX - _minX);
     _rangeY = fabs(_maxY - _minY);
 
@@ -83,8 +111,8 @@ void MapPlot::paint() {
       for (auto y{_minTY}; y != _maxTY + 1; ++y) {
         bmin.y = float(y) * _tileSize;
         bmax.y = float(y + 1) * _tileSize;
-        ImPlot::PlotImage("##", _loader->tileAt(_zoom, x, y), bmin, bmax, _uv0,
-                          _uv1, _tint);
+        ImPlot::PlotImage("##", _loader->tileAt(_zoom, x, y), bmin, bmax,
+                          _impl->uv0, _impl->uv1, _impl->tint);
       }
     }
 
@@ -95,4 +123,62 @@ void MapPlot::paint() {
     ImPlot::EndPlot();
   }
 }
+
+void ImOsm::MapPlot::resetBounds() {
+  _minLat = MinLat;
+  _maxLat = MaxLat;
+  _minLon = MinLon;
+  _maxLon = MaxLon;
+  _setBounds = SetBounds::Geo;
+}
+
+void ImOsm::MapPlot::setBoundsGeo(float minLat, float maxLat, float minLon,
+                                  float maxLon) {
+  _minLat = minLat;
+  _maxLat = maxLat;
+  _minLon = minLon;
+  _maxLon = maxLon;
+  _setBounds = SetBounds::Geo;
+}
+
+void ImOsm::MapPlot::getBoundsGeo(float &minLat, float &maxLat, float &minLon,
+                                  float &maxLon) const {
+  minLat = _minLat;
+  maxLat = _maxLat;
+  minLon = _minLon;
+  maxLon = _maxLon;
+}
+
+void ImOsm::MapPlot::getBoundsTile(int &minTX, int &maxTX, int &minTY,
+                                   int &maxTY) const {
+  minTX = _minTX;
+  maxTX = _maxTX;
+  minTY = _minTY;
+  maxTY = _maxTY;
+}
+
+void ImOsm::MapPlot::setBoundsLocal(float minX, float maxX, float minY,
+                                    float maxY) {
+  _minX = minX;
+  _maxX = maxX;
+  _minY = minY;
+  _maxY = maxY;
+  _setBounds = SetBounds::Local;
+}
+
+void ImOsm::MapPlot::getBoundsLocal(float &minX, float &maxX, float &minY,
+                                    float &maxY) const {
+  minX = _minX;
+  maxX = _maxX;
+  minY = _minY;
+  maxY = _maxY;
+}
+
+bool MapPlot::mouseOnPlot() const {
+  return _impl->mousePos.x > _impl->plotLims.X.Min &&
+         _impl->mousePos.x < _impl->plotLims.X.Max &&
+         _impl->mousePos.y > _impl->plotLims.Y.Min &&
+         _impl->mousePos.y < _impl->plotLims.Y.Max;
+}
+
 } // namespace ImOsm

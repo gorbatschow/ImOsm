@@ -1,4 +1,5 @@
 #include "ImOsmTileGrabberWidget.h"
+#include "ImOsmCoords.h"
 #include "ImOsmMapPlot.h"
 #include "ImOsmTileGrabber.h"
 #include "ImOsmTileSaver.h"
