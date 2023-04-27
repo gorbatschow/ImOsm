@@ -9,6 +9,8 @@ namespace Rich {
 
 struct MarkEditorWidget::Ui {
   inline static const char latlonFormat[]{"%.6f"};
+  inline static const char radiusFormat_m[]{"%.1f [m]"};
+  inline static const char radiusFormat_km[]{"%.1f [km]"};
   std::array<float, 2> latLonInput{0.f, 0.f};
   std::string markNameInputText{};
   bool isMousePick{false};
@@ -89,13 +91,14 @@ void MarkEditorWidget::paint_addMarkBtn() {
 }
 
 void MarkEditorWidget::paint_markTable() {
-  static const int tableCols{5};
+  static const int tableCols{6};
   static const ImGuiTableColumnFlags colFlags{ImGuiTableColumnFlags_WidthFixed};
 
   if (ImGui::BeginTable("MarkTabe", tableCols)) {
-    ImGui::TableSetupColumn("Name", colFlags, 200);
+    ImGui::TableSetupColumn("Name", colFlags, 100);
     ImGui::TableSetupColumn("Lat", colFlags, 100);
     ImGui::TableSetupColumn("Lon", colFlags, 100);
+    ImGui::TableSetupColumn("Radius", colFlags, 100);
     ImGui::TableSetupColumn("Setup", colFlags, 50);
     ImGui::TableSetupColumn("Delete", colFlags, 50);
     ImGui::TableHeadersRow();
@@ -127,6 +130,14 @@ void MarkEditorWidget::paint_markTableRow(const MarkStorage::ItemNode &item) {
   ImGui::TableNextColumn();
   ImGui::Text(_ui->latlonFormat, item.ptr->geoCoords().lon);
 
+  // Radius
+  ImGui::TableNextColumn();
+  if (item.ptr->radius() >= 1e3) {
+    ImGui::Text(_ui->radiusFormat_km, item.ptr->radius() * 1e-3);
+  } else {
+    ImGui::Text(_ui->radiusFormat_m, item.ptr->radius());
+  }
+
   // Setup
   ImGui::TableNextColumn();
   if (ImGui::Button("Setup")) {
@@ -136,7 +147,7 @@ void MarkEditorWidget::paint_markTableRow(const MarkStorage::ItemNode &item) {
   }
 
   if (ImGui::BeginPopupModal("Setup Item")) {
-    // Draw popup contents.
+    // Draw popup contents
     _itemWidget->paint();
     ImGui::Separator();
     if (ImGui::Button("Cancel")) {
