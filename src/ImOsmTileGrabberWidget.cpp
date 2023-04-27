@@ -40,11 +40,11 @@ void TileGrabberWidget::loadState(const mINI::INIStructure &ini) {
     }
     if (opts.has("min_zoom")) {
       _ui->minZ = std::stoi(opts.get("min_zoom"));
-      std::clamp(_ui->maxZ, MinZoom, MaxZoom);
+      std::clamp(_ui->maxZ, MIN_ZOOM, MAX_ZOOM);
     }
     if (opts.has("max_zoom")) {
       _ui->maxZ = std::stoi(opts.get("max_zoom"));
-      std::clamp(_ui->maxZ, MinZoom, MaxZoom);
+      std::clamp(_ui->maxZ, MIN_ZOOM, MAX_ZOOM);
     }
   }
 }
@@ -70,11 +70,11 @@ void ImOsm::TileGrabberWidget::paint() {
 
   ImGui::SetNextItemWidth(100);
   ImGui::InputInt("Min Z", &_ui->minZ);
-  _ui->minZ = std::clamp(_ui->minZ, 0, MaxZoom);
+  _ui->minZ = std::clamp(_ui->minZ, 0, MAX_ZOOM);
   ImGui::SameLine();
   ImGui::SetNextItemWidth(100);
   ImGui::InputInt("Max Z", &_ui->maxZ);
-  _ui->maxZ = std::clamp(_ui->maxZ, 0, MaxZoom);
+  _ui->maxZ = std::clamp(_ui->maxZ, 0, MAX_ZOOM);
   ImGui::SameLine();
   ImGui::Text("Tiles Count: %lu",
               countTiles(_mapPlot->minLat(), _mapPlot->maxLat(),

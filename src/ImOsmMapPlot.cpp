@@ -32,8 +32,8 @@ MapPlot::MapPlot()
       _loader{std::make_shared<TileLoaderOsmMap>()} {}
 
 MapPlot::MapPlot(std::shared_ptr<ITileLoader> &loader)
-    : _impl{std::make_unique<Impl>()}, _loader{loader}, _minLat{MinLat},
-      _minLon{MinLon}, _maxLat{MaxLat}, _maxLon{MaxLon} {
+    : _impl{std::make_unique<Impl>()}, _loader{loader}, _minLat{MIN_LAT},
+      _minLon{MIN_LON}, _maxLat{MAX_LAT}, _maxLon{MAX_LON} {
   resetBounds();
 }
 
@@ -81,7 +81,8 @@ void MapPlot::paint() {
 
     _resX = _pixelsX / _rangeX;
     _resY = _pixelsY / _rangeY;
-    _zoom = std::clamp(int(floor(log2(_resX / _tilePixels))), MinZoom, MaxZoom);
+    _zoom =
+        std::clamp(int(floor(log2(_resX / _tilePixels))), MIN_ZOOM, MAX_ZOOM);
     _tilesNum = POW2[_zoom];
     _tileSize = 1.0 / float(_tilesNum);
 
@@ -125,10 +126,10 @@ void MapPlot::paint() {
 }
 
 void ImOsm::MapPlot::resetBounds() {
-  _minLat = MinLat;
-  _maxLat = MaxLat;
-  _minLon = MinLon;
-  _maxLon = MaxLon;
+  _minLat = MIN_LAT;
+  _maxLat = MAX_LAT;
+  _minLon = MIN_LON;
+  _maxLon = MAX_LON;
   _setBounds = SetBounds::Geo;
 }
 

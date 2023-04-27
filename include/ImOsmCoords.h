@@ -17,12 +17,12 @@ inline constexpr int POW2[]{
     (1 << 7),  (1 << 8),  (1 << 9),  (1 << 10), (1 << 11), (1 << 12), (1 << 13),
     (1 << 14), (1 << 15), (1 << 16), (1 << 17), (1 << 18)};
 
-inline constexpr double MinLat{-85.0};
-inline constexpr double MaxLat{+85.0};
-inline constexpr double MinLon{-179.9};
-inline constexpr double MaxLon{+179.9};
-inline constexpr int MinZoom{0};
-inline constexpr int MaxZoom{18};
+inline constexpr double MIN_LAT{-85.0};
+inline constexpr double MAX_LAT{+85.0};
+inline constexpr double MIN_LON{-179.9};
+inline constexpr double MAX_LON{+179.9};
+inline constexpr int MIN_ZOOM{0};
+inline constexpr int MAX_ZOOM{18};
 
 inline double lon2x(const double lon, int z = 0) {
   return (lon + 180.0) / 360.0 * double(POW2[z]);
@@ -51,9 +51,9 @@ inline int lat2ty(const double lat, const int z) {
 
 inline std::pair<int, int> minmax_tx(double minLon, double maxLon, int z) {
 
-  minLon = std::clamp(minLon, MinLon, MaxLon);
-  maxLon = std::clamp(maxLon, MinLon, MaxLon);
-  z = std::clamp(z, MinZoom, MaxZoom);
+  minLon = std::clamp(minLon, MIN_LON, MAX_LON);
+  maxLon = std::clamp(maxLon, MIN_LON, MAX_LON);
+  z = std::clamp(z, MIN_ZOOM, MAX_ZOOM);
   std::pair<int, int> mm{std::minmax(lon2tx(minLon, z), lon2tx(maxLon, z))};
   mm.second = std::clamp(mm.second, 0, POW2[z] - 1);
   return mm;
@@ -61,9 +61,9 @@ inline std::pair<int, int> minmax_tx(double minLon, double maxLon, int z) {
 
 inline std::pair<int, int> minmax_ty(double minLat, double maxLat, int z) {
 
-  minLat = std::clamp(minLat, MinLat, MaxLat);
-  maxLat = std::clamp(maxLat, MinLat, MaxLat);
-  z = std::clamp(z, MinZoom, MaxZoom);
+  minLat = std::clamp(minLat, MIN_LAT, MAX_LAT);
+  maxLat = std::clamp(maxLat, MIN_LAT, MAX_LAT);
+  z = std::clamp(z, MIN_ZOOM, MAX_ZOOM);
   std::pair<int, int> mm{std::minmax(lat2ty(minLat, z), lat2ty(maxLat, z))};
   mm.second = std::clamp(mm.second, 0, POW2[z] - 1);
   return mm;
