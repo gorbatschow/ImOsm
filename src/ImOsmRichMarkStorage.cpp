@@ -7,13 +7,23 @@ MarkStorage::MarkStorage() = default;
 
 MarkStorage::~MarkStorage() = default;
 
-GeoCoords MarkStorage::findMark(const std::string &name, bool &ok) const {
-  const auto it{std::find_if(
-      _markItems.begin(), _markItems.end(),
-      [name](const ItemNode &node) { return node.ptr->text() == name; })};
+std::shared_ptr<MarkItem> MarkStorage::findMark(const std::string &name) const {
+  const auto it{std::find_if(_markItems.begin(),
+                             _markItems.end(),
+                             [name](const ItemNode &node) {
+                               return node.ptr->text() == name;
+                             })};
   if (it != _markItems.end()) {
+    return it->ptr;
+  }
+  return nullptr;
+}
+
+GeoCoords MarkStorage::findMark(const std::string &name, bool &ok) const {
+  const auto ptr{findMark(name)};
+  if (ptr) {
     ok = true;
-    return (*it).ptr->geoCoords();
+    return ptr->geoCoords();
   }
   ok = false;
   return {};

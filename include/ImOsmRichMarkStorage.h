@@ -16,7 +16,9 @@ public:
   MarkStorage();
   ~MarkStorage();
 
+  std::shared_ptr<MarkItem> findMark(const std::string &name) const;
   GeoCoords findMark(const std::string &name, bool &ok) const;
+
   void loadState(const mINI::INIStructure &ini);
   void saveState(mINI::INIStructure &ini) const;
 
