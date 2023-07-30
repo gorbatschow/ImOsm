@@ -11,10 +11,10 @@ public:
   virtual ~Tile() override;
 
   virtual const char *rawBlob() const override;
-  virtual std::size_t rawBlobSize() const override;
+  virtual size_t rawBlobSize() const override;
   virtual void rgbaLoad() const override { stbLoad(); }
   virtual const char *rgbaBlob() const override;
-  virtual std::size_t rgbaBlobSize() const override;
+  virtual size_t rgbaBlobSize() const override;
   virtual ImTextureID texture() const override;
 
 private:

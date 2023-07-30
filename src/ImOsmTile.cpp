@@ -21,13 +21,17 @@ const char *Tile::rawBlob() const {
   return reinterpret_cast<const char *>(_rawBlob.data());
 }
 
-std::size_t Tile::rawBlobSize() const { return _rawBlob.size(); }
+size_t Tile::rawBlobSize() const {
+  return _rawBlob.size();
+}
 
 const char *Tile::rgbaBlob() const {
   return reinterpret_cast<const char *>(_rgbaBlob.data());
 }
 
-std::size_t Tile::rgbaBlobSize() const { return _rgbaBlob.size(); }
+size_t Tile::rgbaBlobSize() const {
+  return _rgbaBlob.size();
+}
 
 ImTextureID Tile::texture() const {
   return (ImTextureID)(intptr_t)glID();
@@ -50,7 +54,7 @@ void Tile::stbLoad() const {
                             static_cast<int>(_rawBlob.size()), &_pxW, &_pxH,
                             &_channels, STBI_rgb_alpha)};
   if (ptr) {
-    const std::size_t nbytes{std::size_t(_pxW * _pxH * STBI_rgb_alpha)};
+    const size_t nbytes{size_t(_pxW * _pxH * STBI_rgb_alpha)};
     _rgbaBlob.resize(nbytes);
     _rgbaBlob.shrink_to_fit();
     const auto byteptr{reinterpret_cast<std::byte *>(ptr)};
